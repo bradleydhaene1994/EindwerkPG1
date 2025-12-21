@@ -79,17 +79,17 @@ namespace CustomerSimulationDL.FileReaders
                     string Name = parts[startIndex];
                     int Frequency;
 
-                    if (int.TryParse(parts[startIndex + 1], out int fFreq))
+                    if (isSwiss && int.TryParse(parts[startIndex + 1], out int fFreq))
                     {
                         Frequency = fFreq;
                     }
-                    else if (int.TryParse(parts[startIndex + 2], out int mFreq))
+                    else if (isSwiss && int.TryParse(parts[startIndex + 2], out int mFreq))
                     {
                         Frequency = mFreq;
                     }
                     else
                     {
-                        throw new Exception();
+                        Frequency = int.Parse(parts[startIndex + 1].Replace(".", ""));
                     }
 
                     Gender Gender;
