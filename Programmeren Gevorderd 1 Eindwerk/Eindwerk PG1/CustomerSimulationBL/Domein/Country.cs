@@ -6,7 +6,19 @@ using System.Threading.Tasks;
 
 namespace CustomerSimulationBL.Domein
 {
-    class Country
+    public class Country
     {
+        public Country(string name)
+        {
+            Name = name;
+        }
+
+        public int Id { get; set; }
+        public string Name { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Name}";
+        }
     }
 }

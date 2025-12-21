@@ -1,9 +1,33 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35825.156 d17.13
+VisualStudioVersion = 17.13.35825.156
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerSimulationBL", "CustomerSimulationBL\CustomerSimulationBL.csproj", "{EB278EC8-1C37-4871-8B57-D5BF1804D569}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerSimulationDL", "CustomerSimulationDL\CustomerSimulationDL.csproj", "{66B21D9F-5EC4-4182-BF8E-C567F4B56596}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Debugger", "Debugger\Debugger.csproj", "{34B4FA54-E0BE-4173-9144-1B29C368F43A}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EB278EC8-1C37-4871-8B57-D5BF1804D569}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB278EC8-1C37-4871-8B57-D5BF1804D569}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB278EC8-1C37-4871-8B57-D5BF1804D569}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB278EC8-1C37-4871-8B57-D5BF1804D569}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66B21D9F-5EC4-4182-BF8E-C567F4B56596}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66B21D9F-5EC4-4182-BF8E-C567F4B56596}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66B21D9F-5EC4-4182-BF8E-C567F4B56596}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66B21D9F-5EC4-4182-BF8E-C567F4B56596}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34B4FA54-E0BE-4173-9144-1B29C368F43A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34B4FA54-E0BE-4173-9144-1B29C368F43A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34B4FA54-E0BE-4173-9144-1B29C368F43A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34B4FA54-E0BE-4173-9144-1B29C368F43A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection

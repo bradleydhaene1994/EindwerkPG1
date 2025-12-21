@@ -1,12 +1,197 @@
-﻿using System;
+﻿using CustomerSimulationBL.Domein;
+using CustomerSimulationBL.Enumerations;
+using CustomerSimulationBL.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace CustomerSimulationDL.FileReaders
 {
-    class TxtFileReader
+    public class TxtFileReader : IFirstNameReader, ILastNameReader
     {
+        public IEnumerable<FirstName> ReadFirstNames(string path)
+        {
+            var FirstNames = new List<FirstName>();
+
+            bool isDanish = path.ToLower().Contains("navne");
+            bool isFinish = path.ToLower().Contains("mitilasto");
+            bool isSpanish = path.ToLower().Contains("nombres");
+            bool isSwedish = path.ToLower().Contains("namn");
+            bool isSwiss = path.ToLower().Contains("su-q");
+
+            int? skiplines;
+
+            if (isDanish)
+            {
+                skiplines = 4;
+            }
+            else if (isFinish)
+            {
+                skiplines = 1;
+            }
+            else if (isSpanish)
+            {
+                skiplines = 7;
+            }
+            else if (isSwedish)
+            {
+                skiplines = 5;
+            }
+            else if (isSwiss)
+            {
+                skiplines = 6;
+            }
+            else
+            {
+                skiplines = null;
+            }
+
+            using(var sr = new StreamReader(path))
+            {
+                for(int i = 0; i < skiplines; i++)
+                {
+                    sr.ReadLine();
+                }
+
+                string line;
+
+                while((line = sr.ReadLine()) != null && !string.IsNullOrWhiteSpace(line))
+                {
+                    if(string.IsNullOrWhiteSpace(line))
+                    {
+                        continue;
+                    }
+
+                    var parts = line.Split(new char[] { '\t', ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    int startIndex = 0;
+
+                    string firstindexcheck = parts[0].Replace(".", "").Trim();
+
+                    if(int.TryParse(firstindexcheck, out _))
+                    {
+                        startIndex = 1;
+                    }
+
+                    string Name = parts[startIndex];
+                    int Frequency;
+
+                    if (int.TryParse(parts[startIndex + 1], out int fFreq))
+                    {
+                        Frequency = fFreq;
+                    }
+                    else if (int.TryParse(parts[startIndex + 2], out int mFreq))
+                    {
+                        Frequency = mFreq;
+                    }
+                    else
+                    {
+                        throw new Exception();
+                    }
+
+                    Gender Gender;
+
+                    if (path.Contains("hombre") || path.Contains("miehet") || path.Contains("mænd") || path.Contains("män") || parts[startIndex + 1] == "*")
+                    {
+                        Gender = Gender.Male;
+                    }
+                    else
+                    {
+                        Gender = Gender.Female;
+                    }
+
+                    FirstName FirstName = new FirstName(Name, Frequency, Gender);
+
+                    FirstNames.Add(FirstName);
+
+                }
+                return FirstNames;
+            }
+        }
+        public IEnumerable<LastName> ReadLastNames(string path)
+        {
+            var LastNames = new List<LastName>();
+
+            bool isDanish = path.ToLower().Contains("navne");
+            bool isFinish = path.ToLower().Contains("mitilasto");
+            bool isSpanish = path.ToLower().Contains("apellidos");
+            bool isSwedish = path.ToLower().Contains("namn");
+            bool isSwiss = path.ToLower().Contains("ch");
+
+            int? skiplines;
+
+            if (isDanish)
+            {
+                skiplines = 4;
+            }
+            else if (isFinish)
+            {
+                skiplines = 1;
+            }
+            else if (isSpanish)
+            {
+
+                skiplines = 7;
+            }
+            else if (isSwedish)
+            {
+                skiplines = 5;
+            }
+            else if (isSwiss)
+            {
+                skiplines = 6;
+            }
+            else
+            {
+                skiplines = null;
+            }
+
+            using (var sr = new StreamReader(path))
+            {
+                for (int i = 0; i < skiplines; i++)
+                {
+                    sr.ReadLine();
+                }
+                string line;
+
+                while((line = sr.ReadLine()) != null && !string.IsNullOrWhiteSpace(line))
+                {
+                    if (string.IsNullOrWhiteSpace(line))
+                    {
+                        continue;
+                    }
+
+                    var parts = line.Split(new char[] { '\t', ';', ','}, StringSplitOptions.RemoveEmptyEntries);
+                    int startIndex = 0;
+
+                    string firstindexcheck = parts[0].Replace(".", "").Trim();
+
+                    if (int.TryParse(firstindexcheck, out _))
+                    {
+                        startIndex = 1;
+                    }
+
+                    string Name = parts[startIndex];
+                    int Frequency;
+
+                    if(isSwiss)
+                    {
+                        Frequency = int.Parse(parts[startIndex + 2]);
+                    }
+                    else
+                    {
+                        Frequency = int.Parse(parts[startIndex + 1].Replace(".", ""));
+                    }
+
+                    LastName LastName = new LastName(Name, Frequency, null);
+
+                    LastNames.Add(LastName);
+                }
+            }
+            return LastNames;
+        }
     }
 }

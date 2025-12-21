@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace CustomerSimulationBL.Enumerations
 {
-    class Gender
+    public enum Gender
     {
+        Male,
+        Female
     }
 }

@@ -6,7 +6,19 @@ using System.Threading.Tasks;
 
 namespace CustomerSimulationBL.Domein
 {
-    class Municipality
+    public class Municipality
     {
+        public Municipality(string name)
+        {
+            Name = name;
+        }
+
+        public int Id { get; set; }
+        public string Name { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Name}";
+        }
     }
 }
