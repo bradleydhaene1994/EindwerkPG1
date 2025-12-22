@@ -96,7 +96,7 @@ namespace CustomerSimulationDL.FileReaders
                 JsonElement nameSection = root.GetProperty("address");
                 foreach(var item in nameSection.GetProperty("street").EnumerateArray())
                 {
-                    Address Address = new Address(null, item.GetString(), null);
+                    Address Address = new Address(null, item.GetString());
                     Addresses.Add(Address);
                 }
             }

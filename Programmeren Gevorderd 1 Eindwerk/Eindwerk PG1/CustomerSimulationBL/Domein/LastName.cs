@@ -20,5 +20,9 @@ namespace CustomerSimulationBL.Domein
         public string Name { get; set; }
         public int? Frequency { get; set; }
         public Gender? Gender { get; set; }
+        public override string ToString()
+        {
+            return $"{Name}, {Frequency}, {Gender}";
+        }
     }
 }

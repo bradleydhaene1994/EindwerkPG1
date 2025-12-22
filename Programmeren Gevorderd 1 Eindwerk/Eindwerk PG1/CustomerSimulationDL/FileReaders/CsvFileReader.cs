@@ -23,13 +23,23 @@ namespace CustomerSimulationDL.FileReaders
                 {
                     var parts = line.Split(',', ';', '\t');
 
-                    string MunicipalityName = parts[0].Trim();
+                    string RawMunicipalityName = parts[0].Trim();
+                    Municipality Municipality;
+
+                    if (RawMunicipalityName == "(unknown)")
+                    {
+                        Municipality = null;
+                    }
+                    else
+                    {
+                        string MunicipalityName = RawMunicipalityName.Replace("Kommune", "").Replace("kommun", "").Trim();
+                        Municipality = new Municipality(MunicipalityName);
+                    }
+
                     string StreetName = parts[1].Trim();
                     string HighwayType = parts[2].Trim();
 
-                    Municipality Municipality = new Municipality(MunicipalityName);
-
-                    Address Address = new Address(Municipality, StreetName, HighwayType);
+                    Address Address = new Address(Municipality, StreetName);
 
                     Addresses.Add(Address);
                 }

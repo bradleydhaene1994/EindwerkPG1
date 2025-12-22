@@ -27,7 +27,7 @@ namespace CustomerSimulationDL.FileReaders
 
             if (isDanish)
             {
-                skiplines = 4;
+                skiplines = 5;
             }
             else if (isFinish)
             {
@@ -106,7 +106,6 @@ namespace CustomerSimulationDL.FileReaders
                     FirstName FirstName = new FirstName(Name, Frequency, Gender);
 
                     FirstNames.Add(FirstName);
-
                 }
                 return FirstNames;
             }
@@ -125,7 +124,7 @@ namespace CustomerSimulationDL.FileReaders
 
             if (isDanish)
             {
-                skiplines = 4;
+                skiplines = 5;
             }
             else if (isFinish)
             {
@@ -133,7 +132,6 @@ namespace CustomerSimulationDL.FileReaders
             }
             else if (isSpanish)
             {
-
                 skiplines = 7;
             }
             else if (isSwedish)
