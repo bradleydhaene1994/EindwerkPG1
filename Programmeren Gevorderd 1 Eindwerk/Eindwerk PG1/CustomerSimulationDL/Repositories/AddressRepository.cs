@@ -19,7 +19,7 @@ namespace CustomerSimulationDL.Repositories
             _connectionstring = connectionstring;
         }
 
-        public void UploadAddress(IEnumerable<Address> addresses, Country country)
+        public void UploadAddress(IEnumerable<Address> addresses)
         {
             string SQLMunicipality = "IF NOT EXISTS (Select 1 FROM Municipality WHERE CountryID = @CountryID AND Name = @Name) " +
                                      "INSERT INTO Municipality(CountryID, Name) " +
@@ -48,7 +48,7 @@ namespace CustomerSimulationDL.Repositories
                 {
                     foreach(Address a in addresses)
                     {
-                        cmd.Parameters["@CountryID"].Value = country.Id;
+                        cmd.Parameters["@CountryID"].Value = a.Municipality.Country.Id;
                         cmd.Parameters["@Name"].Value = a.Municipality.Name;
                         municipalityId = (int)cmd.ExecuteScalar();
 
@@ -65,6 +65,39 @@ namespace CustomerSimulationDL.Repositories
                     throw;
                 }
             }
+        }
+
+        public List<Address> GetAddressesByCountryID(int countryId)
+        {
+            List<Address> addresses = new List<Address>();
+
+            string SQL = "SELECT a.ID , a.Street, a.MunicipalityID, m.Name " +
+                         "FROM Address a " +
+                         "INNER JOIN Municipality m ON a.MunicipalityID = m.ID " +
+                         "WHERE m.CountryID = @CountryID";
+
+            using(SqlConnection conn =  new SqlConnection(_connectionstring))
+            using(SqlCommand cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = SQL;
+                cmd.Parameters.AddWithValue("@CountryID", countryId);
+                conn.Open();
+                using(SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string Street = reader.GetString(reader.GetOrdinal("Street"));
+                        string MunicipalityName = reader.GetString(reader.GetOrdinal("Name"));
+
+                        Municipality municipality = new Municipality(MunicipalityName);
+
+                        Address address = new Address(municipality, Street);
+
+                        addresses.Add(address);
+                    }
+                }
+            }
+            return addresses;
         }
     }
 }

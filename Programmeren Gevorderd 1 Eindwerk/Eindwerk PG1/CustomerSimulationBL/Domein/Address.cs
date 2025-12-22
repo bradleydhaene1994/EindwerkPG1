@@ -8,17 +8,15 @@ namespace CustomerSimulationBL.Domein
 {
     public class Address
     {
-        public Address(Municipality? municipality, string street, string highwayType)
+        public Address(Municipality? municipality, string street)
         {
             Municipality = municipality;
             Street = street;
-            HighwayType = highwayType;
         }
 
         public int Id { get; set; }
         public Municipality? Municipality { get; set; }
         public string Street { get; set; }
-        public string HighwayType { get; set; }
 
     }
 }
