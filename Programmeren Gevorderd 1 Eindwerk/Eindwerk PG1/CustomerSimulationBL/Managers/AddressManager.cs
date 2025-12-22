@@ -11,7 +11,6 @@ namespace CustomerSimulationBL.Managers
     public class AddressManager
     {
         private IAddressRepository _addressRepo;
-        private Country country;
         public AddressManager(IAddressRepository addressRepo)
         {
             _addressRepo = addressRepo;

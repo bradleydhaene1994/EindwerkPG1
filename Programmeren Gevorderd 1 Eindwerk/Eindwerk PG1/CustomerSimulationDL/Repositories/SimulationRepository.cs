@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CustomerSimulationBL.Interfaces
+namespace CustomerSimulationDL.Repositories
 {
-    public interface IExportService
+    public class SimulationRepository
     {
     }
 }

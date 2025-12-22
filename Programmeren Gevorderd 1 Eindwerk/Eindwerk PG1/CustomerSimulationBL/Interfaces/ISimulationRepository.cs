@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CustomerSimulationBL.Domein;
 
 namespace CustomerSimulationBL.Interfaces
 {
-    internal interface ISimulationRepository
+    public interface ISimulationRepository
     {
+        void UploadSimulationData(SimulationData simulationData);
+        void UploadSimulationSettings(SimulationSettings simulationSettings);
+        void UploadSimulationStatistics(SimulationStatistics simulationStatistics);
     }
 }
