@@ -1,0 +1,43 @@
+﻿<Window x:Class="CustomerSimulationUI.SimulationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CustomerSimulationUI"
+        mc:Ignorable="d"
+        Title="SimulationWindow" Height="auto" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" Margin="5" Text="Country" Grid.ColumnSpan="2"/>
+        <ComboBox Grid.Row="0" Grid.Column="2" Margin="5" Name="SelectCountry" Grid.ColumnSpan="2"/>
+        <TextBlock Grid.Row="1" Grid.Column="0" Margin="5" Text="Municipalities" Grid.ColumnSpan="2"/>
+        <ListBox Grid.Row="1" Grid.Column="2" Margin="5" Name="SelectMunicipalities" SelectionMode="Extended" Grid.ColumnSpan="2"/>
+        <TextBlock Grid.Row="2" Grid.Column="0" Margin="5" Text="Number of Customers" Grid.ColumnSpan="2"/>
+        <TextBox Grid.Row="2" Grid.Column="2" Margin="5" Name="CustomerNumber" Grid.ColumnSpan="2"/>
+        <TextBlock Grid.Row="3" Grid.Column="0" Margin="5" Text="Minimum Age"/>
+        <TextBox Grid.Row="3" Grid.Column="1" Margin="5" Name="MinimumAge"/>
+        <TextBlock Grid.Row="3" Grid.Column="2" Margin="5" Text="Maximum Age"/>
+        <TextBox Grid.Row="3" Grid.Column="3" Margin="5" Name="MaximumAge"/>
+        <TextBlock Grid.Row="4" Grid.Column="0" Margin="5" Text="House Number Rules" Grid.ColumnSpan="2"/>
+        <ListBox Grid.Row="4" Grid.Column="2" Margin="5" Name="SelectHouseruleNumbers" SelectionMode="Extended" Grid.ColumnSpan="2"/>
+        <Button Grid.Row="5" Grid.Column="0" Margin="5" Name="ButtonSimulation" Content="Simulate Customerset" Grid.ColumnSpan="4" Click="ButtonSimulation_Click"/>
+        <DataGrid Grid.Row="6" Grid.Column="0" Margin="5" Name="DataGridSimulatedCustomersets" SelectionMode="Single" Grid.ColumnSpan="4" Grid.RowSpan="2"/>
+        <Button Grid.Row="8" Grid.Column="0" Margin="5" Name="ButtonExportTxt" Content="Export to Txt" Grid.ColumnSpan="4"/>
+    </Grid>
+</Window>

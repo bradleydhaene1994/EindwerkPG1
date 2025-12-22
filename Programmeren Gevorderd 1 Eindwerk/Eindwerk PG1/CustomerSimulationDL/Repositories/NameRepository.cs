@@ -19,7 +19,7 @@ namespace CustomerSimulationDL.Repositories
             _connectionstring = connectionstring;
         }
 
-        public void UploadFirstName(IEnumerable<FirstName> firstNames, int countryId)
+        public void UploadFirstName(IEnumerable<FirstName> firstNames, Country country)
         {
             string SQL = "INSERT INTO FirstName(CountryID, Name, Gender, Frequency) " +
                          "OUTPUT inserted.ID VALUES(@CountryID, @Name, @Gender, @Frequency)";
@@ -39,7 +39,7 @@ namespace CustomerSimulationDL.Repositories
                 {
                     foreach (FirstName firstName in firstNames)
                     {
-                        cmd.Parameters["@CountryID"].Value = countryId;
+                        cmd.Parameters["@CountryID"].Value = country.Id;
                         cmd.Parameters["@Name"].Value = firstName.Name;
                         cmd.Parameters["@Gender"].Value = (object?)firstName.Gender ?? DBNull.Value;
                         cmd.Parameters["@Frequency"].Value = (object?)firstName.Frequency ?? DBNull.Value;
@@ -54,7 +54,7 @@ namespace CustomerSimulationDL.Repositories
                 }
             }
         }
-        public void UploadLastName(IEnumerable<LastName> lastNames, int countryId)
+        public void UploadLastName(IEnumerable<LastName> lastNames, Country country)
         {
             string SQL = "INSERT INTO LastName(CountryID, Name, Gender, Frequency) " +
                          "OUTPUT inserted.ID VALUES(@CountryID, @Name, @Gender, @Frequency)";
@@ -74,7 +74,7 @@ namespace CustomerSimulationDL.Repositories
                 {
                     foreach(LastName lastName in lastNames)
                     {
-                        cmd.Parameters["@CountryID"].Value = countryId;
+                        cmd.Parameters["@CountryID"].Value = country.Id;
                         cmd.Parameters["@Name"].Value = lastName.Name;
                         cmd.Parameters["@Gender"].Value = (object?)lastName.Gender ?? DBNull.Value;
                         cmd.Parameters["@Frequency"].Value = (object?)lastName.Frequency ?? DBNull.Value;

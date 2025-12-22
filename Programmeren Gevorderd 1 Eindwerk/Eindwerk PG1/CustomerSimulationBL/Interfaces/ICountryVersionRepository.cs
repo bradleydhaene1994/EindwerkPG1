@@ -7,8 +7,8 @@ using CustomerSimulationBL.Domein;
 
 namespace CustomerSimulationBL.Interfaces
 {
-    public interface IAddressRepository
+    public interface ICountryVersionRepository
     {
-        void UploadAddress(IEnumerable<Address> Addresses, Country country);
+        void UploadCountryVersion(Country country, int version);
     }
 }
