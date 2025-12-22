@@ -31,8 +31,8 @@ namespace CustomerSimulationDL.Repositories
                 SqlTransaction tran = conn.BeginTransaction();
                 cmd.CommandText = SQL;
                 cmd.Transaction = tran;
-                cmd.Parameters.Add("@CountryID", SqlDbType.Int);
-                cmd.Parameters.Add("@Name", SqlDbType.NVarChar, 100);
+                cmd.Parameters.Add(new SqlParameter("@CountryID", SqlDbType.Int));
+                cmd.Parameters.Add(new SqlParameter("@Name", SqlDbType.NVarChar, 100));
                 int municipalityId;
                 try
                 {

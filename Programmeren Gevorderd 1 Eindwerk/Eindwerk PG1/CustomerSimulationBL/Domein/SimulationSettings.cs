@@ -12,7 +12,7 @@ namespace CustomerSimulationBL.Domein
         public int Id { get; set; }
         public SimulationData SimulationData { get; set; }
         public List<Municipality> SelectedMunicipalities { get; set; }
-        public string Country { get; set; }
+        public Country Country { get; set; }
         public int NumberCustomers { get; set; }
         public int MinAge { get; set; }
         public int MaxAge { get; set; }

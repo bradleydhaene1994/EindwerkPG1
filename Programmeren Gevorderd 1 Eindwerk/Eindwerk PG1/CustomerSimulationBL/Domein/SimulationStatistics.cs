@@ -13,7 +13,7 @@ namespace CustomerSimulationBL.Domein
         public int TotalCustomers { get; set; }
         public Dictionary<int, Municipality> CustomersPerMunicipality { get; set; }
         public int AverageAgeOnSimulationDate { get; set; }
-        public int AverageAgeOCurrentDate { get; set; }
+        public int AverageAgeOnCurrentDate { get; set; }
         public int AgeYoungestCustomer {  get; set; }
         public int AgeOldestCustomer { get; set; }
     }

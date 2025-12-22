@@ -38,10 +38,10 @@ namespace CustomerSimulationDL.Repositories
                 cmd2.CommandText = SQLAddress;
                 cmd.Transaction = tran;
                 cmd2.Transaction = tran;
-                cmd.Parameters.Add("@CountryID", SqlDbType.Int);
-                cmd.Parameters.Add("@Name", SqlDbType.NVarChar, 100);
-                cmd2.Parameters.Add("@MunicipalityID", SqlDbType.Int);
-                cmd2.Parameters.Add("@Street", SqlDbType.NVarChar, 100);
+                cmd.Parameters.Add(new SqlParameter("@CountryID", SqlDbType.Int));
+                cmd.Parameters.Add(new SqlParameter("@Name", SqlDbType.NVarChar, 100));
+                cmd2.Parameters.Add(new SqlParameter("@MunicipalityID", SqlDbType.Int));
+                cmd2.Parameters.Add(new SqlParameter("@Street", SqlDbType.NVarChar, 100));
                 int municipalityId;
                 int addressId;
                 try

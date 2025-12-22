@@ -31,13 +31,13 @@ namespace CustomerSimulationDL.Repositories
                 conn.Open();
                 cmd.CommandText = SQL;
                 cmd.Transaction = tran;
-                cmd.Parameters.Add("@Country", SqlDbType.NVarChar, 100);
-                cmd.Parameters.Add("@FirstName", SqlDbType.NVarChar, 100);
-                cmd.Parameters.Add("@LastName", SqlDbType.NVarChar, 100);
-                cmd.Parameters.Add("@Address", SqlDbType.NVarChar, 100);
-                cmd.Parameters.Add("@SimulationID", SqlDbType.Int);
-                cmd.Parameters.Add("@BirthDate", SqlDbType.DateTime);
-                cmd.Parameters.Add("@HouseNumber", SqlDbType.NVarChar, 100);
+                cmd.Parameters.Add(new SqlParameter("@Country", SqlDbType.NVarChar, 100));
+                cmd.Parameters.Add(new SqlParameter("@FirstName", SqlDbType.NVarChar, 100));
+                cmd.Parameters.Add(new SqlParameter("@LastName", SqlDbType.NVarChar, 100));
+                cmd.Parameters.Add(new SqlParameter("@Address", SqlDbType.NVarChar, 100));
+                cmd.Parameters.Add(new SqlParameter("@SimulationID", SqlDbType.Int));
+                cmd.Parameters.Add(new SqlParameter("@BirthDate", SqlDbType.DateTime));
+                cmd.Parameters.Add(new SqlParameter("@HouseNumber", SqlDbType.NVarChar, 100));
                 int customerId;
                 try
                 {
