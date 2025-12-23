@@ -13,6 +13,14 @@ namespace Debugger
             string BelgiumFirstNameFemalePath = "C:\\Users\\dhaen\\EindwerkPG1\\SourceData\\België\\vrouwennamen_belgie.csv";
             string BelgiumLastNamePath = "C:\\Users\\dhaen\\EindwerkPG1\\SourceData\\België\\Familienamen_2024_Belgie.csv";
 
+            string connectionstring = "Data Source=BRADLEY\\SQLEXPRESS;Initial Catalog=SimulationCustomer;Integrated Security=True;Encrypt=True;Trust Server Certificate=True";
+
+            CountryVersionRepository cvRepo = new CountryVersionRepository(connectionstring);
+            AddressRepository addressRepository = new AddressRepository(connectionstring);
+            SimulationRepository simRepo = new SimulationRepository(connectionstring);
+            NameRepository nameRepo = new NameRepository(connectionstring);
+            CustomerRepository customerRepo = new CustomerRepository(connectionstring);
+
             DateTime dateTime = DateTime.Now;
             DateTime BradleyBirthday = new DateTime(1994, 11, 14);
             DateTime JamesBirthday = new DateTime(1965, 11, 15);
@@ -39,7 +47,7 @@ namespace Debugger
             var FirstNamesFemale = csvFileReader.ReadFirstNames(BelgiumFirstNameFemalePath);
             var LastNames = csvFileReader.ReadLastNames(BelgiumLastNamePath);
 
-
+            cvRepo.UploadCountryVersion(Belgium2024);
         }
     }
 }
