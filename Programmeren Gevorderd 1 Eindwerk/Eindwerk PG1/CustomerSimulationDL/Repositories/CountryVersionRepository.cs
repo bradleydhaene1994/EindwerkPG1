@@ -23,7 +23,7 @@ namespace CustomerSimulationDL.Repositories
 
         public void UploadCountryVersion(CountryVersion countryVersion)
         {
-            string SQL = "INSERT INTO Country_Version(CountryID, Year) " +
+            string SQL = "INSERT INTO CountryVersion(CountryID, Year) " +
                          "OUTPUT inserted.ID VALUES(@CountryID, @Year)";
 
             using(SqlConnection conn = new SqlConnection(_connectionstring))
@@ -35,13 +35,12 @@ namespace CustomerSimulationDL.Repositories
                 cmd.Transaction = tran;
                 cmd.Parameters.Add(new SqlParameter("@CountryID", SqlDbType.Int));
                 cmd.Parameters.Add(new SqlParameter("@Year", SqlDbType.Int));
-                int countryVersionId;
 
                 try
                 {
                     cmd.Parameters["@CountryID"].Value = countryVersion.Country.Id;
                     cmd.Parameters["@Year"].Value = countryVersion.Year;
-                    countryVersionId = (int)cmd.ExecuteScalar();
+                    countryVersion.Id = (int)cmd.ExecuteScalar();
 
                     tran.Commit();
                 }

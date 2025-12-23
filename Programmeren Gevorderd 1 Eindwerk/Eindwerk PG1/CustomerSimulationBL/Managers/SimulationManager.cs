@@ -16,9 +16,9 @@ namespace CustomerSimulationBL.Managers
         {
             _simulationRepo = simulationRepo;
         }
-        public void UploadSimulationData(SimulationData simulationData)
+        public void UploadSimulationData(SimulationData simulationData, CountryVersion countryVersion)
         {
-            _simulationRepo.UploadSimulationData(simulationData);
+            _simulationRepo.UploadSimulationData(simulationData, countryVersion);
         }
         public void UploadSimulationSettings(SimulationSettings simulationSettings)
         {
