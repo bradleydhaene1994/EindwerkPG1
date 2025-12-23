@@ -26,9 +26,9 @@ namespace CustomerSimulationDL.Repositories
 
             using(SqlConnection conn  = new SqlConnection(_connectionstring))
             using(SqlCommand cmd = conn.CreateCommand())
-            using(SqlTransaction tran = conn.BeginTransaction())
             {
                 conn.Open();
+                SqlTransaction tran = conn.BeginTransaction();
                 cmd.CommandText = SQL;
                 cmd.Transaction = tran;
                 cmd.Parameters.Add(new SqlParameter("@CountryVersionID", SqlDbType.Int));

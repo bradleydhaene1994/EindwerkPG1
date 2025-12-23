@@ -24,9 +24,9 @@ namespace CustomerSimulationDL.Repositories
 
             using(SqlConnection conn = new SqlConnection(_connectionstring))
             using(SqlCommand cmd = conn.CreateCommand())
-            using(SqlTransaction tran = conn.BeginTransaction())
             {
                 conn.Open();
+                SqlTransaction tran = conn.BeginTransaction();
                 cmd.CommandText = SQL;
                 cmd.Transaction = tran;
                 cmd.Parameters.Add(new SqlParameter("@Client", SqlDbType.NVarChar, 100));
@@ -55,9 +55,9 @@ namespace CustomerSimulationDL.Repositories
 
             using(SqlConnection conn = new SqlConnection(_connectionstring))
             using(SqlCommand cmd = conn.CreateCommand())
-            using(SqlTransaction tran = conn.BeginTransaction())
             {
                 conn.Open();
+                SqlTransaction tran = conn.BeginTransaction();
                 cmd.CommandText = SQLSimulationSettings;
                 cmd.Transaction = tran;
                 cmd.Parameters.Add(new SqlParameter("@SimulationDataID", SqlDbType.Int));
@@ -92,9 +92,9 @@ namespace CustomerSimulationDL.Repositories
 
             using (SqlConnection conn = new SqlConnection(_connectionstring))
             using (SqlCommand cmd = conn.CreateCommand())
-            using (SqlTransaction tran = conn.BeginTransaction())
             {
                 conn.Open();
+                SqlTransaction tran = conn.BeginTransaction();
                 cmd.CommandText = SQL;
                 cmd.Transaction = tran;
                 cmd.Parameters.Add(new SqlParameter("@SimulationDataID", SqlDbType.Int));

@@ -31,9 +31,9 @@ namespace CustomerSimulationDL.Repositories
             using(SqlConnection conn = new SqlConnection(_connectionstring))
             using(SqlCommand cmd = conn.CreateCommand())
             using(SqlCommand cmd2 = conn.CreateCommand())
-            using(SqlTransaction tran = conn.BeginTransaction())
             {
                 conn.Open();
+                SqlTransaction tran = conn.BeginTransaction();
                 cmd.CommandText = SQLMunicipality;
                 cmd2.CommandText = SQLAddress;
                 cmd.Transaction = tran;
