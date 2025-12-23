@@ -47,7 +47,20 @@ namespace Debugger
             var FirstNamesFemale = csvFileReader.ReadFirstNames(BelgiumFirstNameFemalePath);
             var LastNames = csvFileReader.ReadLastNames(BelgiumLastNamePath);
 
-            cvRepo.UploadCountryVersion(Belgium2024);
+            //cvRepo.UploadCountryVersion(Belgium2024);
+            Belgium2024.Id = 6;
+
+            //addressRepository.UploadAddress(Addresses, Belgium2024);
+            //nameRepo.UploadFirstName(FirstNamesMale, Belgium2024);
+            //nameRepo.UploadLastName(LastNames, Belgium2024);
+
+            //simRepo.UploadSimulationData(simulationData, Belgium2024);
+            simulationData.Id = 1;
+
+            //simRepo.UploadSimulationSettings(simulationSettings);
+            //simRepo.UploadSimulationStatistics(simulationStatistics);
+
+            customerRepo.UploadCustomer(customers);
         }
     }
 }

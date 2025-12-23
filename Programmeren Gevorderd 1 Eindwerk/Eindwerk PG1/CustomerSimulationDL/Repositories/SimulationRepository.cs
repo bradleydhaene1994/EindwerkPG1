@@ -51,7 +51,7 @@ namespace CustomerSimulationDL.Repositories
         public void UploadSimulationSettings(SimulationSettings simulationSettings)
         {
             string SQLSimulationSettings = "INSERT INTO SimulationSettings(SimulationDataID, NumberCustomers, MinAge, MaxAge, HouseNumberRules) " +
-                                           "OUTPUT inserted.ID VALUES(@SimulationID, @NumberCustomers, @MinAge, @MaxAge, @HouseNumberRules)";
+                                           "OUTPUT inserted.ID VALUES(@SimulationDataID, @NumberCustomers, @MinAge, @MaxAge, @HouseNumberRules)";
 
             using(SqlConnection conn = new SqlConnection(_connectionstring))
             using(SqlCommand cmd = conn.CreateCommand())
@@ -110,8 +110,8 @@ namespace CustomerSimulationDL.Repositories
                     cmd.Parameters["@TotalCustomers"].Value = simulationStatistics.TotalCustomers;
                     cmd.Parameters["@AverageAgeSimulationDate"].Value = simulationStatistics.AverageAgeOnSimulationDate;
                     cmd.Parameters["@AverageAgeCurrentDate"].Value = simulationStatistics.AverageAgeOnCurrentDate;
-                    cmd.Parameters["AgeYoungestCustomer"].Value = simulationStatistics.AgeYoungestCustomer;
-                    cmd.Parameters["AgeOldestCustomer"].Value = simulationStatistics.AgeOldestCustomer;
+                    cmd.Parameters["@AgeYoungestCustomer"].Value = simulationStatistics.AgeYoungestCustomer;
+                    cmd.Parameters["@AgeOldestCustomer"].Value = simulationStatistics.AgeOldestCustomer;
                     simulationStatisticsId = (int)cmd.ExecuteScalar();
 
                     tran.Commit();

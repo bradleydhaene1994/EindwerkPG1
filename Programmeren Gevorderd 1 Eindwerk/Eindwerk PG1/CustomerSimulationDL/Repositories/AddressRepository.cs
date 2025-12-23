@@ -19,7 +19,7 @@ namespace CustomerSimulationDL.Repositories
             _connectionstring = connectionstring;
         }
 
-        public void UploadAddress(IEnumerable<Address> addresses)
+        public void UploadAddress(IEnumerable<Address> addresses, CountryVersion countryVersion)
         {
             string SQLMunicipality = "IF NOT EXISTS (Select 1 FROM Municipality WHERE CountryVersionID = @CountryVersionID AND Name = @Name) " +
                                      "INSERT INTO Municipality(CountryVersionID, Name) " +
@@ -42,17 +42,22 @@ namespace CustomerSimulationDL.Repositories
                 cmd.Parameters.Add(new SqlParameter("@Name", SqlDbType.NVarChar, 100));
                 cmd2.Parameters.Add(new SqlParameter("@MunicipalityID", SqlDbType.Int));
                 cmd2.Parameters.Add(new SqlParameter("@StreetName", SqlDbType.NVarChar, 100));
-                int municipalityId;
+                int? municipalityId;
                 int addressId;
                 try
                 {
                     foreach(Address a in addresses)
                     {
-                        cmd.Parameters["@CountryVersionID"].Value = a.Municipality.Country.Id;
-                        cmd.Parameters["@Name"].Value = a.Municipality.Name;
-                        municipalityId = (int)cmd.ExecuteScalar();
+                        municipalityId = null;
+                        
+                        if(a.Municipality != null)
+                        {
+                            cmd.Parameters["@CountryVersionID"].Value = countryVersion.Id;
+                            cmd.Parameters["@Name"].Value = a.Municipality.Name;
+                            municipalityId = (int)cmd.ExecuteScalar();
+                        }
 
-                        cmd2.Parameters["@MunicipalityID"].Value = municipalityId;
+                        cmd2.Parameters["@MunicipalityID"].Value = (object?)municipalityId ?? DBNull.Value;
                         cmd2.Parameters["@StreetName"].Value = a.Street;
                         addressId = (int)cmd2.ExecuteScalar();
                     }

@@ -22,7 +22,7 @@ namespace CustomerSimulationDL.Repositories
         public void UploadCustomer(IEnumerable<Customer> customers)
         {
             string SQL = "INSERT INTO Customer(CountryVersionID, SimulationDataID, FirstName, LastName, Municipality, Street, HouseNumber ,BirthDate) " +
-                         "OUTPUT inserted.ID(@CountryVersionID, @SimulationDataID, @FirstName, @LastName, @Municipality, @Street, @HouseNumber, @BirthDate)";
+                         "OUTPUT inserted.ID VALUES(@CountryVersionID, @SimulationDataID, @FirstName, @LastName, @Municipality, @Street, @HouseNumber, @BirthDate)";
 
             using(SqlConnection conn  = new SqlConnection(_connectionstring))
             using(SqlCommand cmd = conn.CreateCommand())
