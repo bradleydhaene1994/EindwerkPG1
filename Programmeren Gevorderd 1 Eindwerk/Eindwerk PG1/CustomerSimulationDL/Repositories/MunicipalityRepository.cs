@@ -19,10 +19,10 @@ namespace CustomerSimulationDL.Repositories
             _connectionstring = connectionstring;
         }
 
-        public void UploadMunicipality(IEnumerable<Municipality> municipalities, int countryId)
+        public void UploadMunicipality(IEnumerable<Municipality> municipalities, CountryVersion countryVersion)
         {
-            string SQL = "INSERT INTO Municipality(CountryID, Name) " +
-                         "OUTPUT inserted.ID VALUES(@CountryID, @Name)";
+            string SQL = "INSERT INTO Municipality(CountryVersionID, Name) " +
+                         "OUTPUT inserted.ID VALUES(@CountryVersionID, @Name)";
 
             using(SqlConnection conn = new SqlConnection(_connectionstring))
             using(SqlCommand cmd = conn.CreateCommand())
@@ -31,18 +31,17 @@ namespace CustomerSimulationDL.Repositories
                 SqlTransaction tran = conn.BeginTransaction();
                 cmd.CommandText = SQL;
                 cmd.Transaction = tran;
-                cmd.Parameters.Add(new SqlParameter("@CountryID", SqlDbType.Int));
+                cmd.Parameters.Add(new SqlParameter("@CountryVersionID", SqlDbType.Int));
                 cmd.Parameters.Add(new SqlParameter("@Name", SqlDbType.NVarChar, 100));
                 int municipalityId;
                 try
                 {
                     foreach(Municipality m in municipalities)
                     {
-                        cmd.Parameters["@CountryID"].Value = countryId;
+                        cmd.Parameters["@CountryVersionID"].Value = countryVersion.Id;
                         cmd.Parameters["@Name"].Value = m.Name;
                         municipalityId = (int)cmd.ExecuteScalar();
                     }
-
                     tran.Commit();
                 }
                 catch(Exception)

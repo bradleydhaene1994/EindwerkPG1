@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace CustomerSimulationBL.Domein
 {
-    public class SimulationData
+    public class CountryVersion
     {
         public int Id { get; set; }
+        public int Year { get; set; }
         public Country Country { get; set; }
-        public string Client { get; set; }
-        public DateTime DateCreated { get; set; }
-
     }
 }

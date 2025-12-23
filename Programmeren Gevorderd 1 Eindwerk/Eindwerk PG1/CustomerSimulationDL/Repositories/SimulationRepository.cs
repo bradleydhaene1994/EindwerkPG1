@@ -17,10 +17,10 @@ namespace CustomerSimulationDL.Repositories
         {
             _connectionstring = connectionstring;
         }
-        public void UploadSimulationData(SimulationData simulationData)
+        public void UploadSimulationData(SimulationData simulationData, CountryVersion countryVersion)
         {
-            string SQL = "INSERT INTO SimulationData(CountryID, ClientName, DateCreated) " +
-                         "OUTPUT inserted.ID VALUES(@CountryID, @ClientName, @DateCreated)";
+            string SQL = "INSERT INTO SimulationData(Client, DateCreated, CountryVersionID) " +
+                         "OUTPUT inserted.ID VALUES(@Client, @DateCreated, @CountryVersionID)";
 
             using(SqlConnection conn = new SqlConnection(_connectionstring))
             using(SqlCommand cmd = conn.CreateCommand())
@@ -29,15 +29,15 @@ namespace CustomerSimulationDL.Repositories
                 conn.Open();
                 cmd.CommandText = SQL;
                 cmd.Transaction = tran;
-                cmd.Parameters.Add(new SqlParameter("@CountryID", SqlDbType.Int));
-                cmd.Parameters.Add(new SqlParameter("@ClientName", SqlDbType.NVarChar, 100));
+                cmd.Parameters.Add(new SqlParameter("@Client", SqlDbType.NVarChar, 100));
                 cmd.Parameters.Add(new SqlParameter("@DateCreated", SqlDbType.DateTime));
+                cmd.Parameters.Add(new SqlParameter("@CountryVersionID", SqlDbType.Int));
                 int simulationDataId;
                 try
                 {
-                    cmd.Parameters["@CountryID"].Value = simulationData.Country.Id;
-                    cmd.Parameters["@ClientName"].Value = simulationData.ClientName;
+                    cmd.Parameters["@Client"].Value = simulationData.Client;
                     cmd.Parameters["@DateCreated"].Value = simulationData.DateCreated;
+                    cmd.Parameters["@CountryVersionID"].Value = countryVersion.Id;
                     simulationDataId = (int)cmd.ExecuteScalar();
 
                     tran.Commit();
@@ -50,48 +50,30 @@ namespace CustomerSimulationDL.Repositories
         }
         public void UploadSimulationSettings(SimulationSettings simulationSettings)
         {
-            string SQLSimulationSettings = "INSERT INTO SimulationSettings(SimulationID, CountryID, NumberCustomers, MinAge, MaxAge, HouseNumberRules) " +
-                                           "OUTPUT inserted.ID VALUES(@SimulationID, @CountryID, @NumberCustomers, @MinAge, @MaxAge, @HouseNumberRules)";
-            string SQLSimulationSettingsMunicipality = "INSERT INTO SimulationSettingsMunicipality(SimulationSettingsID, MunicipalityID) " +
-                                                       "OUTPUT inserted.ID VALUES(@SimulationSettingsID, @MunicipalityID)";
+            string SQLSimulationSettings = "INSERT INTO SimulationSettings(SimulationDataID, NumberCustomers, MinAge, MaxAge, HouseNumberRules) " +
+                                           "OUTPUT inserted.ID VALUES(@SimulationID, @NumberCustomers, @MinAge, @MaxAge, @HouseNumberRules)";
 
             using(SqlConnection conn = new SqlConnection(_connectionstring))
             using(SqlCommand cmd = conn.CreateCommand())
-            using(SqlCommand cmd2 = conn.CreateCommand())
             using(SqlTransaction tran = conn.BeginTransaction())
             {
                 conn.Open();
                 cmd.CommandText = SQLSimulationSettings;
-                cmd2.CommandText = SQLSimulationSettingsMunicipality;
                 cmd.Transaction = tran;
-                cmd2.Transaction = tran;
-                cmd.Parameters.Add(new SqlParameter("@SimulationID", SqlDbType.Int));
-                cmd.Parameters.Add(new SqlParameter("@CountryID", SqlDbType.Int));
+                cmd.Parameters.Add(new SqlParameter("@SimulationDataID", SqlDbType.Int));
                 cmd.Parameters.Add(new SqlParameter("@NumberCustomers", SqlDbType.Int));
                 cmd.Parameters.Add(new SqlParameter("@MinAge", SqlDbType.Int));
                 cmd.Parameters.Add(new SqlParameter("@MaxAge", SqlDbType.Int));
                 cmd.Parameters.Add(new SqlParameter("@HouseNumberRules", SqlDbType.NVarChar, 100));
-                cmd2.Parameters.Add(new SqlParameter("@SimulationSettingsID", SqlDbType.Int));
-                cmd2.Parameters.Add(new SqlParameter("@MunicipalityID", SqlDbType.Int));
                 int simulationSettingsId;
-                int simulationSettingsMunicipalityId;
                 try
                 {
-                    cmd.Parameters["@SimulationID"].Value = simulationSettings.SimulationData.Id;
-                    cmd.Parameters["@CountryID"].Value = simulationSettings.Country.Id;
+                    cmd.Parameters["@SimulationDataID"].Value = simulationSettings.SimulationData.Id;
                     cmd.Parameters["@NumberCustomers"].Value = simulationSettings.NumberCustomers;
                     cmd.Parameters["@MinAge"].Value = simulationSettings.MinAge;
                     cmd.Parameters["@MaxAge"].Value = simulationSettings.MaxAge;
                     cmd.Parameters["@HouseNumberRules"].Value = simulationSettings.HouseNumberRules;
                     simulationSettingsId = (int)cmd.ExecuteScalar();
-
-                    foreach(Municipality m in simulationSettings.SelectedMunicipalities)
-                    {
-                        cmd2.Parameters["@SimulationSettingsID"].Value = simulationSettingsId;
-                        cmd2.Parameters["@MunicipalityID"].Value = m.Id;
-                    }
-
-                    simulationSettingsMunicipalityId = (int)cmd2.ExecuteScalar();
 
                     tran.Commit();
                 }
@@ -117,8 +99,8 @@ namespace CustomerSimulationDL.Repositories
                 cmd.Transaction = tran;
                 cmd.Parameters.Add(new SqlParameter("@SimulationDataID", SqlDbType.Int));
                 cmd.Parameters.Add(new SqlParameter("@TotalCustomers", SqlDbType.Int));
-                cmd.Parameters.Add(new SqlParameter("@AverageAgeSimulationDate", SqlDbType.Int));
-                cmd.Parameters.Add(new SqlParameter("@AverageAgeCurrentDate", SqlDbType.Int));
+                cmd.Parameters.Add(new SqlParameter("@AverageAgeSimulationDate", SqlDbType.Decimal));
+                cmd.Parameters.Add(new SqlParameter("@AverageAgeCurrentDate", SqlDbType.Decimal));
                 cmd.Parameters.Add(new SqlParameter("@AgeYoungestCustomer", SqlDbType.Int));
                 cmd.Parameters.Add(new SqlParameter("@AgeOldestCustomer", SqlDbType.Int));
                 int simulationStatisticsId;

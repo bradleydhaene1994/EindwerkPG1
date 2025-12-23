@@ -21,10 +21,10 @@ namespace CustomerSimulationDL.Repositories
             _connectionstring = connectionstring;
         }
 
-        public void UploadCountryVersion(Country country, int version)
+        public void UploadCountryVersion(CountryVersion countryVersion)
         {
-            string SQL = "INSERT INTO Country_Version(CountryID, Version) " +
-                         "OUTPUT inserted.ID VALUES(@CountryID, @Version)";
+            string SQL = "INSERT INTO Country_Version(CountryID, Year) " +
+                         "OUTPUT inserted.ID VALUES(@CountryID, @Year)";
 
             using(SqlConnection conn = new SqlConnection(_connectionstring))
             using(SqlCommand cmd = conn.CreateCommand())
@@ -34,13 +34,13 @@ namespace CustomerSimulationDL.Repositories
                 cmd.CommandText = SQL;
                 cmd.Transaction = tran;
                 cmd.Parameters.Add(new SqlParameter("@CountryID", SqlDbType.Int));
-                cmd.Parameters.Add(new SqlParameter("@Version", SqlDbType.Int));
+                cmd.Parameters.Add(new SqlParameter("@Year", SqlDbType.Int));
                 int countryVersionId;
 
                 try
                 {
-                    cmd.Parameters["@CountryID"].Value = country.Id;
-                    cmd.Parameters["@Version"].Value = version;
+                    cmd.Parameters["@CountryID"].Value = countryVersion.Country.Id;
+                    cmd.Parameters["@Year"].Value = countryVersion.Year;
                     countryVersionId = (int)cmd.ExecuteScalar();
 
                     tran.Commit();

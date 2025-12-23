@@ -21,12 +21,12 @@ namespace CustomerSimulationDL.Repositories
 
         public void UploadAddress(IEnumerable<Address> addresses)
         {
-            string SQLMunicipality = "IF NOT EXISTS (Select 1 FROM Municipality WHERE CountryID = @CountryID AND Name = @Name) " +
-                                     "INSERT INTO Municipality(CountryID, Name) " +
-                                     "OUTPUT inserted.ID VALUES(@CountryID, @Name) " +
-                                     "ELSE SELECT ID FROM Municipality WHERE CountryID = @CountryID AND Name = @Name";
-            string SQLAddress = "INSERT INTO Address(MunicipalityID, Street) " +
-                                "OUTPUT inserted.ID VALUES(@MunicipalityID, @Street)";
+            string SQLMunicipality = "IF NOT EXISTS (Select 1 FROM Municipality WHERE CountryVersionID = @CountryVersionID AND Name = @Name) " +
+                                     "INSERT INTO Municipality(CountryVersionID, Name) " +
+                                     "OUTPUT inserted.ID VALUES(@CountryVersionID, @Name) " +
+                                     "ELSE SELECT ID FROM Municipality WHERE CountryVersionID = @CountryVersionID AND Name = @Name";
+            string SQLAddress = "INSERT INTO Address(MunicipalityID, StreetName) " +
+                                "OUTPUT inserted.ID VALUES(@MunicipalityID, @StreetName)";
 
             using(SqlConnection conn = new SqlConnection(_connectionstring))
             using(SqlCommand cmd = conn.CreateCommand())
@@ -38,25 +38,24 @@ namespace CustomerSimulationDL.Repositories
                 cmd2.CommandText = SQLAddress;
                 cmd.Transaction = tran;
                 cmd2.Transaction = tran;
-                cmd.Parameters.Add(new SqlParameter("@CountryID", SqlDbType.Int));
+                cmd.Parameters.Add(new SqlParameter("@CountryVersionID", SqlDbType.Int));
                 cmd.Parameters.Add(new SqlParameter("@Name", SqlDbType.NVarChar, 100));
                 cmd2.Parameters.Add(new SqlParameter("@MunicipalityID", SqlDbType.Int));
-                cmd2.Parameters.Add(new SqlParameter("@Street", SqlDbType.NVarChar, 100));
+                cmd2.Parameters.Add(new SqlParameter("@StreetName", SqlDbType.NVarChar, 100));
                 int municipalityId;
                 int addressId;
                 try
                 {
                     foreach(Address a in addresses)
                     {
-                        cmd.Parameters["@CountryID"].Value = a.Municipality.Country.Id;
+                        cmd.Parameters["@CountryVersionID"].Value = a.Municipality.Country.Id;
                         cmd.Parameters["@Name"].Value = a.Municipality.Name;
                         municipalityId = (int)cmd.ExecuteScalar();
 
                         cmd2.Parameters["@MunicipalityID"].Value = municipalityId;
-                        cmd2.Parameters["@Street"].Value = a.Street;
+                        cmd2.Parameters["@StreetName"].Value = a.Street;
                         addressId = (int)cmd2.ExecuteScalar();
                     }
-
                     tran.Commit();
                 }
                 catch(Exception)
