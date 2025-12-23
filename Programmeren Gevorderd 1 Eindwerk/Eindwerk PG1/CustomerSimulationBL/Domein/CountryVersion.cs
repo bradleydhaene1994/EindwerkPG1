@@ -8,6 +8,11 @@ namespace CustomerSimulationBL.Domein
 {
     public class CountryVersion
     {
+        public CountryVersion(int year, Country country)
+        {
+            Year = year;
+            Country = country;
+        }
         public int Id { get; set; }
         public int Year { get; set; }
         public Country Country { get; set; }

@@ -9,7 +9,7 @@ namespace CustomerSimulationBL.Interfaces
 {
     public interface INameRepository
     {
-        void UploadFirstName(IEnumerable<FirstName> lirstNames, Country country);
-        void UploadLastName(IEnumerable<LastName> lastNames, Country country);
+        void UploadFirstName(IEnumerable<FirstName> firstNames, CountryVersion countryVersion);
+        void UploadLastName(IEnumerable<LastName> lastNames, CountryVersion countryVersion);
     }
 }

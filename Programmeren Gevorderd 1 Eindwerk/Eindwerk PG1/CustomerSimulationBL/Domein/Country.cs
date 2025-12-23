@@ -8,8 +8,9 @@ namespace CustomerSimulationBL.Domein
 {
     public class Country
     {
-        public Country(string name)
+        public Country(int id, string name)
         {
+            Id = id;
             Name = name;
         }
 
