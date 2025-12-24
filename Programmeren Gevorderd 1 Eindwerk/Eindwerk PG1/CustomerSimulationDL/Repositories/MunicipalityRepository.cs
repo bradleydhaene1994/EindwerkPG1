@@ -50,5 +50,18 @@ namespace CustomerSimulationDL.Repositories
                 }
             }
         }
+
+        public List<Municipality> GetMunicipalityByCountryVersionID(int countryVersionID)
+        {
+            List<Municipality> municipalities = new List<Municipality>();
+
+            string SQL = "SELECT m.ID, m.Name " +
+                         "FROM Municipality m " +
+                         "WHERE CountryVersionID = @CountryVersionID";
+
+
+
+            return municipalities;
+        }
     }
 }

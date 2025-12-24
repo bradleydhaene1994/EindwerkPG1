@@ -19,7 +19,7 @@ namespace CustomerSimulationDL.Repositories
             _connectionstring = connectionstring;
         }
 
-        public void UploadCustomer(IEnumerable<Customer> customers)
+        public void UploadCustomer(IEnumerable<Customer> customers, int simulationDataId)
         {
             string SQL = "INSERT INTO Customer(CountryVersionID, SimulationDataID, FirstName, LastName, Municipality, Street, HouseNumber ,BirthDate) " +
                          "OUTPUT inserted.ID VALUES(@CountryVersionID, @SimulationDataID, @FirstName, @LastName, @Municipality, @Street, @HouseNumber, @BirthDate)";
@@ -44,8 +44,7 @@ namespace CustomerSimulationDL.Repositories
                 {
                     foreach(Customer c in customers)
                     {
-                        cmd.Parameters["@CountryVersionID"].Value = c.CountryVersion.Id;
-                        cmd.Parameters["@SimulationDataID"].Value = c.simulationData.Id;
+                        cmd.Parameters["@SimulationDataID"].Value = simulationDataId;
                         cmd.Parameters["@FirstName"].Value = c.FirstName;
                         cmd.Parameters["@LastName"].Value = c.LastName;
                         cmd.Parameters["@Municipality"].Value = c.Municipality;
@@ -62,6 +61,41 @@ namespace CustomerSimulationDL.Repositories
                     throw;
                 }
             }
+        }
+
+        public List<Customer> GetCustomerBySimulationDataID(int simulationDataID)
+        {
+            List<Customer> customers = new List<Customer>();
+
+            string SQL = "SELECT c.ID, c.FirstName, c.LastName, c.Municipality, c.Street, c.HouseNumber, c.BirthDate " +
+                         "FROM Customer c " +
+                         "WHERE c.SimulationDataID = @SimulationDataID";
+
+            using(SqlConnection conn = new SqlConnection(_connectionstring))
+            using(SqlCommand cmd = conn.CreateCommand())
+            {
+                conn.Open();
+                cmd.Parameters.AddWithValue("@SimulationDataID", simulationDataID);
+                cmd.CommandText = SQL;
+                using(SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while(reader.Read())
+                    {
+                        int id = reader.GetInt32(reader.GetOrdinal("ID"));
+                        string firstName = reader.GetString(reader.GetOrdinal("FirstName"));
+                        string lastName = reader.GetString(reader.GetOrdinal("LastName"));
+                        string municipality = reader.GetString(reader.GetOrdinal("Municipality"));
+                        string street = reader.GetString(reader.GetOrdinal("Street"));
+                        string houseNumber = reader.GetString(reader.GetOrdinal("HouseNumber"));
+                        DateTime birthDate = reader.GetDateTime(reader.GetOrdinal("BirthDate"));
+
+                        Customer customer = new Customer(id, firstName, lastName, municipality, street, birthDate, houseNumber);
+
+                        customers.Add(customer);
+                    }
+                }
+            }
+            return customers;
         }
     }
 }

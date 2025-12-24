@@ -8,15 +8,13 @@ namespace CustomerSimulationBL.Domein
 {
     public class SimulationData
     {
-        public SimulationData(CountryVersion countryVersion, string client, DateTime dateCreated)
+        public SimulationData(string client, DateTime dateCreated)
         {
-            CountryVersion = countryVersion;
             Client = client;
             DateCreated = dateCreated;
         }
 
         public int Id { get; set; }
-        public CountryVersion CountryVersion { get; set; }
         public string Client { get; set; }
         public DateTime DateCreated { get; set; }
 

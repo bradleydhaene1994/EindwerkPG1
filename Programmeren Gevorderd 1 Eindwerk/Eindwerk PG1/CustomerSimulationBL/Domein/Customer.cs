@@ -8,25 +8,32 @@ namespace CustomerSimulationBL.Domein
 {
     public class Customer
     {
-        public Customer(CountryVersion countryVersion, string firstName, string lastName, string municipality, string street, SimulationData simulationData, DateTime birthDate, string houseNumber)
+        public Customer(string firstName, string lastName, string municipality, string street, DateTime birthDate, string houseNumber)
         {
-            CountryVersion = countryVersion;
             FirstName = firstName;
             LastName = lastName;
             Municipality = municipality;
             Street = street;
-            this.simulationData = simulationData;
+            BirthDate = birthDate;
+            HouseNumber = houseNumber;
+        }
+
+        public Customer(int id, string firstName, string lastName, string municipality, string street, DateTime birthDate, string houseNumber)
+        {
+            Id = id;
+            FirstName = firstName;
+            LastName = lastName;
+            Municipality = municipality;
+            Street = street;
             BirthDate = birthDate;
             HouseNumber = houseNumber;
         }
 
         public int Id { get; set; }
-        public CountryVersion CountryVersion { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Municipality { get; set; }
         public string Street { get; set; }
-        public SimulationData simulationData { get; set; }
         public DateTime BirthDate { get; set; }
         public string HouseNumber { get; set; }
     }

@@ -9,6 +9,6 @@ namespace CustomerSimulationBL.Interfaces
 {
     public interface ICustomerRepository
     {
-        void UploadCustomer(IEnumerable<Customer> customers);
+        void UploadCustomer(IEnumerable<Customer> customers, int simulationDataId);
     }
 }

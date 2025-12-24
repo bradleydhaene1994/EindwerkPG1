@@ -9,9 +9,8 @@ namespace CustomerSimulationBL.Domein
 {
     public class SimulationSettings
     {
-        public SimulationSettings(SimulationData simulationData, List<Municipality>? selectedMunicipalities, int numberCustomers, int minAge, int maxAge, string houseNumberRules)
+        public SimulationSettings(List<Municipality>? selectedMunicipalities, int numberCustomers, int minAge, int maxAge, string houseNumberRules)
         {
-            SimulationData = simulationData;
             SelectedMunicipalities = selectedMunicipalities;
             NumberCustomers = numberCustomers;
             MinAge = minAge;
@@ -20,7 +19,6 @@ namespace CustomerSimulationBL.Domein
         }
 
         public int Id { get; set; }
-        public SimulationData SimulationData { get; set; }
         public List<Municipality>? SelectedMunicipalities { get; set; }
         public int NumberCustomers { get; set; }
         public int MinAge { get; set; }

@@ -10,16 +10,21 @@ namespace Debugger
         {
             string connectionstring = "Data Source=BRADLEY\\SQLEXPRESS;Initial Catalog=SimulationCustomer;Integrated Security=True;Encrypt=True;Trust Server Certificate=True";
             AddressRepository addressRepo = new AddressRepository(connectionstring);
+            CustomerRepository customerRepo = new CustomerRepository(connectionstring);
             
             Country Belgium = new Country(1, "Belgium");
             CountryVersion Belgium2024 = new CountryVersion(2024, Belgium);
             Belgium2024.Id = 6;
 
-            var addresses = addressRepo.GetAddressesByCountryVersionID(Belgium2024.Id);
+            SimulationData simulationData = new SimulationData(Belgium2024, "Bradley", DateTime.Now);
+            simulationData.Id = 1;
 
-            foreach(var address in addresses)
+            var addresses = addressRepo.GetAddressesByCountryVersionID(Belgium2024.Id);
+            var customers = customerRepo.GetCustomerBySimulationDataID(simulationData.Id);
+
+            foreach(var customer in customers)
             {
-                Console.WriteLine(address.ToString());
+                Console.WriteLine($"{customer.FirstName} {customer.LastName}");
             }
         }
     }

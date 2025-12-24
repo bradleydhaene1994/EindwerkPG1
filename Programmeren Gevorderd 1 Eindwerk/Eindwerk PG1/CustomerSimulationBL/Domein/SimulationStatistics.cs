@@ -8,9 +8,8 @@ namespace CustomerSimulationBL.Domein
 {
     public class SimulationStatistics
     {
-        public SimulationStatistics(SimulationData simulationData, int totalCustomers, Dictionary<int, Municipality>? customersPerMunicipality, int averageAgeOnSimulationDate, int averageAgeOnCurrentDate, int ageYoungestCustomer, int ageOldestCustomer)
+        public SimulationStatistics(int totalCustomers, Dictionary<int, Municipality>? customersPerMunicipality, int averageAgeOnSimulationDate, int averageAgeOnCurrentDate, int ageYoungestCustomer, int ageOldestCustomer)
         {
-            SimulationData = simulationData;
             TotalCustomers = totalCustomers;
             CustomersPerMunicipality = customersPerMunicipality;
             AverageAgeOnSimulationDate = averageAgeOnSimulationDate;
@@ -20,7 +19,6 @@ namespace CustomerSimulationBL.Domein
         }
 
         public int Id { get; set; }
-        public SimulationData SimulationData { get; set; }
         public int TotalCustomers { get; set; }
         public Dictionary<int, Municipality>? CustomersPerMunicipality { get; set; }
         public int AverageAgeOnSimulationDate { get; set; }
