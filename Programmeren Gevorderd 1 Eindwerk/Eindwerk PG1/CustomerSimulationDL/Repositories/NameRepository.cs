@@ -7,6 +7,7 @@ using CustomerSimulationBL.Domein;
 using CustomerSimulationBL.Interfaces;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using CustomerSimulationBL.Enumerations;
 
 namespace CustomerSimulationDL.Repositories
 {
@@ -88,6 +89,83 @@ namespace CustomerSimulationDL.Repositories
                     throw;
                 }
             }
+        }
+
+        public List<FirstName> GetFirstNamesByCountryVersionID(int countryVersionID)
+        {
+            List<FirstName> firstNames = new List<FirstName>();
+
+            string SQL = "SELECT fn.ID, fn.Name, fn.Gender, fn.Frequency " +
+                         "FROM FirstName fn " +
+                         "WHERE CountryVersionID = @CountryVersionID";
+
+            using(SqlConnection conn = new SqlConnection(_connectionstring))
+            using(SqlCommand cmd = conn.CreateCommand())
+            {
+                conn.Open();
+                cmd.Parameters.AddWithValue("@CountryVersionID", countryVersionID);
+                cmd.CommandText = SQL;
+
+                using(SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        int id = reader.GetInt32(reader.GetOrdinal("ID"));
+                        string name = reader.GetString(reader.GetOrdinal("Name"));
+                        string genderAsString = reader.GetString(reader.GetOrdinal("Gender"));
+                        Gender gender = (Gender)Enum.Parse(typeof(Gender), genderAsString);
+                        int frequency = reader.GetInt32(reader.GetOrdinal("Frequency"));
+
+                        FirstName firstName = new FirstName(id, name, frequency, gender);
+
+                        firstNames.Add(firstName);
+                    }
+                }
+            }
+            return firstNames;
+        }
+
+        public List<LastName> GetLastNamesByCountryVersionID(int countryVersionID)
+        {
+            List<LastName> lastNames = new List<LastName>();
+
+            string SQL = "SELECT ln.ID, ln.Name, ln.Gender, ln.Frequency " +
+                         "FROM LastName ln " +
+                         "WHERE CountryVersionID = @CountryVersionID";
+
+            using(SqlConnection conn = new SqlConnection(_connectionstring))
+            using(SqlCommand cmd = conn.CreateCommand())
+            {
+                conn.Open();
+                cmd.Parameters.AddWithValue("@CountryVersionID", countryVersionID);
+                cmd.CommandText = SQL;
+
+                using(SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        int id = reader.GetInt32(reader.GetOrdinal("ID"));
+                        string name = reader.GetString(reader.GetOrdinal("Name"));
+                        int genderIndex = reader.GetOrdinal("Gender");
+                        Gender gender;
+                        if(!reader.IsDBNull(genderIndex))
+                        {
+                            string genderAsString = reader.GetString(genderIndex);
+                            gender = (Gender)Enum.Parse(typeof(Gender), genderAsString, ignoreCase: true);
+                        }
+                        else
+                        {
+                            gender = Gender.Unknown;
+                        }
+                        int frequency = reader.GetInt32(reader.GetOrdinal("Frequency"));
+
+                        LastName lastName = new LastName(id, name, frequency, gender);
+
+                        lastNames.Add(lastName);
+                    }
+                }
+            }
+            return lastNames;
         }
     }
 }

@@ -9,6 +9,7 @@ namespace CustomerSimulationBL.Enumerations
     public enum Gender
     {
         Male,
-        Female
+        Female,
+        Unknown
     }
 }

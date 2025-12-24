@@ -14,6 +14,13 @@ namespace CustomerSimulationBL.Domein
             DateCreated = dateCreated;
         }
 
+        public SimulationData(int id, string client, DateTime dateCreated)
+        {
+            Id = id;
+            Client = client;
+            DateCreated = dateCreated;
+        }
+
         public int Id { get; set; }
         public string Client { get; set; }
         public DateTime DateCreated { get; set; }

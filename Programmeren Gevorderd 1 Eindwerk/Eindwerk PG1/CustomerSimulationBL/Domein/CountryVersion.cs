@@ -12,6 +12,12 @@ namespace CustomerSimulationBL.Domein
         {
             Year = year;
         }
+
+        public CountryVersion(int id, int year) : this(id)
+        {
+            Year = year;
+        }
+
         public int Id { get; set; }
         public int Year { get; set; }
     }

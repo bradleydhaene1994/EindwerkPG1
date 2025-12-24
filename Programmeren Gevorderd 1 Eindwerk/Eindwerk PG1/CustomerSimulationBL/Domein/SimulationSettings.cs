@@ -18,6 +18,16 @@ namespace CustomerSimulationBL.Domein
             HouseNumberRules = houseNumberRules;
         }
 
+        public SimulationSettings(int id, List<Municipality>? selectedMunicipalities, int numberCustomers, int minAge, int maxAge, string houseNumberRules)
+        {
+            Id = id;
+            SelectedMunicipalities = selectedMunicipalities;
+            NumberCustomers = numberCustomers;
+            MinAge = minAge;
+            MaxAge = maxAge;
+            HouseNumberRules = houseNumberRules;
+        }
+
         public int Id { get; set; }
         public List<Municipality>? SelectedMunicipalities { get; set; }
         public int NumberCustomers { get; set; }

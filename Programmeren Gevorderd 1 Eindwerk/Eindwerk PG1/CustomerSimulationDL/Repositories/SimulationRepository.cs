@@ -22,8 +22,8 @@ namespace CustomerSimulationDL.Repositories
             string SQL = "INSERT INTO SimulationData(Client, DateCreated, CountryVersionID) " +
                          "OUTPUT inserted.ID VALUES(@Client, @DateCreated, @CountryVersionID)";
 
-            using(SqlConnection conn = new SqlConnection(_connectionstring))
-            using(SqlCommand cmd = conn.CreateCommand())
+            using (SqlConnection conn = new SqlConnection(_connectionstring))
+            using (SqlCommand cmd = conn.CreateCommand())
             {
                 conn.Open();
                 SqlTransaction tran = conn.BeginTransaction();
@@ -42,7 +42,7 @@ namespace CustomerSimulationDL.Repositories
 
                     tran.Commit();
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     tran.Rollback();
                 }
@@ -53,8 +53,8 @@ namespace CustomerSimulationDL.Repositories
             string SQLSimulationSettings = "INSERT INTO SimulationSettings(SimulationDataID, NumberCustomers, MinAge, MaxAge, HouseNumberRules) " +
                                            "OUTPUT inserted.ID VALUES(@SimulationDataID, @NumberCustomers, @MinAge, @MaxAge, @HouseNumberRules)";
 
-            using(SqlConnection conn = new SqlConnection(_connectionstring))
-            using(SqlCommand cmd = conn.CreateCommand())
+            using (SqlConnection conn = new SqlConnection(_connectionstring))
+            using (SqlCommand cmd = conn.CreateCommand())
             {
                 conn.Open();
                 SqlTransaction tran = conn.BeginTransaction();
@@ -77,7 +77,7 @@ namespace CustomerSimulationDL.Repositories
 
                     tran.Commit();
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     tran.Rollback();
                     throw;
@@ -122,6 +122,99 @@ namespace CustomerSimulationDL.Repositories
                     throw;
                 }
             }
+        }
+        public List<SimulationData> GetAllSimulationData()
+        {
+            List<SimulationData> simulationDatas = new List<SimulationData>();
+
+            string SQL = "SELECT sd.ID, sd.Client, sd.DateCreated " +
+                         "FROM SimulationData sd";
+
+            using (SqlConnection conn = new SqlConnection(_connectionstring))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                conn.Open();
+                cmd.CommandText = SQL;
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        int id = reader.GetInt32(reader.GetOrdinal("ID"));
+                        string client = reader.GetString(reader.GetOrdinal("Client"));
+                        DateTime dateCreated = reader.GetDateTime(reader.GetOrdinal("DateCreated"));
+
+                        SimulationData simulationData = new SimulationData(id, client, dateCreated);
+
+                        simulationDatas.Add(simulationData);
+                    }
+                }
+            }
+            return simulationDatas;
+        }
+        public SimulationSettings GetSimulationSettingsBySimulationDataID(int simulationDataId)
+        {
+            SimulationSettings simSettings = null;
+
+            string SQL = "SELECT ss.ID, ss.NumberCustomers, ss.MinAge, ss.MaxAge, ss.HouseNumberRules " +
+                         "FROM SimulationSettings ss " +
+                         "WHERE SimulationDataID = @SimulationDataID";
+
+            using(SqlConnection conn = new SqlConnection(_connectionstring))
+            using(SqlCommand cmd = conn.CreateCommand())
+            {
+                conn.Open();
+                cmd.Parameters.AddWithValue("SimulationDataID", simulationDataId);
+                cmd.CommandText = SQL;
+
+                using(SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if(reader.Read())
+                    {
+                        int id = reader.GetInt32(reader.GetOrdinal("ID"));
+                        int numberCustomers = reader.GetInt32(reader.GetOrdinal("NumberCustomers"));
+                        int minAge = reader.GetInt32(reader.GetOrdinal("MinAge"));
+                        int maxAge = reader.GetInt32(reader.GetOrdinal("MaxAge"));
+                        string houseNumberRules = reader.GetString(reader.GetOrdinal("HouseNumberRules"));
+
+                        simSettings = new SimulationSettings(id, null, numberCustomers, minAge, maxAge, houseNumberRules);
+                    }
+                }
+            }
+            return simSettings;
+        }
+
+        public SimulationStatistics GetSimulationStatisticsBySimulationDataID(int simulationDataId)
+        {
+            SimulationStatistics simulationStatistics = null;
+
+            string SQL = "SELECT ss.ID, ss.TotalCustomers, ss.AverageAgeSimulationDate, ss.AverageAgeCurrentDate, ss.AgeYoungestCustomer, ss.AgeOldestCustomer " +
+                         "FROM SimulationStatistics ss " +
+                         "WHERE SimulationDataID = @SimulationDataID";
+
+            using(SqlConnection conn = new SqlConnection(_connectionstring))
+            using(SqlCommand cmd = conn.CreateCommand())
+            {
+                conn.Open();
+                cmd.Parameters.AddWithValue("SimulationDataID", simulationDataId);
+                cmd.CommandText = SQL;
+
+                using(SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if(reader.Read())
+                    {
+                        int id = reader.GetInt32(reader.GetOrdinal("ID"));
+                        int totalCustomers = reader.GetInt32(reader.GetOrdinal("TotalCustomers"));
+                        decimal averageAgeSimulationDate = reader.GetDecimal(reader.GetOrdinal("AverageAgeSimulationDate"));
+                        decimal averageAgeCurrentDate = reader.GetDecimal(reader.GetOrdinal("AverageAgeCurrentDate"));
+                        int ageYoungestCustomer = reader.GetInt32(reader.GetOrdinal("AgeYoungestCustomer"));
+                        int ageOldestCustomer = reader.GetInt32(reader.GetOrdinal("AgeOldestCustomer"));
+
+                        simulationStatistics = new SimulationStatistics(id, totalCustomers, null, averageAgeSimulationDate, averageAgeCurrentDate, ageYoungestCustomer, ageOldestCustomer);
+                    }
+                }
+            }
+            return simulationStatistics;
         }
     }
 }

@@ -14,6 +14,13 @@ namespace CustomerSimulationBL.Domein
             Street = street;
         }
 
+        public Address(int id, Municipality? municipality, string street)
+        {
+            Id = id;
+            Municipality = municipality;
+            Street = street;
+        }
+
         public int Id { get; set; }
         public Municipality? Municipality { get; set; }
         public string Street { get; set; }

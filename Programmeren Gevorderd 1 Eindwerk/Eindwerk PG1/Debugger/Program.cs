@@ -11,21 +11,19 @@ namespace Debugger
             string connectionstring = "Data Source=BRADLEY\\SQLEXPRESS;Initial Catalog=SimulationCustomer;Integrated Security=True;Encrypt=True;Trust Server Certificate=True";
             AddressRepository addressRepo = new AddressRepository(connectionstring);
             CustomerRepository customerRepo = new CustomerRepository(connectionstring);
+            NameRepository nameRepo = new NameRepository(connectionstring);
+            SimulationRepository simRepo = new SimulationRepository(connectionstring);
             
             Country Belgium = new Country(1, "Belgium");
             CountryVersion Belgium2024 = new CountryVersion(2024);
             Belgium2024.Id = 6;
 
-            SimulationData simulationData = new SimulationData("Bradley", DateTime.Now);
-            simulationData.Id = 1;
+            var simData = simRepo.GetAllSimulationData();
+            var simSettings = simRepo.GetSimulationSettingsBySimulationDataID(1);
+            var simStatistics = simRepo.GetSimulationStatisticsBySimulationDataID(1);
 
-            var addresses = addressRepo.GetAddressesByCountryVersionID(Belgium2024.Id);
-            var customers = customerRepo.GetCustomerBySimulationDataID(simulationData.Id);
+            Console.WriteLine($"{simStatistics.TotalCustomers}");
 
-            foreach(var customer in customers)
-            {
-                Console.WriteLine($"{customer.FirstName} {customer.LastName}");
-            }
         }
     }
 }

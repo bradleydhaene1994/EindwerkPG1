@@ -16,6 +16,14 @@ namespace CustomerSimulationBL.Domein
             Gender = gender;
         }
 
+        public FirstName(int id, string name, int? frequency, Gender gender)
+        {
+            Id = id;
+            Name = name;
+            Frequency = frequency;
+            Gender = gender;
+        }
+
         public int Id { get; set; }
         public string Name { get; set; }
         public int? Frequency { get; set; }
