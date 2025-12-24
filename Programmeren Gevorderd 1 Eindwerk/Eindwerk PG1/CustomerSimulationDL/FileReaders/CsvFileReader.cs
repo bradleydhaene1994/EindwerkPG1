@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CustomerSimulationDL.FileReaders
 {
-    public class CsvFileReader : IAddressReader, IFirstNameReader, ILastNameReader
+    public class CsvFileReader : ICsvReader
     {
         public IEnumerable<Address> ReadAddresses(string path)
         {

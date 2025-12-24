@@ -7,8 +7,9 @@ using CustomerSimulationBL.Domein;
 
 namespace CustomerSimulationBL.Interfaces
 {
-    public interface IMunicipalityReader
+    public interface ITxtReader
     {
-        IEnumerable<Municipality> ReadMunicipalities(string path);
+        IEnumerable<FirstName> ReadFirstNames(string path);
+        IEnumerable<LastName> ReadLastNames(string path);
     }
 }

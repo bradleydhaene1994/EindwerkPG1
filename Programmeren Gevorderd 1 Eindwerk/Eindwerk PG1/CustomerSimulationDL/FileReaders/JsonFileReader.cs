@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CustomerSimulationDL.FileReaders
 {
-    public class JsonFileReader : IFirstNameReader, ILastNameReader, IAddressReader, IMunicipalityReader
+    public class JsonFileReader : IJsonReader
     {
         public IEnumerable<FirstName> ReadFirstNames(string path)
         {

@@ -11,7 +11,7 @@ using System.Xml.Linq;
 
 namespace CustomerSimulationDL.FileReaders
 {
-    public class TxtFileReader : IFirstNameReader, ILastNameReader
+    public class TxtFileReader : ITxtReader
     {
         public IEnumerable<FirstName> ReadFirstNames(string path)
         {

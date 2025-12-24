@@ -7,8 +7,11 @@ using CustomerSimulationBL.Domein;
 
 namespace CustomerSimulationBL.Interfaces
 {
-    public interface IFirstNameReader
+    public interface IJsonReader
     {
         IEnumerable<FirstName> ReadFirstNames(string path);
+        IEnumerable<LastName> ReadLastNames(string path);
+        IEnumerable<Address> ReadAddresses(string path);
+        IEnumerable<Municipality> ReadMunicipalities(string path);
     }
 }
