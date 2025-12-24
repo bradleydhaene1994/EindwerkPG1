@@ -9,6 +9,6 @@ namespace CustomerSimulationBL.Interfaces
 {
     public interface ICountryVersionRepository
     {
-        void UploadCountryVersion(CountryVersion countryVersion);
+        void UploadCountryVersion(CountryVersion countryVersion, int countryId);
     }
 }

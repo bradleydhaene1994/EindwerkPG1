@@ -59,7 +59,24 @@ namespace CustomerSimulationDL.Repositories
                          "FROM Municipality m " +
                          "WHERE CountryVersionID = @CountryVersionID";
 
+            using(SqlConnection conn = new SqlConnection(_connectionstring))
+            using(SqlCommand cmd = conn.CreateCommand())
+            {
+                conn.Open();
+                cmd.Parameters.AddWithValue("@CountryVersionID", countryVersionID);
+                cmd.CommandText = SQL;
 
+                using(SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        int id = reader.GetInt32(reader.GetOrdinal("ID"));
+                        string name = reader.GetString(reader.GetOrdinal("Name"));
+
+                        Municipality Municipality = new Municipality(id, name);
+                    }
+                }
+            }
 
             return municipalities;
         }

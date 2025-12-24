@@ -13,10 +13,10 @@ namespace Debugger
             CustomerRepository customerRepo = new CustomerRepository(connectionstring);
             
             Country Belgium = new Country(1, "Belgium");
-            CountryVersion Belgium2024 = new CountryVersion(2024, Belgium);
+            CountryVersion Belgium2024 = new CountryVersion(2024);
             Belgium2024.Id = 6;
 
-            SimulationData simulationData = new SimulationData(Belgium2024, "Bradley", DateTime.Now);
+            SimulationData simulationData = new SimulationData("Bradley", DateTime.Now);
             simulationData.Id = 1;
 
             var addresses = addressRepo.GetAddressesByCountryVersionID(Belgium2024.Id);

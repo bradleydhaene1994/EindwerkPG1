@@ -9,8 +9,8 @@ namespace CustomerSimulationBL.Interfaces
 {
     public interface ISimulationRepository
     {
-        void UploadSimulationData(SimulationData simulationData, CountryVersion countryVersion);
-        void UploadSimulationSettings(SimulationSettings simulationSettings);
-        void UploadSimulationStatistics(SimulationStatistics simulationStatistics);
+        void UploadSimulationData(SimulationData simulationData, int countryVersionId);
+        void UploadSimulationSettings(SimulationSettings simulationSettings, int simulationDataId);
+        void UploadSimulationStatistics(SimulationStatistics simulationStatistics, int simulationDataId);
     }
 }

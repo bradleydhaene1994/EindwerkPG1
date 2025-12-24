@@ -21,7 +21,7 @@ namespace CustomerSimulationDL.Repositories
             _connectionstring = connectionstring;
         }
 
-        public void UploadCountryVersion(CountryVersion countryVersion)
+        public void UploadCountryVersion(CountryVersion countryVersion, int countryId)
         {
             string SQL = "INSERT INTO CountryVersion(CountryID, Year) " +
                          "OUTPUT inserted.ID VALUES(@CountryID, @Year)";
@@ -38,7 +38,7 @@ namespace CustomerSimulationDL.Repositories
 
                 try
                 {
-                    cmd.Parameters["@CountryID"].Value = countryVersion.Country.Id;
+                    cmd.Parameters["@CountryID"].Value = countryId;
                     cmd.Parameters["@Year"].Value = countryVersion.Year;
                     countryVersion.Id = (int)cmd.ExecuteScalar();
 

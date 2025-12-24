@@ -20,13 +20,13 @@ namespace CustomerSimulationBL.Managers
         {
             _simulationRepo.UploadSimulationData(simulationData, countryVersion);
         }
-        public void UploadSimulationSettings(SimulationSettings simulationSettings)
+        public void UploadSimulationSettings(SimulationSettings simulationSettings, int simulationDataId)
         {
-            _simulationRepo.UploadSimulationSettings(simulationSettings);
+            _simulationRepo.UploadSimulationSettings(simulationSettings, simulationDataId);
         }
-        public void UploadSimulationStatistics(SimulationStatistics simulationStatistics)
+        public void UploadSimulationStatistics(SimulationStatistics simulationStatistics, int simulationDataId)
         {
-            _simulationRepo.UploadSimulationStatistics(simulationStatistics);
+            _simulationRepo.UploadSimulationStatistics(simulationStatistics, simulationDataId);
         }
     }
 }
