@@ -21,12 +21,14 @@ namespace CustomerSimulationDL.Repositories
 
         public void UploadAddress(IEnumerable<Address> addresses, CountryVersion countryVersion)
         {
-            string SQLMunicipality = "IF NOT EXISTS (Select 1 FROM Municipality WHERE CountryVersionID = @CountryVersionID AND Name = @Name) " +
+            string SQLMunicipality = "IF NOT EXISTS (SELECT 1 FROM Municipality WHERE CountryVersionID = @CountryVersionID AND Name = @Name) " +
                                      "INSERT INTO Municipality(CountryVersionID, Name) " +
                                      "OUTPUT inserted.ID VALUES(@CountryVersionID, @Name) " +
                                      "ELSE SELECT ID FROM Municipality WHERE CountryVersionID = @CountryVersionID AND Name = @Name";
-            string SQLAddress = "INSERT INTO Address(MunicipalityID, StreetName) " +
-                                "OUTPUT inserted.ID VALUES(@MunicipalityID, @StreetName)";
+            string SQLAddress = "IF NOT EXISTS (SELECT 1 FROM ADDRESS WHERE StreetName = @StreetName AND (MunicipalityID = @MunicipalityID OR (MunicipalityID IS NULL and @MunicipalityID IS NULL)) " +
+                                "INSERT INTO Address(MunicipalityID, StreetName " +
+                                "OUTPUT inserted.ID VALUES(@MunicipalityID, @StreetName) " +
+                                "ELSE SELECT ID FROM Adress WHERE Streetname = @StreetName AND (MunicipalityID = @MunicipalityID OR (MunicipalityID IS NULL AND @MunicipalityID IS NULL))";
 
             using(SqlConnection conn = new SqlConnection(_connectionstring))
             using(SqlCommand cmd = conn.CreateCommand())
@@ -71,29 +73,30 @@ namespace CustomerSimulationDL.Repositories
             }
         }
 
-        public List<Address> GetAddressesByCountryID(int countryId)
+        public List<Address> GetAddressesByCountryVersionID(int countryVersionId)
         {
             List<Address> addresses = new List<Address>();
 
-            string SQL = "SELECT a.ID , a.Street, a.MunicipalityID, m.Name " +
+            string SQL = "SELECT a.StreetName, m.Name " +
                          "FROM Address a " +
-                         "INNER JOIN Municipality m ON a.MunicipalityID = m.ID " +
-                         "WHERE m.CountryID = @CountryID";
+                         "LEFT JOIN Municipality m ON a.MunicipalityID = m.ID " +
+                         "WHERE m.CountryVersionID = @CountryVersionID " +
+                         "OR a.MunicipalityID IS NULL";
 
             using(SqlConnection conn =  new SqlConnection(_connectionstring))
             using(SqlCommand cmd = conn.CreateCommand())
             {
                 cmd.CommandText = SQL;
-                cmd.Parameters.AddWithValue("@CountryID", countryId);
+                cmd.Parameters.AddWithValue("@CountryVersionID", countryVersionId);
                 conn.Open();
                 using(SqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        string Street = reader.GetString(reader.GetOrdinal("Street"));
-                        string MunicipalityName = reader.GetString(reader.GetOrdinal("Name"));
+                        string Street = reader.GetString(reader.GetOrdinal("StreetName"));
+                        string MunicipalityName = reader.IsDBNull(reader.GetOrdinal("Name")) ? null : reader.GetString(reader.GetOrdinal("Name"));
 
-                        Municipality municipality = new Municipality(MunicipalityName);
+                        Municipality municipality = MunicipalityName == null ? null : new Municipality(MunicipalityName);
 
                         Address address = new Address(municipality, Street);
 
