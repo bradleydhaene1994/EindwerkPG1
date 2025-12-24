@@ -8,11 +8,11 @@ using CustomerSimulationBL.Interfaces;
 
 namespace CustomerSimulationBL.Managers
 {
-    public class SimulationManager
+    public class SimulationDataManager
     {
         private ISimulationRepository _simulationRepo;
 
-        public SimulationManager(ISimulationRepository simulationRepo)
+        public SimulationDataManager(ISimulationRepository simulationRepo)
         {
             _simulationRepo = simulationRepo;
         }
@@ -27,6 +27,21 @@ namespace CustomerSimulationBL.Managers
         public void UploadSimulationStatistics(SimulationStatistics simulationStatistics, int simulationDataId)
         {
             _simulationRepo.UploadSimulationStatistics(simulationStatistics, simulationDataId);
+        }
+        public List<SimulationData> GetAllSimulationData()
+        {
+            var simData = _simulationRepo.GetAllSimulationData();
+            return simData;
+        }
+        public SimulationSettings GetSimulationSettingsBySimulationDataID(int simulationDataId)
+        {
+            SimulationSettings simSettings = _simulationRepo.GetSimulationSettingsBySimulationDataID(simulationDataId);
+            return simSettings;
+        }
+        public SimulationStatistics GetSimulationStatisticsBySimulationDataID(int simulationDataId)
+        {
+            SimulationStatistics simStatistics = _simulationRepo.GetSimulationStatisticsBySimulationDataID(simulationDataId);
+            return simStatistics;
         }
     }
 }

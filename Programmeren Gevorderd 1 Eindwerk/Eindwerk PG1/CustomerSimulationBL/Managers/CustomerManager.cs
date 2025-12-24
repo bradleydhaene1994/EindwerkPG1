@@ -21,5 +21,10 @@ namespace CustomerSimulationBL.Managers
         {
             _customerRepo.UploadCustomer(customers, simulationDataId);
         }
+        public List<Customer> GetCustomerBySimulationDataID(int simulationDataID)
+        {
+            var customers = _customerRepo.GetCustomerBySimulationDataID(simulationDataID);
+            return customers;
+        }
     }
 }

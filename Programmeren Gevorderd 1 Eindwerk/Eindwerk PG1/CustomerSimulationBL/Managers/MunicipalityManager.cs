@@ -20,5 +20,14 @@ namespace CustomerSimulationBL.Managers
         {
             _municipalityRepo.UploadMunicipality(municipalities, countryVersion);
         }
+        public List<Municipality> GetMunicipalityByCountryVersionID(int countryVersionID)
+        {
+            var municipalities = _municipalityRepo.GetMunicipalityByCountryVersionID(countryVersionID);
+            return municipalities;
+        }
+        public Municipality GetRandomMunicipality(List<Municipality> municipalities)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

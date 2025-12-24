@@ -19,7 +19,7 @@ namespace CustomerSimulationDL.Repositories
             _connectionstring = connectionstring;
         }
 
-        public void UploadAddress(IEnumerable<Address> addresses, CountryVersion countryVersion)
+        public void UploadAddress(IEnumerable<Address> addresses, int countryVersionID)
         {
             string SQLMunicipality = "IF NOT EXISTS (SELECT 1 FROM Municipality WHERE CountryVersionID = @CountryVersionID AND Name = @Name) " +
                                      "INSERT INTO Municipality(CountryVersionID, Name) " +
@@ -54,7 +54,7 @@ namespace CustomerSimulationDL.Repositories
                         
                         if(a.Municipality != null)
                         {
-                            cmd.Parameters["@CountryVersionID"].Value = countryVersion.Id;
+                            cmd.Parameters["@CountryVersionID"].Value = countryVersionID;
                             cmd.Parameters["@Name"].Value = a.Municipality.Name;
                             municipalityId = (int)cmd.ExecuteScalar();
                         }

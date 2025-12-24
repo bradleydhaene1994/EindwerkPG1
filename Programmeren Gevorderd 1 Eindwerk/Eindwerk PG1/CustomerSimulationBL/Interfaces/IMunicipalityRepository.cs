@@ -10,5 +10,6 @@ namespace CustomerSimulationBL.Interfaces
     public interface IMunicipalityRepository
     {
         void UploadMunicipality(IEnumerable<Municipality> Municipalities, CountryVersion countryVersion);
+        List<Municipality> GetMunicipalityByCountryVersionID(int countryVersionID);
     }
 }

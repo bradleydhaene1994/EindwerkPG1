@@ -24,5 +24,23 @@ namespace CustomerSimulationBL.Managers
         {
             _nameRepo.UploadLastName(lastNames, countryVersion);
         }
+        public List<FirstName> GetFirstNamesByCountryVersionID(int countryVersionID)
+        {
+            var firstNames = _nameRepo.GetFirstNamesByCountryVersionID(countryVersionID);
+            return firstNames;
+        }
+        public List<LastName> GetLastNamesByCountryVersionID(int countryVersionID)
+        {
+            var lastNames = _nameRepo.GetLastNamesByCountryVersionID(countryVersionID);
+            return lastNames;
+        }
+        public FirstName GetRandomFirstName(List<FirstName> firstNames)
+        {
+            throw new NotImplementedException();
+        }
+        public LastName GetRandomLastNames(List<LastName> lastNames)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

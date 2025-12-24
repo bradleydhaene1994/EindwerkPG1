@@ -11,5 +11,7 @@ namespace CustomerSimulationBL.Interfaces
     {
         void UploadFirstName(IEnumerable<FirstName> firstNames, CountryVersion countryVersion);
         void UploadLastName(IEnumerable<LastName> lastNames, CountryVersion countryVersion);
+        List<FirstName> GetFirstNamesByCountryVersionID(int countryVersionID);
+        List<LastName> GetLastNamesByCountryVersionID(int countryVersionID);
     }
 }

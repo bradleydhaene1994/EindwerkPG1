@@ -9,6 +9,7 @@ namespace CustomerSimulationBL.Interfaces
 {
     public interface IAddressRepository
     {
-        void UploadAddress(IEnumerable<Address> Addresses, CountryVersion countryVersion);
+        void UploadAddress(IEnumerable<Address> Addresses, int countryVersionID);
+        List<Address> GetAddressesByCountryVersionID(int countryVersionId);
     }
 }

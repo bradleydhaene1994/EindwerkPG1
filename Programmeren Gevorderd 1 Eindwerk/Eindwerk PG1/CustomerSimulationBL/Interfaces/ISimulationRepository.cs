@@ -12,5 +12,8 @@ namespace CustomerSimulationBL.Interfaces
         void UploadSimulationData(SimulationData simulationData, int countryVersionId);
         void UploadSimulationSettings(SimulationSettings simulationSettings, int simulationDataId);
         void UploadSimulationStatistics(SimulationStatistics simulationStatistics, int simulationDataId);
+        List<SimulationData> GetAllSimulationData();
+        SimulationSettings GetSimulationSettingsBySimulationDataID(int simulationDataId);
+        SimulationStatistics GetSimulationStatisticsBySimulationDataID(int simulationDataId);
     }
 }
