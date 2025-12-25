@@ -70,7 +70,7 @@ namespace CustomerSimulationBL.Managers
 
             throw new InvalidOperationException("Failed to select a first name.");
         }
-        public LastName GetRandomLastNames(List<LastName> lastNames)
+        public LastName GetRandomLastName(List<LastName> lastNames)
         {
             if(lastNames == null)
             {
