@@ -11,6 +11,7 @@ namespace CustomerSimulationBL.Managers
     public class NameManager
     {
         private INameRepository _nameRepo;
+        private static readonly Random _random = new Random();
 
         public NameManager(INameRepository nameRepo)
         {
@@ -36,11 +37,73 @@ namespace CustomerSimulationBL.Managers
         }
         public FirstName GetRandomFirstName(List<FirstName> firstNames)
         {
-            throw new NotImplementedException();
+            if(firstNames == null)
+            {
+                throw new ArgumentNullException(nameof(firstNames));
+            }
+            if(firstNames.Count == 0)
+            {
+                throw new ArgumentException("List of first names cannot be empty.", nameof(firstNames));
+            }
+
+            bool hasFrequency = firstNames.All(x => x.Frequency.HasValue);
+
+            if(!hasFrequency)
+            {
+                int index = _random.Next(firstNames.Count);
+                return firstNames[index];
+            }
+
+            int totalFrequency = firstNames.Sum(x => x.Frequency!.Value);
+
+            int randomValue = _random.Next(totalFrequency);
+            int cumulative = 0;
+
+            foreach(var firstName in firstNames)
+            {
+                cumulative += firstName.Frequency!.Value;
+                if(randomValue < cumulative)
+                {
+                    return firstName;
+                }
+            }
+
+            throw new InvalidOperationException("Failed to select a first name.");
         }
         public LastName GetRandomLastNames(List<LastName> lastNames)
         {
-            throw new NotImplementedException();
+            if(lastNames == null)
+            {
+                throw new ArgumentNullException(nameof(lastNames));
+            }
+            if(lastNames.Count == 0)
+            {
+                throw new ArgumentException("List of last names can not be empty.", nameof(lastNames));
+            }
+
+            bool hasFrequency = lastNames.All(x => x.Frequency.HasValue);
+
+            if(!hasFrequency)
+            {
+                int index = _random.Next(lastNames.Count);
+                return lastNames[index];
+            }
+
+            int totalFrequency = lastNames.Sum(x => x.Frequency!.Value);
+
+            int randomValue = _random.Next(totalFrequency);
+            int cumulative = 0;
+
+            foreach(var lastName in lastNames)
+            {
+                cumulative += lastName.Frequency!.Value;
+                if(randomValue < cumulative)
+                {
+                    return lastName;
+                }
+            }
+
+            throw new InvalidOperationException("Failed to select a last name .");
         }
     }
 }

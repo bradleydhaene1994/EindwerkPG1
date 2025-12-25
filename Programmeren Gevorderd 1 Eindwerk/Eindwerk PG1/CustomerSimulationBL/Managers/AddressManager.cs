@@ -11,6 +11,8 @@ namespace CustomerSimulationBL.Managers
     public class AddressManager
     {
         private IAddressRepository _addressRepo;
+        private static readonly Random _random = new Random();
+
         public AddressManager(IAddressRepository addressRepo)
         {
             _addressRepo = addressRepo;
@@ -28,7 +30,17 @@ namespace CustomerSimulationBL.Managers
         }
         public Address GetRandomAddress(List<Address> addresses)
         {
-            throw new NotImplementedException();
+            if(addresses == null)
+            {
+                throw new ArgumentNullException(nameof(addresses));
+            }
+            if(addresses.Count == 0)
+            {
+                throw new ArgumentException("Address list can not be empty.", nameof(addresses));
+            }
+
+            int index = _random.Next(addresses.Count);
+            return addresses[index];
         }
     }
 }
