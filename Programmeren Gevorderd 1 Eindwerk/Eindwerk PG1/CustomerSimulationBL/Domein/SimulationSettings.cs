@@ -9,30 +9,21 @@ namespace CustomerSimulationBL.Domein
 {
     public class SimulationSettings
     {
-        public SimulationSettings(List<Municipality>? selectedMunicipalities, int numberCustomers, int minAge, int maxAge, string houseNumberRules)
-        {
-            SelectedMunicipalities = selectedMunicipalities;
-            NumberCustomers = numberCustomers;
-            MinAge = minAge;
-            MaxAge = maxAge;
-            HouseNumberRules = houseNumberRules;
-        }
-
-        public SimulationSettings(int id, List<Municipality>? selectedMunicipalities, int numberCustomers, int minAge, int maxAge, string houseNumberRules)
+        public SimulationSettings(int id, IReadOnlyList<int> selectedMunicipalityIds, int totalCustomers, int minAge, int maxAge, string houseNumberRules)
         {
             Id = id;
-            SelectedMunicipalities = selectedMunicipalities;
-            NumberCustomers = numberCustomers;
-            MinAge = minAge;
-            MaxAge = maxAge;
+            SelectedMunicipalityIds = selectedMunicipalityIds;
+            TotalCustomers = totalCustomers;
+            this.minAge = minAge;
+            this.maxAge = maxAge;
             HouseNumberRules = houseNumberRules;
         }
 
-        public int Id { get; set; }
-        public List<Municipality>? SelectedMunicipalities { get; set; }
-        public int NumberCustomers { get; set; }
-        public int MinAge { get; set; }
-        public int MaxAge { get; set; }
-        public string HouseNumberRules { get; set; }
+        public int Id { get; private set; }
+        public IReadOnlyList<int> SelectedMunicipalityIds { get; }
+        public int TotalCustomers { get; }
+        public int minAge { get; }
+        public int maxAge { get; }
+        public string HouseNumberRules { get; }
     }
 }
