@@ -8,7 +8,7 @@ using CustomerSimulationBL.DTOs;
 
 namespace CustomerSimulationBL.Managers
 {
-    public class CustomersetSimulationService
+    public class GenerateCustomerService
     {
         private readonly AddressManager _addressmanager;
         private readonly MunicipalityManager _municipalitymanager;

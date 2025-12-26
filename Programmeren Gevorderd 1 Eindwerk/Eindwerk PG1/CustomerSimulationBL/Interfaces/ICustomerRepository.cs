@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CustomerSimulationBL.Domein;
+using CustomerSimulationBL.DTOs;
 
 namespace CustomerSimulationBL.Interfaces
 {
     public interface ICustomerRepository
     {
-        void UploadCustomer(IEnumerable<Customer> customers, int simulationDataId);
+        void UploadCustomer(IEnumerable<CustomerDTO> customers, int simulationDataId);
         List<Customer> GetCustomerBySimulationDataID(int simulationDataID);
     }
 }

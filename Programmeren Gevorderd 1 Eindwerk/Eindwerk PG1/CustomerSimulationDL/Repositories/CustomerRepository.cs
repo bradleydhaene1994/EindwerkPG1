@@ -7,6 +7,7 @@ using CustomerSimulationBL.Domein;
 using CustomerSimulationBL.Interfaces;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using CustomerSimulationBL.DTOs;
 
 namespace CustomerSimulationDL.Repositories
 {
@@ -19,7 +20,7 @@ namespace CustomerSimulationDL.Repositories
             _connectionstring = connectionstring;
         }
 
-        public void UploadCustomer(IEnumerable<Customer> customers, int simulationDataId)
+        public void UploadCustomer(IEnumerable<CustomerDTO> customers, int simulationDataId)
         {
             string SQL = "INSERT INTO Customer(CountryVersionID, SimulationDataID, FirstName, LastName, Municipality, Street, HouseNumber ,BirthDate) " +
                          "OUTPUT inserted.ID VALUES(@CountryVersionID, @SimulationDataID, @FirstName, @LastName, @Municipality, @Street, @HouseNumber, @BirthDate)";
@@ -42,7 +43,7 @@ namespace CustomerSimulationDL.Repositories
                 int customerId;
                 try
                 {
-                    foreach(Customer c in customers)
+                    foreach(var c in customers)
                     {
                         cmd.Parameters["@SimulationDataID"].Value = simulationDataId;
                         cmd.Parameters["@FirstName"].Value = c.FirstName;
