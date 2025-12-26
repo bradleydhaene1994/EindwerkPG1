@@ -8,14 +8,16 @@ namespace CustomerSimulationBL.DTOs
 {
     public class SimulationSettingsDTO
     {
-        public SimulationSettingsDTO(int id, List<int> selectedMunicipalityIds, int totalCustomers, int minAge, int maxAge, string houseNumberRules)
+        public SimulationSettingsDTO(List<int> selectedMunicipalityIds, int totalCustomers, int minAge, int maxAge, int minNumber, int maxNumber, bool hasLetters, int percentageLetters)
         {
-            Id = id;
             SelectedMunicipalityIds = selectedMunicipalityIds;
             TotalCustomers = totalCustomers;
             MinAge = minAge;
             MaxAge = maxAge;
-            HouseNumberRules = houseNumberRules;
+            this.minNumber = minNumber;
+            this.maxNumber = maxNumber;
+            HasLetters = hasLetters;
+            PercentageLetters = percentageLetters;
         }
 
         public int Id {  get; set; }
