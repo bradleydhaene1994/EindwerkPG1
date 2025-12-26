@@ -17,25 +17,25 @@ namespace CustomerSimulationBL.Managers
 
         private readonly Random _random = new Random();
 
-        public List<CustomerDTO> CustomerSetSimulation(SimulationSettings settings, int countryVersionId)
+        public List<CustomerDTO> GenerateCustomers(SimulationSettings settings, int countryVersionId)
         {   
             List<CustomerDTO> customers = new List<CustomerDTO>();
 
-            for(int i = 0; i < settings.TotalCustomers; i++)
+            var addresses = _addressmanager.GetAddressesByCountryVersionID(countryVersionId);
+            var municipalities = _municipalitymanager.GetMunicipalityByCountryVersionID(countryVersionId);
+            var firstNames = _namemanager.GetFirstNamesByCountryVersionID(countryVersionId);
+            var lastNames = _namemanager.GetLastNamesByCountryVersionID(countryVersionId);
+
+            for (int i = 0; i < settings.TotalCustomers; i++)
             {
-                var addresses = _addressmanager.GetAddressesByCountryVersionID(countryVersionId);
                 Address randomAddres = _addressmanager.GetRandomAddress(addresses);
                 string addressStreet = randomAddres.Street;
 
-                var municipalities = _municipalitymanager.GetMunicipalityByCountryVersionID(countryVersionId);
                 Municipality randomMunicipality = _municipalitymanager.GetRandomMunicipality(municipalities);
                 string municipalityName = randomMunicipality.Name;
-
-                var firstNames = _namemanager.GetFirstNamesByCountryVersionID(countryVersionId);
                 FirstName randomFirstName = _namemanager.GetRandomFirstName(firstNames);
                 string nameFirst = randomFirstName.Name;
 
-                var lastNames = _namemanager.GetLastNamesByCountryVersionID(countryVersionId);
                 LastName randomLastName = _namemanager.GetRandomLastName(lastNames);
                 string nameLast = randomLastName.Name;
 

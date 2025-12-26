@@ -9,7 +9,7 @@ namespace CustomerSimulationBL.Domein
 {
     public class SimulationSettings
     {
-        public SimulationSettings(int id, IReadOnlyList<int> selectedMunicipalityIds, int totalCustomers, int minAge, int maxAge, int minNumber, int maxNumber, bool hasLetters, int percentageLetters)
+        public SimulationSettings(int id, List<int> selectedMunicipalityIds, int totalCustomers, int minAge, int maxAge, int minNumber, int maxNumber, bool hasLetters, int percentageLetters)
         {
             Id = id;
             SelectedMunicipalityIds = selectedMunicipalityIds;
@@ -23,7 +23,7 @@ namespace CustomerSimulationBL.Domein
         }
 
         public int Id { get; set; }
-        public IReadOnlyList<int> SelectedMunicipalityIds { get; }
+        public List<int> SelectedMunicipalityIds { get; }
         public int TotalCustomers { get; }
         public int MinAge { get; }
         public int MaxAge { get; }
