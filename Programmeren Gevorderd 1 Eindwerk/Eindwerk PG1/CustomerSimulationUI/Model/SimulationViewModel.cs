@@ -44,7 +44,7 @@ namespace CustomerSimulationUI.Model
             Customers.Clear();
             foreach (var customer in generatedCustomers)
             {
-                generatedCustomers.Add(customer);
+                Customers.Add(customer);
             }
         }
 
