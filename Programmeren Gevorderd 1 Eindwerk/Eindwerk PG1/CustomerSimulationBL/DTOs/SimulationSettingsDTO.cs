@@ -23,6 +23,9 @@ namespace CustomerSimulationBL.DTOs
         public int TotalCustomers { get; set; }
         public int MinAge { get; set; }
         public int MaxAge { get; set; }
-        public string HouseNumberRules { get; set; }
+        public int minNumber { get; set; }
+        public int maxNumber { get; set; }
+        public bool HasLetters { get; set; }
+        public int PercentageLetters { get; set; }
     }
 }

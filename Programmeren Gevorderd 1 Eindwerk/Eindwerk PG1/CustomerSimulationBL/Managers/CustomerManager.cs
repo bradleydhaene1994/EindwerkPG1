@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CustomerSimulationBL.Domein;
+using CustomerSimulationBL.DTOs;
 using CustomerSimulationBL.Interfaces;
 
 namespace CustomerSimulationBL.Managers
@@ -28,21 +29,12 @@ namespace CustomerSimulationBL.Managers
             return customers;
         }
 
-        public DateTime GetRandomBirthdate(int minAge, int maxAge)
+        public DateTime GetRandomBirthdate(SimulationSettingsDTO settings)
         {
-            if(minAge < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(minAge));
-            }
-            if(maxAge < minAge)
-            {
-                throw new ArgumentException("Maximum age must be higher than minimum age.");
-            }
-
             DateTime today = DateTime.Now;
 
-            DateTime earliestBirthDate = today.AddYears(-maxAge);
-            DateTime latestBirthDate = today.AddYears(-minAge);
+            DateTime earliestBirthDate = today.AddYears(-settings.MaxAge);
+            DateTime latestBirthDate = today.AddYears(-settings.MinAge);
 
             int dayRange = (latestBirthDate - earliestBirthDate).Days;
 
@@ -51,24 +43,11 @@ namespace CustomerSimulationBL.Managers
             return earliestBirthDate.AddDays(randomDays);
         }
 
-        public string GetRandomHouseNumber(int minNumber, int maxNumber, bool hasLetters, int percentageLetters)
+        public string GetRandomHouseNumber(SimulationSettingsDTO settings)
         {
-            if(minNumber < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(minNumber));
-            }
-            if(maxNumber < minNumber)
-            {
-                throw new ArgumentException("maximum number must be higher than minimum number");
-            }
-            if(percentageLetters < 0 || percentageLetters > 100)
-            {
-                throw new ArgumentOutOfRangeException(nameof(percentageLetters));
-            }
+            int number = _random.Next(settings.MinAge , settings.MaxAge + 1);
 
-            int number = _random.Next(minNumber , maxNumber + 1);
-
-            bool addLeter = hasLetters && _random.Next(100) < percentageLetters;
+            bool addLeter = settings.HasLetters && _random.Next(100) < settings.PercentageLetters;
 
             if(!addLeter)
             {

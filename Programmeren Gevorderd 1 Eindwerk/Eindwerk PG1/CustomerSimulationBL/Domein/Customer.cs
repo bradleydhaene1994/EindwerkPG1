@@ -30,11 +30,11 @@ namespace CustomerSimulationBL.Domein
         }
 
         public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Municipality { get; set; }
-        public string Street { get; set; }
-        public DateTime BirthDate { get; set; }
-        public string HouseNumber { get; set; }
+        public string FirstName { get; }
+        public string LastName { get; }
+        public string Municipality { get; }
+        public string Street { get; }
+        public DateTime BirthDate { get; }
+        public string HouseNumber { get; }
     }
 }

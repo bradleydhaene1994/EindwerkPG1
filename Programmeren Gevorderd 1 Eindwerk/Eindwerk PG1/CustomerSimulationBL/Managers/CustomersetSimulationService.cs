@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CustomerSimulationBL.Domein;
+using CustomerSimulationBL.DTOs;
 
 namespace CustomerSimulationBL.Managers
 {
@@ -16,13 +17,11 @@ namespace CustomerSimulationBL.Managers
 
         private readonly Random _random = new Random();
 
-        public List<Customer> CustomerSetSimulation(SimulationSettings simulationSettings, int countryVersionId, int minNumber, int maxNumber, bool hasLetters, int percentageLetters)
-        {
-            int customerAmount = simulationSettings.NumberCustomers;
-            
-            List<Customer> customers = new List<Customer>();
+        public List<CustomerDTO> CustomerSetSimulation(SimulationSettingsDTO settings)
+        {   
+            List<CustomerDTO> customers = new List<CustomerDTO>();
 
-            for(int i = 0; i < customerAmount; i++)
+            for(int i = 0; i < settings.TotalCustomers; i++)
             {
                 var addresses = _addressmanager.GetAddressesByCountryVersionID(countryVersionId);
                 Address randomAddres = _addressmanager.GetRandomAddress(addresses);
@@ -40,7 +39,7 @@ namespace CustomerSimulationBL.Managers
                 LastName randomLastName = _namemanager.GetRandomLastName(lastNames);
                 string nameLast = randomLastName.Name;
 
-                DateTime randomBirthday = _customermanager.GetRandomBirthdate(simulationSettings.MinAge, simulationSettings.MaxAge);
+                DateTime randomBirthday = _customermanager.GetRandomBirthdate();
                 string houseNumber = _customermanager.GetRandomHouseNumber(minNumber, maxNumber, hasLetters, percentageLetters);
 
                 Customer customer = new Customer(nameFirst, nameLast, municipalityName, addressStreet, randomBirthday, houseNumber);
