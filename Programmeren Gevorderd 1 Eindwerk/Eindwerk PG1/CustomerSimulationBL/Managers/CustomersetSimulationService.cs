@@ -17,7 +17,7 @@ namespace CustomerSimulationBL.Managers
 
         private readonly Random _random = new Random();
 
-        public List<CustomerDTO> CustomerSetSimulation(SimulationSettingsDTO settings)
+        public List<CustomerDTO> CustomerSetSimulation(SimulationSettings settings, int countryVersionId)
         {   
             List<CustomerDTO> customers = new List<CustomerDTO>();
 
@@ -39,10 +39,10 @@ namespace CustomerSimulationBL.Managers
                 LastName randomLastName = _namemanager.GetRandomLastName(lastNames);
                 string nameLast = randomLastName.Name;
 
-                DateTime randomBirthday = _customermanager.GetRandomBirthdate();
-                string houseNumber = _customermanager.GetRandomHouseNumber(minNumber, maxNumber, hasLetters, percentageLetters);
+                DateTime randomBirthday = _customermanager.GetRandomBirthdate(settings);
+                string houseNumber = _customermanager.GetRandomHouseNumber(settings);
 
-                Customer customer = new Customer(nameFirst, nameLast, municipalityName, addressStreet, randomBirthday, houseNumber);
+                CustomerDTO customer = new CustomerDTO(nameFirst, nameLast, municipalityName, addressStreet, randomBirthday, houseNumber);
 
                 customers.Add(customer);
             }

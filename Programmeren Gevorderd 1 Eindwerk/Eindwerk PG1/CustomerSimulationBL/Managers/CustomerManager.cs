@@ -29,7 +29,7 @@ namespace CustomerSimulationBL.Managers
             return customers;
         }
 
-        public DateTime GetRandomBirthdate(SimulationSettingsDTO settings)
+        public DateTime GetRandomBirthdate(SimulationSettings settings)
         {
             DateTime today = DateTime.Now;
 
@@ -43,7 +43,7 @@ namespace CustomerSimulationBL.Managers
             return earliestBirthDate.AddDays(randomDays);
         }
 
-        public string GetRandomHouseNumber(SimulationSettingsDTO settings)
+        public string GetRandomHouseNumber(SimulationSettings settings)
         {
             int number = _random.Next(settings.MinAge , settings.MaxAge + 1);
 

@@ -14,10 +14,10 @@ namespace CustomerSimulationBL.Domein
             Id = id;
             SelectedMunicipalityIds = selectedMunicipalityIds;
             TotalCustomers = totalCustomers;
-            this.minAge = minAge;
-            this.maxAge = maxAge;
-            this.minNumber = minNumber;
-            this.maxNumber = maxNumber;
+            this.MinAge = minAge;
+            this.MaxAge = maxAge;
+            this.MinNumber = minNumber;
+            this.MaxNumber = maxNumber;
             HasLetters = hasLetters;
             PercentageLetters = percentageLetters;
         }
@@ -25,16 +25,16 @@ namespace CustomerSimulationBL.Domein
         public int Id { get; set; }
         public IReadOnlyList<int> SelectedMunicipalityIds { get; }
         public int TotalCustomers { get; }
-        public int minAge { get; }
-        public int maxAge { get; }
-        public int minNumber { get; }
-        public int maxNumber { get; }
+        public int MinAge { get; }
+        public int MaxAge { get; }
+        public int MinNumber { get; }
+        public int MaxNumber { get; }
         public bool HasLetters { get; }
         public int PercentageLetters { get; }
 
         public string HouseNumberRulesToString()
         {
-            return $"Minimum number: {minNumber}, Maximum number: {maxNumber}, Has Letters: {HasLetters}, Percentage appearance letters in housenumbers: {PercentageLetters}%";
+            return $"Minimum number: {MinNumber}, Maximum number: {MaxNumber}, Has Letters: {HasLetters}, Percentage appearance letters in housenumbers: {PercentageLetters}%";
         }
     }
 }
