@@ -48,10 +48,10 @@ namespace CustomerSimulationDL.Repositories
                 }
             }
         }
-        public void UploadSimulationSettings(SimulationSettings simulationSettings, int simulationDataId)
+        public void UploadSimulationSettings(SimulationSettings simulationSettings, int simulationDataId, int houseNumberRulesId)
         {
-            string SQLSimulationSettings = "INSERT INTO SimulationSettings(SimulationDataID, NumberCustomers, MinAge, MaxAge, HouseNumberRules) " +
-                                           "OUTPUT inserted.ID VALUES(@SimulationDataID, @NumberCustomers, @MinAge, @MaxAge, @HouseNumberRules)";
+            string SQLSimulationSettings = "INSERT INTO SimulationSettings(SimulationDataID, NumberCustomers, MinAge, MaxAge, HouseNumberRulesID) " +
+                                           "OUTPUT inserted.ID VALUES(@SimulationDataID, @NumberCustomers, @MinAge, @MaxAge, @HouseNumberRulesID)";
 
             using (SqlConnection conn = new SqlConnection(_connectionstring))
             using (SqlCommand cmd = conn.CreateCommand())
@@ -64,15 +64,15 @@ namespace CustomerSimulationDL.Repositories
                 cmd.Parameters.Add(new SqlParameter("@NumberCustomers", SqlDbType.Int));
                 cmd.Parameters.Add(new SqlParameter("@MinAge", SqlDbType.Int));
                 cmd.Parameters.Add(new SqlParameter("@MaxAge", SqlDbType.Int));
-                cmd.Parameters.Add(new SqlParameter("@HouseNumberRules", SqlDbType.NVarChar, 100));
+                cmd.Parameters.Add(new SqlParameter("@HouseNumberRulesID", SqlDbType.Int));
                 int simulationSettingsId;
                 try
                 {
                     cmd.Parameters["@SimulationDataID"].Value = simulationDataId;
-                    cmd.Parameters["@NumberCustomers"].Value = simulationSettings.NumberCustomers;
+                    cmd.Parameters["@NumberCustomers"].Value = simulationSettings.TotalCustomers;
                     cmd.Parameters["@MinAge"].Value = simulationSettings.MinAge;
                     cmd.Parameters["@MaxAge"].Value = simulationSettings.MaxAge;
-                    cmd.Parameters["@HouseNumberRules"].Value = simulationSettings.HouseNumberRules;
+                    cmd.Parameters["@HouseNumberRulesID"].Value = houseNumberRulesId;
                     simulationSettingsId = (int)cmd.ExecuteScalar();
 
                     tran.Commit();
@@ -84,6 +84,40 @@ namespace CustomerSimulationDL.Repositories
                 }
             }
 
+        }
+        public void UploadHouseNumberRules(SimulationSettings simulationSettings)
+        {
+            string SQL = "INSERT INTO HouseNumberRules(MinNumber, MaxNumber, HasLetters, PercentageLetters " +
+                         "OUTPUT inserted.ID VALUES(@MinNumber, @MaxNumber, @HasLetters, @PercentageLetters)";
+
+            using(SqlConnection conn = new SqlConnection(_connectionstring))
+            using(SqlCommand cmd = conn.CreateCommand())
+            {
+                conn.Open();
+                SqlTransaction tran = conn.BeginTransaction();
+                cmd.CommandText = SQL;
+                cmd.Transaction = tran;
+                cmd.Parameters.Add(new SqlParameter("@MinNumber", SqlDbType.Int));
+                cmd.Parameters.Add(new SqlParameter("@MaxNumber", SqlDbType.Int));
+                cmd.Parameters.Add(new SqlParameter("@HasLetters", SqlDbType.Bit));
+                cmd.Parameters.Add(new SqlParameter("@PercentageLetters", SqlDbType.Int));
+                int houseNumberRulesId;
+                try
+                {
+                    cmd.Parameters["@MinNumber"].Value = simulationSettings.MinNumber;
+                    cmd.Parameters["@MaxNumber"].Value = simulationSettings.MaxNumber;
+                    cmd.Parameters["@HasLetters"].Value = simulationSettings.HasLetters;
+                    cmd.Parameters["@PercentageLetters"].Value = simulationSettings.PercentageLetters;
+                    houseNumberRulesId = (int)cmd.ExecuteScalar();
+
+                    tran.Commit();
+                }
+                catch (Exception)
+                {
+                    tran.Rollback();
+                    throw;
+                }
+            }
         }
         public void UploadSimulationStatistics(SimulationStatistics simulationStatistics, int simulationDataId)
         {
@@ -156,9 +190,11 @@ namespace CustomerSimulationDL.Repositories
         {
             SimulationSettings simSettings = null;
 
-            string SQL = "SELECT ss.ID, ss.NumberCustomers, ss.MinAge, ss.MaxAge, ss.HouseNumberRules " +
+            string SQL = "SELECT ss.Id, ss.NumberCustomers, ss.MinAge, ss.MaxAge, hnr.MinNumber, hnr.MaxNumer, hnr.HasLetters, hnr.PercentageLetters " +
                          "FROM SimulationSettings ss " +
-                         "WHERE SimulationDataID = @SimulationDataID";
+                         "JOIN HouseNumberRules hnr " +
+                         "ONT ss.HouseNumberRulesID = hnr.ID " +
+                         "Where ss.SimulationDataID = @SimulationDataID";
 
             using(SqlConnection conn = new SqlConnection(_connectionstring))
             using(SqlCommand cmd = conn.CreateCommand())
@@ -175,9 +211,13 @@ namespace CustomerSimulationDL.Repositories
                         int numberCustomers = reader.GetInt32(reader.GetOrdinal("NumberCustomers"));
                         int minAge = reader.GetInt32(reader.GetOrdinal("MinAge"));
                         int maxAge = reader.GetInt32(reader.GetOrdinal("MaxAge"));
-                        string houseNumberRules = reader.GetString(reader.GetOrdinal("HouseNumberRules"));
 
-                        simSettings = new SimulationSettings(id, null, numberCustomers, minAge, maxAge, houseNumberRules);
+                        int minNumber = reader.GetInt32(reader.GetOrdinal("MinNumber"));
+                        int maxNumber = reader.GetInt32(reader.GetOrdinal("MaxNumber"));
+                        bool hasLetters = reader.GetBoolean(reader.GetOrdinal("HasLetters"));
+                        int percentageLetters = reader.GetInt32(reader.GetOrdinal("PercentageLetters"));
+
+                        simSettings = new SimulationSettings(id, null, numberCustomers, minAge, maxAge, minNumber, maxNumber, hasLetters, percentageLetters);
                     }
                 }
             }

@@ -52,14 +52,14 @@ namespace CustomerSimulationUI
 
         private void ButtonUpload_Click(object sender, RoutedEventArgs e)
         {
-            UploadWindow uploadWindow = new UploadWindow(_addressRepository, _customerRepository, _countryVersionRepository, _municipalityRepository, _nameRepository, _csvReader, _jsonReader, _textReader);
+            UploadWindow uploadWindow = new UploadWindow(_addressRepository, _customerRepository, _countryVersionRepository, _municipalityRepository, _nameRepository, _textReader, _jsonReader, _csvReader);
             uploadWindow.Show();
         }
 
         private void ButtionSimulation_Click(object sender, RoutedEventArgs e)
         {
-            SimulationWindow simulationWindow = new SimulationWindow(_addressRepository, _customerRepository, _countryVersionRepository, _municipalityRepository, _nameRepository, _simulationRepository);
-            simulationWindow.Show();
+            //SimulationWindow simulationWindow = new SimulationWindow(_addressRepository, _customerRepository, _countryVersionRepository, _municipalityRepository, _nameRepository, _simulationRepository);
+            //simulationWindow.Show();
         }
     }
 }

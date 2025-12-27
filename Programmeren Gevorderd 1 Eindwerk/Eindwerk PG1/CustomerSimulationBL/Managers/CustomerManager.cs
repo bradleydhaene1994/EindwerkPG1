@@ -19,7 +19,7 @@ namespace CustomerSimulationBL.Managers
             _customerRepo = customerRepo;
         }
 
-        public void UploadCustomer(IEnumerable<Customer> customers, int simulationDataId)
+        public void UploadCustomer(IEnumerable<CustomerDTO> customers, int simulationDataId)
         {
             _customerRepo.UploadCustomer(customers, simulationDataId);
         }

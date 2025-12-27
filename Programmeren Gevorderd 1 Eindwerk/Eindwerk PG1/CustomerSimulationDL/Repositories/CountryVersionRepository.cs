@@ -51,5 +51,33 @@ namespace CustomerSimulationDL.Repositories
                 }
             }
         }
+        public List<Country> GetAllCountries()
+        {
+            List<Country> countries = new List<Country>();
+
+            string SQL = "SELECT * " +
+                         "FROM Country";
+
+            using(SqlConnection con = new SqlConnection(_connectionstring))
+            using (SqlCommand cmd = con.CreateCommand())
+            {
+                con.Open();
+                cmd.CommandText = SQL;
+
+                using(SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        int Id = (int)reader["Id"];
+                        string Name = (string)reader["Name"];
+
+                        Country country = new Country(Id, Name);
+
+                        countries.Add(country);
+                    }
+                }
+            }
+            return countries;
+        }
     }
 }
