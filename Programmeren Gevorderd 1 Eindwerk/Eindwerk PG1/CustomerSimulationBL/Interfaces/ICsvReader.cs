@@ -9,7 +9,7 @@ namespace CustomerSimulationBL.Interfaces
 {
     public interface ICsvReader
     {
-        IEnumerable<Address> ReadAddresses(string path);
+        List<Address> ReadAddresses(string path);
         IEnumerable<FirstName> ReadFirstNames(string path);
         IEnumerable<LastName> ReadLastNames(string path);
     }

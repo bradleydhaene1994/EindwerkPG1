@@ -11,7 +11,7 @@ namespace CustomerSimulationDL.FileReaders
 {
     public class CsvFileReader : ICsvReader
     {
-        public IEnumerable<Address> ReadAddresses(string path)
+        public List<Address> ReadAddresses(string path)
         {
             var Addresses = new List<Address>();
 

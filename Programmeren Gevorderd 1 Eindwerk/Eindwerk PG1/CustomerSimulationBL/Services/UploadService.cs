@@ -47,17 +47,17 @@ namespace CustomerSimulationBL.Services
                 _ => throw new InvalidOperationException("Unsupported file format")
             };
         }
-        public void Upload(string filePath, CountryVersion countryVersion, UploadDataType dataType, int countryId)
+        public void Upload(string filePath, CountryVersion countryVersion, UploadDataType dataType, int countryId, IProgress<int> progress)
         {
-            _countryVersionRepository.UploadCountryVersion(countryVersion, countryId);
-            int countryVersionId = countryVersion.Id;
+            int countryVersionId = _countryVersionRepository.UploadCountryVersion(countryVersion, countryId);
+            
 
             FileFormat format = GetFileFormat(filePath);
 
             switch(dataType)
             {
                 case UploadDataType.Address:
-                    UploadAddresses(filePath, format, countryVersionId);
+                    UploadAddresses(filePath, format, countryVersionId, progress);
                     break;
 
                 case UploadDataType.FirstName:
@@ -73,16 +73,26 @@ namespace CustomerSimulationBL.Services
                     break;
             }
         }
-        private void UploadAddresses(string filePath, FileFormat format, int countryVersionId)
+        private void UploadAddresses(string filePath, FileFormat format, int countryVersionId, IProgress<int> progress)
         {
-            IEnumerable<Address> addresses = format switch
+            var addresses = format switch
             {
-                FileFormat.Csv => _csvReader.ReadAddresses(filePath),
-                FileFormat.Json => _jsonReader.ReadAddresses(filePath),
+                FileFormat.Csv => _csvReader.ReadAddresses(filePath).ToList(),
+                FileFormat.Json => _jsonReader.ReadAddresses(filePath).ToList(),
                 _ => throw new InvalidOperationException()
             };
 
-            _addressRepository.UploadAddress(addresses, countryVersionId);
+            int total = addresses.Count;
+            int processed = 0;
+
+            foreach(var address in addresses)
+            {
+                _addressRepository.UploadAddress(address, countryVersionId);
+
+                processed++;
+                int percent = (int)((processed / (double)total) * 100);
+                progress?.Report(percent);
+            }
         }
         private void UploadFirstNames(string filePath, FileFormat format, int countryVersionId)
         {

@@ -19,18 +19,53 @@ namespace CustomerSimulationDL.Repositories
             _connectionstring = connectionstring;
         }
 
-        public void UploadAddress(IEnumerable<Address> addresses, int countryVersionID)
+        public void UploadAddress(Address address, int countryVersionID)
         {
-            string SQLMunicipality = "IF NOT EXISTS (SELECT 1 FROM Municipality WHERE CountryVersionID = @CountryVersionID AND Name = @Name) " +
-                                     "INSERT INTO Municipality(CountryVersionID, Name) " +
-                                     "OUTPUT inserted.ID VALUES(@CountryVersionID, @Name) " +
-                                     "ELSE SELECT ID FROM Municipality WHERE CountryVersionID = @CountryVersionID AND Name = @Name";
-            string SQLAddress = "IF NOT EXISTS (SELECT 1 FROM ADDRESS WHERE StreetName = @StreetName AND (MunicipalityID = @MunicipalityID OR (MunicipalityID IS NULL and @MunicipalityID IS NULL)) " +
-                                "INSERT INTO Address(MunicipalityID, StreetName " +
-                                "OUTPUT inserted.ID VALUES(@MunicipalityID, @StreetName) " +
-                                "ELSE SELECT ID FROM Adress WHERE Streetname = @StreetName AND (MunicipalityID = @MunicipalityID OR (MunicipalityID IS NULL AND @MunicipalityID IS NULL))";
-
-            using(SqlConnection conn = new SqlConnection(_connectionstring))
+            string SQLMunicipality = @"
+                                        IF NOT EXISTS (
+                                        SELECT 1 
+                                        FROM Municipality 
+                                        WHERE CountryVersionID = @CountryVersionID 
+                                        AND Name = @Name
+                                        )
+                                        BEGIN
+                                        INSERT INTO Municipality (CountryVersionID, Name)
+                                        OUTPUT INSERTED.ID
+                                        VALUES (@CountryVersionID, @Name);
+                                        END
+                                        ELSE
+                                        BEGIN
+                                        SELECT ID 
+                                        FROM Municipality 
+                                        WHERE CountryVersionID = @CountryVersionID 
+                                        AND Name = @Name;
+                                        END";
+            string SQLAddress = @"
+                                IF NOT EXISTS (
+                                    SELECT 1 
+                                    FROM [Address]
+                                    WHERE StreetName = @StreetName
+                                      AND (
+                                          MunicipalityID = @MunicipalityID
+                                          OR (MunicipalityID IS NULL AND @MunicipalityID IS NULL)
+                                      )
+                                )
+                                BEGIN
+                                    INSERT INTO [Address] (MunicipalityID, StreetName)
+                                    OUTPUT INSERTED.ID
+                                    VALUES (@MunicipalityID, @StreetName);
+                                END
+                                ELSE
+                                BEGIN
+                                    SELECT ID 
+                                    FROM [Address]
+                                    WHERE StreetName = @StreetName
+                                      AND (
+                                          MunicipalityID = @MunicipalityID
+                                          OR (MunicipalityID IS NULL AND @MunicipalityID IS NULL)
+                                      );
+                                END";
+            using (SqlConnection conn = new SqlConnection(_connectionstring))
             using(SqlCommand cmd = conn.CreateCommand())
             using(SqlCommand cmd2 = conn.CreateCommand())
             {
@@ -48,21 +83,19 @@ namespace CustomerSimulationDL.Repositories
                 int addressId;
                 try
                 {
-                    foreach(Address a in addresses)
-                    {
-                        municipalityId = null;
+                  municipalityId = null;
                         
-                        if(a.Municipality != null)
-                        {
-                            cmd.Parameters["@CountryVersionID"].Value = countryVersionID;
-                            cmd.Parameters["@Name"].Value = a.Municipality.Name;
-                            municipalityId = (int)cmd.ExecuteScalar();
-                        }
+                  if(address.Municipality != null)
+                  {
+                      cmd.Parameters["@CountryVersionID"].Value = countryVersionID;
+                      cmd.Parameters["@Name"].Value = address.Municipality.Name;
+                      municipalityId = (int)cmd.ExecuteScalar();
+                  }
 
-                        cmd2.Parameters["@MunicipalityID"].Value = (object?)municipalityId ?? DBNull.Value;
-                        cmd2.Parameters["@StreetName"].Value = a.Street;
-                        addressId = (int)cmd2.ExecuteScalar();
-                    }
+                      cmd2.Parameters["@MunicipalityID"].Value = (object?)municipalityId ?? DBNull.Value;
+                      cmd2.Parameters["@StreetName"].Value = address.Street;
+                      addressId = (int)cmd2.ExecuteScalar();
+
                     tran.Commit();
                 }
                 catch(Exception)

@@ -18,9 +18,9 @@ namespace CustomerSimulationBL.Managers
             _addressRepo = addressRepo;
         }
 
-        public void UploadAddress(IEnumerable<Address> addresses, int countryVersionID)
+        public void UploadAddress(Address address, int countryVersionID)
         {
-            _addressRepo.UploadAddress(addresses, countryVersionID);
+            _addressRepo.UploadAddress(address, countryVersionID);
         }
 
         public List<Address> GetAddressesByCountryVersionID(int countryVersionId)

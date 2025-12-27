@@ -17,9 +17,10 @@ namespace CustomerSimulationBL.Managers
             _countryVersionRepo = countryVersionRepo;
         }
 
-        public void UploadCountryVersion(CountryVersion countryVersion, int simulationDataId)
+        public int UploadCountryVersion(CountryVersion countryVersion, int simulationDataId)
         {
-            _countryVersionRepo.UploadCountryVersion(countryVersion, simulationDataId);
+            int countryVersionId = _countryVersionRepo.UploadCountryVersion(countryVersion, simulationDataId);
+            return countryVersionId;
         }
     }
 }

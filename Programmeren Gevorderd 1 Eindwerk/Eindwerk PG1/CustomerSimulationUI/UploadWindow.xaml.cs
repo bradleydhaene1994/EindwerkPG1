@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using CustomerSimulationBL.Domein;
 using CustomerSimulationBL.Enumerations;
 using CustomerSimulationBL.Interfaces;
+using CustomerSimulationBL.Services;
 using Microsoft.Win32;
 
 namespace CustomerSimulationUI
@@ -45,6 +46,8 @@ namespace CustomerSimulationUI
             _jsonReader = jsonReader;
             _csvReader = csvReader;
 
+            _uploadService = new UploadService(_addressRepository, _municipalityRepository, _nameRepository, _countryVersionRepository, _csvReader, _textReader, _jsonReader);
+
             List<Country> countries = _countryVersionRepository.GetAllCountries();
 
             SelectCountry.ItemsSource = countries;
@@ -71,7 +74,7 @@ namespace CustomerSimulationUI
             }
         }
 
-        private void ButtonUploadFile_Click(object sender, RoutedEventArgs e)
+        private async void ButtonUploadFile_Click(object sender, RoutedEventArgs e)
         {
             if(string.IsNullOrWhiteSpace(FilePath.Text))
             {
@@ -86,11 +89,13 @@ namespace CustomerSimulationUI
 
             var selectedCountry = SelectCountry.SelectedItem as Country;
 
-            if(selectedCountry != null)
+            if(selectedCountry == null)
             {
                 MessageBox.Show("Please select a country.");
                     return;
             }
+
+            string filePath = FilePath.Text;
 
             int countryId = selectedCountry.Id;
 
@@ -98,7 +103,17 @@ namespace CustomerSimulationUI
 
             UploadDataType dataType = GetSelectedDataType();
 
-            _uploadService.Upload(FilePath.Text, countryVersion, dataType, countryId);
+            UploadProgressBar.Value = 0;
+            UploadProgressBar.Visibility = Visibility.Visible;
+
+            var progress = new Progress<int>(value =>
+            {
+                UploadProgressBar.Value = value;
+            });
+
+            await Task.Run(() => _uploadService.Upload(filePath, countryVersion, dataType, countryId, progress));
+
+            UploadProgressBar.Visibility = Visibility.Collapsed;
 
             MessageBox.Show("Upload Completed");
         }

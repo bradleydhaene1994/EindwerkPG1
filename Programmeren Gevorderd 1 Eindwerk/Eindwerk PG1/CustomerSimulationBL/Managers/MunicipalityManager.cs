@@ -16,9 +16,9 @@ namespace CustomerSimulationBL.Managers
             _municipalityRepo = municipalityRepo;
         }
 
-        public void UploadMunicipality(IEnumerable<Municipality> municipalities, CountryVersion countryVersion)
+        public void UploadMunicipality(IEnumerable<Municipality> municipalities, int countryVersionId)
         {
-            _municipalityRepo.UploadMunicipality(municipalities, countryVersion);
+            _municipalityRepo.UploadMunicipality(municipalities, countryVersionId);
         }
         public List<Municipality> GetMunicipalityByCountryVersionID(int countryVersionID)
         {
