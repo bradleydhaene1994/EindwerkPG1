@@ -10,27 +10,27 @@ namespace CustomerSimulationUtils
 {
     public class RepositoryFactory
     {
-        public static IAddressRepository GetAddressRepository(string connectionstring)
+        public IAddressRepository GetAddressRepository(string connectionstring)
         {
             return new AddressRepository(connectionstring);
         }
-        public static ICountryVersionRepository GetCountryVersionRepository(string connectionstring)
+        public ICountryVersionRepository GetCountryVersionRepository(string connectionstring)
         {
             return new CountryVersionRepository(connectionstring);
         }
-        public static ICustomerRepository GetCustomerRepository(string connectionstring)
+        public ICustomerRepository GetCustomerRepository(string connectionstring)
         {
             return new CustomerRepository(connectionstring);
         }
-        public static IMunicipalityRepository GetMunicipalityRepository(string connectionstring)
+        public IMunicipalityRepository GetMunicipalityRepository(string connectionstring)
         {
             return new MunicipalityRepository(connectionstring);
         }
-        public static INameRepository GetNameRepository(string connectionstring)
+        public INameRepository GetNameRepository(string connectionstring)
         {
             return new NameRepository(connectionstring);
         }
-        public static ISimulationRepository GetSimulationRepository(string connectionstring)
+        public ISimulationRepository GetSimulationRepository(string connectionstring)
         {
             return new SimulationRepository(connectionstring);
         }

@@ -8,17 +8,17 @@ using CustomerSimulationDL.FileReaders;
 
 namespace CustomerSimulationUtils
 {
-    public static class FileReaderFactory
+    public class FileReaderFactory
     {
-        public static ICsvReader GeefCsvReader()
+        public ICsvReader GetCsvReader()
         {
             return new CsvFileReader();
         }
-        public static IJsonReader GeefJsonReader()
+        public IJsonReader GetJsonReader()
         {
             return new JsonFileReader();
         }
-        public static ITxtReader GeefTxtReader()
+        public ITxtReader GetTxtReader()
         {
             return new TxtFileReader();
         }
