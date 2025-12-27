@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CustomerSimulationUI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="auto" Width="auto">
+        SizeToContent="Height"
+        Title="MainWindow" Height="auto" Width="500">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

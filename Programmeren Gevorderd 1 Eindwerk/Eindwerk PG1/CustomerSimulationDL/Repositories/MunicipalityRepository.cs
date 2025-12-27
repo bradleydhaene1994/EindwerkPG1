@@ -19,7 +19,7 @@ namespace CustomerSimulationDL.Repositories
             _connectionstring = connectionstring;
         }
 
-        public void UploadMunicipality(IEnumerable<Municipality> municipalities, CountryVersion countryVersion)
+        public void UploadMunicipality(IEnumerable<Municipality> municipalities, int countryVersionId)
         {
             string SQL = "INSERT INTO Municipality(CountryVersionID, Name) " +
                          "OUTPUT inserted.ID VALUES(@CountryVersionID, @Name)";
@@ -38,7 +38,7 @@ namespace CustomerSimulationDL.Repositories
                 {
                     foreach(Municipality m in municipalities)
                     {
-                        cmd.Parameters["@CountryVersionID"].Value = countryVersion.Id;
+                        cmd.Parameters["@CountryVersionID"].Value = countryVersionId;
                         cmd.Parameters["@Name"].Value = m.Name;
                         municipalityId = (int)cmd.ExecuteScalar();
                     }

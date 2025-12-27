@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -12,7 +13,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using CustomerSimulationBL.Domein;
+using CustomerSimulationBL.Enumerations;
 using CustomerSimulationBL.Interfaces;
+using Microsoft.Win32;
 
 namespace CustomerSimulationUI
 {
@@ -29,6 +32,7 @@ namespace CustomerSimulationUI
         private readonly ITxtReader _textReader;
         private readonly IJsonReader _jsonReader;
         private readonly ICsvReader _csvReader;
+        private readonly IUploadService _uploadService;
         public UploadWindow(IAddressRepository adresRepo, ICustomerRepository customerRepo, ICountryVersionRepository cvRepo, IMunicipalityRepository muniRepo, INameRepository nameRepo, ITxtReader txtReader, IJsonReader jsonReader, ICsvReader csvReader)
         {
             InitializeComponent();
@@ -46,16 +50,71 @@ namespace CustomerSimulationUI
             SelectCountry.ItemsSource = countries;
             SelectCountry.SelectedIndex = 0;
             SelectCountry.DisplayMemberPath = "Name";
+            SelectCountry.SelectedValuePath = "ID";
+
         }
 
         private void ButtonSelectFile_Click(object sender, RoutedEventArgs e)
         {
+            var openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = "Select a file to upload";
+            openFileDialog.Filter = "CSV files (*.csv)|*.csv|JSON files (*.json)|*.json|TXT files (*.txt)|*.txt";
+            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            openFileDialog.Multiselect = false;
 
+            bool? result = openFileDialog.ShowDialog();
+
+            if(result == true)
+            {
+                string selectedFilePath = openFileDialog.FileName;
+                FilePath.Text = selectedFilePath;
+            }
         }
 
         private void ButtonUploadFile_Click(object sender, RoutedEventArgs e)
         {
+            if(string.IsNullOrWhiteSpace(FilePath.Text))
+            {
+                MessageBox.Show("Please select a file for upload.");
+                return;
+            }
+            if(!int.TryParse(FieldYear.Text, out int year))
+            {
+                MessageBox.Show("Invalid Year");
+                return;
+            }
 
+            var selectedCountry = SelectCountry.SelectedItem as Country;
+
+            if(selectedCountry != null)
+            {
+                MessageBox.Show("Please select a country.");
+                    return;
+            }
+
+            int countryId = selectedCountry.Id;
+
+            CountryVersion countryVersion = new CountryVersion(year);
+
+            UploadDataType dataType = GetSelectedDataType();
+
+            _uploadService.Upload(FilePath.Text, countryVersion, dataType, countryId);
+
+            MessageBox.Show("Upload Completed");
+        }
+
+        private UploadDataType GetSelectedDataType()
+        {
+            var selected = (SelectDatatype.SelectedItem as ComboBoxItem)?.Content?.ToString();
+
+            return selected switch
+            {
+                "Address" => UploadDataType.Address,
+                "Municipality" => UploadDataType.Municipality,
+                "First Name" => UploadDataType.FirstName,
+                "Last Name" => UploadDataType.LastName,
+                _ => throw new InvalidOperationException("Invalid Datatype")
+            };
         }
     }
 }

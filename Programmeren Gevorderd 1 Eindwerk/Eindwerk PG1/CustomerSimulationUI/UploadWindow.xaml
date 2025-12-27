@@ -5,9 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CustomerSimulationUI"
         mc:Ignorable="d"
+        SizeToContent="Height"
         Title="UploadWindow" Height="auto" Width="600">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -22,8 +24,15 @@
         <ComboBox Grid.Row="0" Grid.Column="1" Margin="5" Name="SelectCountry"/>
         <TextBlock Grid.Row="0" Grid.Column="2" Margin="5" Text="Year"/>
         <TextBox Grid.Row="0" Grid.Column="3" Margin="5" Name="FieldYear"/>
-        <TextBox Grid.Row="1" Grid.Column="0" Margin="5" Name="FilePath" Grid.ColumnSpan="2"/>
-        <Button Grid.Row="1" Grid.Column="2" Margin="5" Name="ButtonSelectFile" Content="Select File" Grid.ColumnSpan="2" Click="ButtonSelectFile_Click"/>
-        <Button Grid.Row="2" Grid.Column="0" Margin="5" Name="ButtonUploadFile" Content="Upload File" Grid.ColumnSpan="4" Click="ButtonUploadFile_Click"/>
+        <TextBlock Grid.Row="1" Grid.Column="0" Margin="5" Text="DataType" Grid.ColumnSpan="2"/>
+        <ComboBox Grid.Row="1" Grid.Column="2" Margin="5" Name="SelectDatatype" Grid.ColumnSpan="2">
+            <ComboBoxItem Content="Address" />
+            <ComboBoxItem Content="Municipality" />
+            <ComboBoxItem Content="First Name" />
+            <ComboBoxItem Content="Last Name" />
+        </ComboBox>
+        <TextBox Grid.Row="2" Grid.Column="0" Margin="5" Name="FilePath" Grid.ColumnSpan="2" IsReadOnly="True"/>
+        <Button Grid.Row="2" Grid.Column="2" Margin="5" Name="ButtonSelectFile" Content="Select File" Grid.ColumnSpan="2" Click="ButtonSelectFile_Click"/>
+        <Button Grid.Row="3" Grid.Column="0" Margin="5" Name="ButtonUploadFile" Content="Upload File" Grid.ColumnSpan="4" Click="ButtonUploadFile_Click"/>
     </Grid>
 </Window>
