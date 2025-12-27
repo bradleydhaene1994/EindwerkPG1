@@ -20,9 +20,9 @@ namespace CustomerSimulationBL.Managers
         {
             _simulationRepo.UploadSimulationData(simulationData, countryVersionId);
         }
-        public void UploadSimulationSettings(SimulationSettings simulationSettings, int simulationDataId)
+        public void UploadSimulationSettings(SimulationSettings simulationSettings, int simulationDataId, int houseNumberRulesId)
         {
-            _simulationRepo.UploadSimulationSettings(simulationSettings, simulationDataId);
+            _simulationRepo.UploadSimulationSettings(simulationSettings, simulationDataId, houseNumberRulesId);
         }
         public void UploadSimulationStatistics(SimulationStatistics simulationStatistics, int simulationDataId)
         {

@@ -34,7 +34,7 @@ namespace CustomerSimulationUI
             RepositoryFactory repoFactory = new RepositoryFactory();
             FileReaderFactory fileReaderFactory = new FileReaderFactory();
             var builder = new ConfigurationBuilder().
-                              SetBasePath(Directory.GetCurrentDirectory()).
+                              SetBasePath(AppContext.BaseDirectory).
                               AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
             var configuration = builder.Build();
             string connectionString = configuration.GetSection("ConnectionStrings")["SQLserver"];
