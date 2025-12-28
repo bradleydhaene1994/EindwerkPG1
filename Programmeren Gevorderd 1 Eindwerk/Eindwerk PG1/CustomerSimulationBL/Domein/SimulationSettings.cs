@@ -9,6 +9,18 @@ namespace CustomerSimulationBL.Domein
 {
     public class SimulationSettings
     {
+        public SimulationSettings(List<int> selectedMunicipalityIds, int totalCustomers, int minAge, int maxAge, int minNumber, int maxNumber, bool hasLetters, int percentageLetters)
+        {
+            SelectedMunicipalityIds = selectedMunicipalityIds;
+            TotalCustomers = totalCustomers;
+            MinAge = minAge;
+            MaxAge = maxAge;
+            MinNumber = minNumber;
+            MaxNumber = maxNumber;
+            HasLetters = hasLetters;
+            PercentageLetters = percentageLetters;
+        }
+
         public SimulationSettings(int id, List<int> selectedMunicipalityIds, int totalCustomers, int minAge, int maxAge, int minNumber, int maxNumber, bool hasLetters, int percentageLetters)
         {
             Id = id;

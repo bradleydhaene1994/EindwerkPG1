@@ -5,19 +5,49 @@ using System.Text;
 using System.Threading.Tasks;
 using CustomerSimulationBL.Domein;
 using CustomerSimulationBL.DTOs;
+using CustomerSimulationBL.Interfaces;
 
 namespace CustomerSimulationBL.Managers
 {
-    public class GenerateCustomerService
+    public class GenerateCustomerService : ISimulationService
     {
         private readonly AddressManager _addressmanager;
         private readonly MunicipalityManager _municipalitymanager;
         private readonly NameManager _namemanager;
         private readonly CustomerManager _customermanager;
+        private readonly SimulationDataManager _simulationDataManager;
+        public GenerateCustomerService(AddressManager addressmanager, MunicipalityManager municipalitymanager, NameManager namemanager, CustomerManager customermanager, SimulationDataManager simulationDataManager)
+        {
+            _addressmanager = addressmanager;
+            _municipalitymanager = municipalitymanager;
+            _namemanager = namemanager;
+            _customermanager = customermanager;
+            _simulationDataManager = simulationDataManager;
+        }
+        public void RunSimulation(SimulationData simData, SimulationSettings simSettings, int countryVersionId)
+        {
+            //Save SimulationData
+            int simulationDataId = _simulationDataManager.UploadSimulationData(simData, countryVersionId);
 
-        private readonly Random _random = new Random();
+            //Save HouseNumberRules
+            int houseNumberRulesId = _simulationDataManager.UploadHouseNumberRules(simSettings);
 
-        public List<CustomerDTO> GenerateCustomers(SimulationSettings settings, int countryVersionId)
+            //Save SimulationSettings
+            _simulationDataManager.UploadSimulationSettings(simSettings, simulationDataId, houseNumberRulesId);
+
+            //Generate Customers
+            List<CustomerDTO> customerDTOs = GenerateCustomers(simData, simSettings, countryVersionId);
+
+            //Save Customers
+            _customermanager.UploadCustomer(customerDTOs, simulationDataId);
+
+            //Calculate statistics
+            SimulationStatistics stats = CalculateStatistics(customerDTOs);
+
+            //Save Statistics
+            _simulationDataManager.UploadSimulationStatistics(stats, simulationDataId);
+        }
+        private List<CustomerDTO> GenerateCustomers(SimulationData simulationData, SimulationSettings settings, int countryVersionId)
         {   
             List<CustomerDTO> customers = new List<CustomerDTO>();
 
@@ -47,6 +77,33 @@ namespace CustomerSimulationBL.Managers
                 customers.Add(customer);
             }
             return customers;
+        }
+
+        private SimulationStatistics CalculateStatistics(List<CustomerDTO> customers)
+        {
+            DateTime today = DateTime.Today;
+            var agesToday = customers.Select(c => CalculateAge(c.BirthDate, today)).ToList();
+
+            int totalCustomers = customers.Count;
+            double averageAgeSimulationDate = agesToday.Average();
+            double averageAgeToday= agesToday.Average();
+            int youngestAge = agesToday.Min();
+            int oldestAge = agesToday.Max();
+
+            SimulationStatistics simStatistics = new SimulationStatistics(totalCustomers, null, averageAgeSimulationDate, averageAgeToday, youngestAge, oldestAge);
+
+            return simStatistics;
+        }
+        private int CalculateAge(DateTime birthDate, DateTime referenceDate)
+        {
+            int age = referenceDate.Year - birthDate.Year;
+            
+            if(referenceDate < birthDate.AddYears(age))
+            {
+                age--;
+            }
+
+            return age;
         }
     }
 }

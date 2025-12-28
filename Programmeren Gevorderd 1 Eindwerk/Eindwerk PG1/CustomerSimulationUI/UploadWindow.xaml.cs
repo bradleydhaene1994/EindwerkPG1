@@ -25,36 +25,21 @@ namespace CustomerSimulationUI
     /// </summary>
     public partial class UploadWindow : Window
     {
-        private readonly IAddressRepository _addressRepository;
-        private readonly ICustomerRepository _customerRepository;
-        private readonly ICountryVersionRepository _countryVersionRepository;
-        private readonly IMunicipalityRepository _municipalityRepository;
-        private readonly INameRepository _nameRepository;
-        private readonly ITxtReader _textReader;
-        private readonly IJsonReader _jsonReader;
-        private readonly ICsvReader _csvReader;
         private readonly IUploadService _uploadService;
-        public UploadWindow(IAddressRepository adresRepo, ICustomerRepository customerRepo, ICountryVersionRepository cvRepo, IMunicipalityRepository muniRepo, INameRepository nameRepo, ITxtReader txtReader, IJsonReader jsonReader, ICsvReader csvReader)
+        private readonly ICountryVersionRepository _countryVersionRepo;
+        public UploadWindow(IUploadService uploadService, ICountryVersionRepository countryVersionRepo)
         {
             InitializeComponent();
-            _addressRepository = adresRepo;
-            _customerRepository = customerRepo;
-            _countryVersionRepository = cvRepo;
-            _municipalityRepository = muniRepo;
-            _nameRepository = nameRepo;
-            _textReader = txtReader;
-            _jsonReader = jsonReader;
-            _csvReader = csvReader;
 
-            _uploadService = new UploadService(_addressRepository, _municipalityRepository, _nameRepository, _countryVersionRepository, _csvReader, _textReader, _jsonReader);
+            _uploadService = uploadService;
+            _countryVersionRepo = countryVersionRepo;
 
-            List<Country> countries = _countryVersionRepository.GetAllCountries();
+            List<Country> countries = _countryVersionRepo.GetAllCountries();
 
             SelectCountry.ItemsSource = countries;
             SelectCountry.SelectedIndex = 0;
             SelectCountry.DisplayMemberPath = "Name";
             SelectCountry.SelectedValuePath = "ID";
-
         }
 
         private void ButtonSelectFile_Click(object sender, RoutedEventArgs e)
@@ -103,17 +88,21 @@ namespace CustomerSimulationUI
 
             UploadDataType dataType = GetSelectedDataType();
 
-            UploadProgressBar.Value = 0;
-            UploadProgressBar.Visibility = Visibility.Visible;
+            //Create and show progress window
+            var progressWindow = new ProgressWindow();
+            progressWindow.Owner = this;
+            progressWindow.Show();
 
-            var progress = new Progress<int>(value =>
+            var progress = new Progress<int>(value => { progressWindow.ReportProgress(value); });
+
+            try
             {
-                UploadProgressBar.Value = value;
-            });
-
-            await Task.Run(() => _uploadService.Upload(filePath, countryVersion, dataType, countryId, progress));
-
-            UploadProgressBar.Visibility = Visibility.Collapsed;
+                await Task.Run(() => _uploadService.Upload(filePath, countryVersion, dataType, countryId, progress));
+            }
+            finally
+            {
+                progressWindow.Close();
+            }
 
             MessageBox.Show("Upload Completed");
         }

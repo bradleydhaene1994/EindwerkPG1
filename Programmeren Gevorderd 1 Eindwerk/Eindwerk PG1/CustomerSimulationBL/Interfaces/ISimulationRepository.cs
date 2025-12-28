@@ -9,9 +9,10 @@ namespace CustomerSimulationBL.Interfaces
 {
     public interface ISimulationRepository
     {
-        void UploadSimulationData(SimulationData simulationData, int countryVersionId);
+        int UploadSimulationData(SimulationData simulationData, int countryVersionId);
         void UploadSimulationSettings(SimulationSettings simulationSettings, int simulationDataId, int houseNumberRulesId);
         void UploadSimulationStatistics(SimulationStatistics simulationStatistics, int simulationDataId);
+        int UploadHouseNumberRules(SimulationSettings simulationSettings);
         List<SimulationData> GetAllSimulationData();
         SimulationSettings GetSimulationSettingsBySimulationDataID(int simulationDataId);
         SimulationStatistics GetSimulationStatisticsBySimulationDataID(int simulationDataId);

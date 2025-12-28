@@ -1,0 +1,16 @@
+﻿<Window x:Class="CustomerSimulationUI.ProgressWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CustomerSimulationUI"
+        mc:Ignorable="d"
+        Title="Uploading..." Height="120" Width="300"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="ToolWindow">
+    <StackPanel Margin="20">
+        <TextBlock Text="Uploading, please wait..." HorizontalAlignment="Center" Margin="0,0,0,10"/>
+        <ProgressBar Name="ProgressBar" Height="20" Minimum="0" Maximum="100"/>
+    </StackPanel>
+</Window>

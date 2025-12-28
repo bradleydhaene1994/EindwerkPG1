@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CustomerSimulationBL.Domein;
 using CustomerSimulationBL.DTOs;
 using CustomerSimulationBL.Managers;
 using CustomerSimulationBL.Mappers;
@@ -29,25 +30,19 @@ namespace CustomerSimulationUI.Model
 
         public ObservableCollection<CustomerDTO> Customers { get; } = new ObservableCollection<CustomerDTO>();
 
-        public void GenerateCustomers(int countryVersionId)
+        public void RunSimulation(int countryVersionId, string clientName)
         {
-            //Create DTO from UI
+            //Create SimulationData
+            var simulationData = new SimulationData(clientName, DateTime.Now);
+
+            //Create SimulationSettingsDTO
             var settingsDTO = new SimulationSettingsDTO(SelectedMunicipalityIds.ToList(), TotalCustomers, MinAge, MaxAge, MinNumber, MaxNumber, HasLetters, PercentageLetters);
 
-            //Map DTO -> Domain
+            //Map DTO => Domain
             var settings = SimulationSettingsMapper.ToDomain(settingsDTO);
 
-            //Run customer simulation
-            var generatedCustomers = _generateCustomerService.GenerateCustomers(settings, countryVersionId);
-
-            //Update UI
-            Customers.Clear();
-            foreach (var customer in generatedCustomers)
-            {
-                Customers.Add(customer);
-            }
+            _generateCustomerService.RunSimulation(simulationData, settings, countryVersionId);
         }
-
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string propertyName)
         {

@@ -82,17 +82,7 @@ namespace CustomerSimulationBL.Services
                 _ => throw new InvalidOperationException()
             };
 
-            int total = addresses.Count;
-            int processed = 0;
-
-            foreach(var address in addresses)
-            {
-                _addressRepository.UploadAddress(address, countryVersionId);
-
-                processed++;
-                int percent = (int)((processed / (double)total) * 100);
-                progress?.Report(percent);
-            }
+            _addressRepository.UploadAddress(addresses, countryVersionId, progress);
         }
         private void UploadFirstNames(string filePath, FileFormat format, int countryVersionId)
         {

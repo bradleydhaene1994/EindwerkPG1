@@ -17,7 +17,7 @@ namespace CustomerSimulationDL.Repositories
         {
             _connectionstring = connectionstring;
         }
-        public void UploadSimulationData(SimulationData simulationData, int countryVersionId)
+        public int UploadSimulationData(SimulationData simulationData, int countryVersionId)
         {
             string SQL = "INSERT INTO SimulationData(Client, DateCreated, CountryVersionID) " +
                          "OUTPUT inserted.ID VALUES(@Client, @DateCreated, @CountryVersionID)";
@@ -41,10 +41,12 @@ namespace CustomerSimulationDL.Repositories
                     simulationDataId = (int)cmd.ExecuteScalar();
 
                     tran.Commit();
+                    return simulationDataId;
                 }
                 catch (Exception)
                 {
                     tran.Rollback();
+                    throw;
                 }
             }
         }
@@ -85,7 +87,7 @@ namespace CustomerSimulationDL.Repositories
             }
 
         }
-        public void UploadHouseNumberRules(SimulationSettings simulationSettings)
+        public int UploadHouseNumberRules(SimulationSettings simulationSettings)
         {
             string SQL = "INSERT INTO HouseNumberRules(MinNumber, MaxNumber, HasLetters, PercentageLetters " +
                          "OUTPUT inserted.ID VALUES(@MinNumber, @MaxNumber, @HasLetters, @PercentageLetters)";
@@ -111,6 +113,8 @@ namespace CustomerSimulationDL.Repositories
                     houseNumberRulesId = (int)cmd.ExecuteScalar();
 
                     tran.Commit();
+
+                    return houseNumberRulesId;
                 }
                 catch (Exception)
                 {
@@ -245,8 +249,8 @@ namespace CustomerSimulationDL.Repositories
                     {
                         int id = reader.GetInt32(reader.GetOrdinal("ID"));
                         int totalCustomers = reader.GetInt32(reader.GetOrdinal("TotalCustomers"));
-                        decimal averageAgeSimulationDate = reader.GetDecimal(reader.GetOrdinal("AverageAgeSimulationDate"));
-                        decimal averageAgeCurrentDate = reader.GetDecimal(reader.GetOrdinal("AverageAgeCurrentDate"));
+                        double averageAgeSimulationDate = reader.GetFloat(reader.GetOrdinal("AverageAgeSimulationDate"));
+                        double averageAgeCurrentDate = reader.GetFloat(reader.GetOrdinal("AverageAgeCurrentDate"));
                         int ageYoungestCustomer = reader.GetInt32(reader.GetOrdinal("AgeYoungestCustomer"));
                         int ageOldestCustomer = reader.GetInt32(reader.GetOrdinal("AgeOldestCustomer"));
 

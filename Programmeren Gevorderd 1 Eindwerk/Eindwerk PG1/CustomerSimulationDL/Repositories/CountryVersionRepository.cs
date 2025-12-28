@@ -81,5 +81,35 @@ namespace CustomerSimulationDL.Repositories
             }
             return countries;
         }
+        public List<CountryVersion> GetAllCountryVersions()
+        {
+            List<CountryVersion> countryVersions = new List<CountryVersion>();
+
+            string SQL = "SELECT * " +
+                         "FROM CountryVersion";
+
+            using (SqlConnection conn = new SqlConnection(_connectionstring))
+            using (SqlCommand cmd = conn.CreateCommand())
+            {
+                conn.Open();
+                cmd.CommandText = SQL;
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while(reader.Read())
+                    {
+                        int Id = (int)reader["ID"];
+                        int countryId = (int)reader["CountryID"];
+                        int year = (int)reader["Year"];
+
+                        CountryVersion countryVersion = new CountryVersion(Id, year);
+
+                        countryVersions.Add(countryVersion);
+                    }
+                }
+
+                return countryVersions;
+            }
+        }
     }
 }

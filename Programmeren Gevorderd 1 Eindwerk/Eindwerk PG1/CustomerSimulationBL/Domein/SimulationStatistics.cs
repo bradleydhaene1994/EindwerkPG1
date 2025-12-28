@@ -8,7 +8,7 @@ namespace CustomerSimulationBL.Domein
 {
     public class SimulationStatistics
     {
-        public SimulationStatistics(int totalCustomers, Dictionary<int, Municipality>? customersPerMunicipality, decimal averageAgeOnSimulationDate, decimal averageAgeOnCurrentDate, int ageYoungestCustomer, int ageOldestCustomer)
+        public SimulationStatistics(int totalCustomers, Dictionary<int, Municipality>? customersPerMunicipality, double averageAgeOnSimulationDate, double averageAgeOnCurrentDate, int ageYoungestCustomer, int ageOldestCustomer)
         {
             TotalCustomers = totalCustomers;
             CustomersPerMunicipality = customersPerMunicipality;
@@ -18,7 +18,7 @@ namespace CustomerSimulationBL.Domein
             AgeOldestCustomer = ageOldestCustomer;
         }
 
-        public SimulationStatistics(int id, int totalCustomers, Dictionary<int, Municipality>? customersPerMunicipality, decimal averageAgeOnSimulationDate, decimal averageAgeOnCurrentDate, int ageYoungestCustomer, int ageOldestCustomer)
+        public SimulationStatistics(int id, int totalCustomers, Dictionary<int, Municipality>? customersPerMunicipality, double averageAgeOnSimulationDate, double averageAgeOnCurrentDate, int ageYoungestCustomer, int ageOldestCustomer)
         {
             Id = id;
             TotalCustomers = totalCustomers;
@@ -32,8 +32,8 @@ namespace CustomerSimulationBL.Domein
         public int Id { get; set; }
         public int TotalCustomers { get; set; }
         public Dictionary<int, Municipality>? CustomersPerMunicipality { get; set; }
-        public decimal AverageAgeOnSimulationDate { get; set; }
-        public decimal AverageAgeOnCurrentDate { get; set; }
+        public double AverageAgeOnSimulationDate { get; set; }
+        public double AverageAgeOnCurrentDate { get; set; }
         public int AgeYoungestCustomer {  get; set; }
         public int AgeOldestCustomer { get; set; }
     }

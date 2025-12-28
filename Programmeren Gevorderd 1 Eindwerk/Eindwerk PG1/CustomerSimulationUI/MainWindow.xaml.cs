@@ -12,6 +12,8 @@ using Microsoft.Extensions.Configuration;
 using CustomerSimulationBL.Interfaces;
 using CustomerSimulationUtils;
 using System.IO;
+using CustomerSimulationBL.Services;
+using CustomerSimulationBL.Managers;
 
 namespace CustomerSimulationUI
 {
@@ -20,46 +22,52 @@ namespace CustomerSimulationUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly IAddressRepository _addressRepository;
-        private readonly ICustomerRepository _customerRepository;
         private readonly ICountryVersionRepository _countryVersionRepository;
-        private readonly IMunicipalityRepository _municipalityRepository;
-        private readonly INameRepository _nameRepository;
-        private readonly ISimulationRepository _simulationRepository;
-        private readonly ITxtReader _textReader;
-        private readonly IJsonReader _jsonReader;
-        private readonly ICsvReader _csvReader;
+        private readonly IUploadService _uploadService;
+        private readonly GenerateCustomerService _generateCustomerService;
         public MainWindow()
         {
-            RepositoryFactory repoFactory = new RepositoryFactory();
-            FileReaderFactory fileReaderFactory = new FileReaderFactory();
             var builder = new ConfigurationBuilder().
                               SetBasePath(AppContext.BaseDirectory).
                               AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
             var configuration = builder.Build();
             string connectionString = configuration.GetSection("ConnectionStrings")["SQLserver"];
-            
-            _addressRepository = repoFactory.GetAddressRepository(connectionString);
-            _customerRepository = repoFactory.GetCustomerRepository(connectionString);
-            _countryVersionRepository = repoFactory.GetCountryVersionRepository(connectionString);
-            _municipalityRepository = repoFactory.GetMunicipalityRepository(connectionString);
-            _nameRepository = repoFactory.GetNameRepository(connectionString);
-            _simulationRepository = repoFactory.GetSimulationRepository(connectionString);
-            _textReader = fileReaderFactory.GetTxtReader();
-            _jsonReader = fileReaderFactory.GetJsonReader();
-            _csvReader = fileReaderFactory.GetCsvReader();
+
+            RepositoryFactory repositoryFactory = new RepositoryFactory();
+            FileReaderFactory readerFactory = new FileReaderFactory();
+
+            _countryVersionRepository = repositoryFactory.GetCountryVersionRepository(connectionString);
+
+            IAddressRepository addressRepository = repositoryFactory.GetAddressRepository(connectionString);
+            IMunicipalityRepository municipalityRepository = repositoryFactory.GetMunicipalityRepository(connectionString);
+            INameRepository nameRepository = repositoryFactory.GetNameRepository(connectionString);
+            ICustomerRepository customerRepository = repositoryFactory.GetCustomerRepository(connectionString);
+            ISimulationRepository simulationRepo = repositoryFactory.GetSimulationRepository(connectionString);
+            ICsvReader csvReader = readerFactory.GetCsvReader();
+            IJsonReader jsonReader = readerFactory.GetJsonReader();
+            ITxtReader txtReader = readerFactory.GetTxtReader();
+
+            var addressManager = new AddressManager(addressRepository);
+            var municipalityManager = new MunicipalityManager(municipalityRepository);
+            var nameManager = new NameManager(nameRepository);
+            var customerManager = new CustomerManager(customerRepository);
+            var simulationDataManager = new SimulationDataManager(simulationRepo);
+
+            _generateCustomerService = new GenerateCustomerService(addressManager, municipalityManager, nameManager, customerManager, simulationDataManager);
+
+            _uploadService = new UploadService(addressRepository, municipalityRepository, nameRepository, _countryVersionRepository, csvReader, txtReader, jsonReader);
         }
 
         private void ButtonUpload_Click(object sender, RoutedEventArgs e)
         {
-            UploadWindow uploadWindow = new UploadWindow(_addressRepository, _customerRepository, _countryVersionRepository, _municipalityRepository, _nameRepository, _textReader, _jsonReader, _csvReader);
+            UploadWindow uploadWindow = new UploadWindow(_uploadService, _countryVersionRepository);
             uploadWindow.Show();
         }
 
         private void ButtionSimulation_Click(object sender, RoutedEventArgs e)
         {
-            //SimulationWindow simulationWindow = new SimulationWindow(_addressRepository, _customerRepository, _countryVersionRepository, _municipalityRepository, _nameRepository, _simulationRepository);
-            //simulationWindow.Show();
+            SimulationWindow simulationWindow = new SimulationWindow(_countryVersionRepository, _generateCustomerService);
+            simulationWindow.Show();
         }
     }
 }

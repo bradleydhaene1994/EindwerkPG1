@@ -16,9 +16,10 @@ namespace CustomerSimulationBL.Managers
         {
             _simulationRepo = simulationRepo;
         }
-        public void UploadSimulationData(SimulationData simulationData, int countryVersionId)
+        public int UploadSimulationData(SimulationData simulationData, int countryVersionId)
         {
-            _simulationRepo.UploadSimulationData(simulationData, countryVersionId);
+            int simulationDataId = _simulationRepo.UploadSimulationData(simulationData, countryVersionId);
+            return simulationDataId;
         }
         public void UploadSimulationSettings(SimulationSettings simulationSettings, int simulationDataId, int houseNumberRulesId)
         {
@@ -27,6 +28,11 @@ namespace CustomerSimulationBL.Managers
         public void UploadSimulationStatistics(SimulationStatistics simulationStatistics, int simulationDataId)
         {
             _simulationRepo.UploadSimulationStatistics(simulationStatistics, simulationDataId);
+        }
+        public int UploadHouseNumberRules(SimulationSettings simulationSettings)
+        {
+            int HouseNumberRulesId = _simulationRepo.UploadHouseNumberRules(simulationSettings);
+            return HouseNumberRulesId;
         }
         public List<SimulationData> GetAllSimulationData()
         {

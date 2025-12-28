@@ -11,6 +11,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using CustomerSimulationBL.Domein;
+using CustomerSimulationBL.Interfaces;
+using CustomerSimulationBL.Managers;
 
 namespace CustomerSimulationUI
 {
@@ -19,14 +22,50 @@ namespace CustomerSimulationUI
     /// </summary>
     public partial class SimulationWindow : Window
     {
-        public SimulationWindow()
+        private readonly ICountryVersionRepository _countryVersionRepository;
+        private readonly GenerateCustomerService _generateCustomerService;
+        public SimulationWindow(ICountryVersionRepository countryVersionRepo, GenerateCustomerService genCustomer)
         {
             InitializeComponent();
+
+            _countryVersionRepository = countryVersionRepo;
+            _generateCustomerService = genCustomer;
+
+            List<CountryVersion> countryVersions = _countryVersionRepository.GetAllCountryVersions();
+
+            SelectedCountryVersion.ItemsSource = countryVersions;
+            SelectedCountryVersion.SelectedIndex = 0;
+            SelectedCountryVersion.DisplayMemberPath = "Name";
+            SelectedCountryVersion.SelectedValuePath = "ID";
         }
 
         private void ButtonSimulation_Click(object sender, RoutedEventArgs e)
         {
+            if(string.IsNullOrWhiteSpace(ClientName.Text))
+            {
+                MessageBox.Show("Please fill in your name");
+                return;
+            }
+            if(!int.TryParse(CustomerNumber.Text, out int totalCustomers))
+            {
+                MessageBox.Show("Please fill in how many customers you would like to simulate");
+            }
 
+            int minAge = int.Parse(MinimumAge.Text);
+            int maxAge = int.Parse(MaximumAge.Text);
+            int minHouseNumber = int.Parse(MinHouseNumber.Text);
+            int maxHouseNumber = int.Parse(MaxHouseNumber.Text);
+            bool hasLetters = HasLetters.IsChecked == true;
+            int percentageLetters = int.Parse(PercentageLetters.Text);
+            var selectedCountryVersion = SelectedCountryVersion.SelectedItem as CountryVersion;
+            var countryVersionId = selectedCountryVersion.Id;
+
+            var simulationData = new SimulationData(ClientName.Text, DateTime.Now);
+            var simulationSettings = new SimulationSettings(null, totalCustomers, minAge, maxAge, minHouseNumber, maxHouseNumber, hasLetters, percentageLetters);
+
+            _generateCustomerService.RunSimulation(simulationData, simulationSettings, countryVersionId);
+
+            MessageBox.Show("Simulation created succesfully.");
         }
     }
 }
