@@ -9,7 +9,7 @@ namespace CustomerSimulationBL.Interfaces
 {
     public interface ICountryVersionRepository
     {
-        int UploadCountryVersion(CountryVersion countryVersion, int countryId);
+        int GetOrUploadCountryVersion(int countryId, int year);
         List<Country> GetAllCountries();
         List<CountryVersion> GetAllCountryVersions();
     }

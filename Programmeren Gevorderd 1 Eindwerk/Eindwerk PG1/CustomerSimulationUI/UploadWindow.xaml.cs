@@ -84,8 +84,6 @@ namespace CustomerSimulationUI
 
             int countryId = selectedCountry.Id;
 
-            CountryVersion countryVersion = new CountryVersion(year);
-
             UploadDataType dataType = GetSelectedDataType();
 
             //Create and show progress window
@@ -97,7 +95,7 @@ namespace CustomerSimulationUI
 
             try
             {
-                await Task.Run(() => _uploadService.Upload(filePath, countryVersion, dataType, countryId, progress));
+                await Task.Run(() => _uploadService.Upload(filePath, year, dataType, countryId, progress));
             }
             finally
             {

@@ -21,36 +21,30 @@ namespace CustomerSimulationDL.Repositories
             _connectionstring = connectionstring;
         }
 
-        public int UploadCountryVersion(CountryVersion countryVersion, int countryId)
+        public int GetOrUploadCountryVersion(int countryId, int year)
         {
-            string SQL = "INSERT INTO CountryVersion(CountryID, Year) " +
-                         "OUTPUT inserted.ID VALUES(@CountryID, @Year)";
+            string SQLInsert = "INSERT INTO CountryVersion(CountryID, Year) " +
+                               "OUTPUT inserted.ID VALUES(@CountryID, @Year)";
 
-            using(SqlConnection conn = new SqlConnection(_connectionstring))
-            using(SqlCommand cmd = conn.CreateCommand())
+            string SQLSelect = "SELECT ID FROM CountryVersion " +
+                               "WHERE CountryID = @CountryID AND Year = @Year";
+
+            using SqlConnection conn = new SqlConnection(_connectionstring);
+            using SqlCommand cmd = new SqlCommand(SQLInsert, conn);
+
+            cmd.Parameters.Add("@CountryID", SqlDbType.Int).Value = countryId;
+            cmd.Parameters.Add("@Year", SqlDbType.Int).Value = year;
+
+            conn.Open();
+
+            try
             {
-                conn.Open();
-                SqlTransaction tran = conn.BeginTransaction();
-                cmd.CommandText = SQL;
-                cmd.Transaction = tran;
-                cmd.Parameters.Add(new SqlParameter("@CountryID", SqlDbType.Int));
-                cmd.Parameters.Add(new SqlParameter("@Year", SqlDbType.Int));
-                int countryVersionId;
-                try
-                {
-                    cmd.Parameters["@CountryID"].Value = countryId;
-                    cmd.Parameters["@Year"].Value = countryVersion.Year;
-                    countryVersionId =  (int)cmd.ExecuteScalar();
-
-                    tran.Commit();
-
-                    return countryVersionId;
-                }
-                catch(Exception ex)
-                {
-                    tran.Rollback();
-                    throw;
-                }
+                return (int)cmd.ExecuteScalar();
+            }
+            catch(SqlException ex) when (ex.Number == 2627 || ex.Number == 2601)
+            {
+                cmd.CommandText = SQLSelect;
+                return (int)cmd.ExecuteScalar();
             }
         }
         public List<Country> GetAllCountries()
@@ -85,8 +79,10 @@ namespace CustomerSimulationDL.Repositories
         {
             List<CountryVersion> countryVersions = new List<CountryVersion>();
 
-            string SQL = "SELECT * " +
-                         "FROM CountryVersion";
+            string SQL = "SELECT cv.ID, cv.CountryID, cv.Year, c.Name AS CountryName " +
+                         "FROM CountryVersion cv " +
+                         "JOIN Country c ON c.ID = cv.CountryID " +
+                         "ORDER BY c.Name, cv.Year";
 
             using (SqlConnection conn = new SqlConnection(_connectionstring))
             using (SqlCommand cmd = conn.CreateCommand())
@@ -98,16 +94,18 @@ namespace CustomerSimulationDL.Repositories
                 {
                     while(reader.Read())
                     {
-                        int Id = (int)reader["ID"];
-                        int countryId = (int)reader["CountryID"];
-                        int year = (int)reader["Year"];
+                        int id = reader.GetInt32(reader.GetOrdinal("ID"));
+                        int countryId = reader.GetInt32(reader.GetOrdinal("CountryID"));
+                        int year = reader.GetInt32(reader.GetOrdinal("Year"));
+                        string countryName = reader.GetString(reader.GetOrdinal("CountryName"));
 
-                        CountryVersion countryVersion = new CountryVersion(Id, year);
+                        Country country = new Country(id, countryName);
+
+                        CountryVersion countryVersion = new CountryVersion(id, year, country);
 
                         countryVersions.Add(countryVersion);
                     }
                 }
-
                 return countryVersions;
             }
         }

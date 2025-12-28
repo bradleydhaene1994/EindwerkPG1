@@ -11,6 +11,11 @@ namespace CustomerSimulationDL.FileReaders
 {
     public class CsvFileReader : ICsvReader
     {
+        //primary, secondary, tertiary, residential, unclassified, living_street
+        //die 6 mogen er allemaal door
+        //al de rest niet
+
+
         public List<Address> ReadAddresses(string path)
         {
             var Addresses = new List<Address>();
@@ -28,7 +33,7 @@ namespace CustomerSimulationDL.FileReaders
 
                     if (RawMunicipalityName == "(unknown)")
                     {
-                        Municipality = null;
+                        Municipality = new Municipality("unknown");
                     }
                     else
                     {

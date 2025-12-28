@@ -26,7 +26,17 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <TextBlock Grid.Row="0" Grid.Column="0" Margin="5" Text="Country Version" Grid.ColumnSpan="2"/>
-        <ComboBox Grid.Row="0" Grid.Column="2" Margin="5" Name="SelectedCountryVersion" Grid.ColumnSpan="2"/>
+        <ComboBox Grid.Row="0" Grid.Column="2" Margin="5" Name="SelectedCountryVersion" SelectedValuePath="ID" Grid.ColumnSpan="2">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock>
+                        <Run Text="{Binding Country.Name}"/>
+                        <Run Text=" - "/>
+                        <Run Text="{Binding Year}"/>
+                    </TextBlock>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
         <TextBlock Grid.Row="1" Grid.Column="0" Margin="5" Text="Municipalities" Grid.ColumnSpan="2"/>
         <ListBox Grid.Row="1" Grid.Column="2" Margin="5" Name="SelectMunicipalities" SelectionMode="Extended" Grid.ColumnSpan="2"/>
         <TextBlock Grid.Row="2" Grid.Column="0" Margin="5" Text="Number of Customers"/>

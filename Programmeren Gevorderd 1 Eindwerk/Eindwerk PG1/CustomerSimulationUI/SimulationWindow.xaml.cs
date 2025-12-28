@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using CustomerSimulationBL.Domein;
 using CustomerSimulationBL.Interfaces;
 using CustomerSimulationBL.Managers;
+using Microsoft.Identity.Client;
 
 namespace CustomerSimulationUI
 {
@@ -35,8 +36,6 @@ namespace CustomerSimulationUI
 
             SelectedCountryVersion.ItemsSource = countryVersions;
             SelectedCountryVersion.SelectedIndex = 0;
-            SelectedCountryVersion.DisplayMemberPath = "Name";
-            SelectedCountryVersion.SelectedValuePath = "ID";
         }
 
         private void ButtonSimulation_Click(object sender, RoutedEventArgs e)

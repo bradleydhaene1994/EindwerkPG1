@@ -7,6 +7,7 @@ using CustomerSimulationBL.Interfaces;
 using CustomerSimulationBL.Domein;
 using System.Data;
 using Microsoft.Data.SqlClient;
+using System.Text.RegularExpressions;
 
 namespace CustomerSimulationDL.Repositories
 {
@@ -21,24 +22,55 @@ namespace CustomerSimulationDL.Repositories
 
         public void UploadAddress(IEnumerable<Address> addresses, int countryVersionID, IProgress<int> progress)
         {
-            using(SqlConnection connection = new SqlConnection(_connectionstring))
+            const string SQLMunicipality = "INSERT INTO Municipality (CountryVersionID, Name) " +
+                                           "OUTPUT INSERTED.ID VALUES (@CountryVersionID, @Name)";
+
+            const string SQLMunicipalitySelect = "SELECT ID FROM Municipality " +
+                                                 "WHERE CountryVersionID = @CountryVersionID AND Name = @Name";
+
+            const string SQLAddress = "INSERT INTO [Address] (MunicipalityID, StreetName, CountryVersionID) " +
+                                      "OUTPUT INSERTED.ID VALUES (@MunicipalityID, @StreetName, @CountryVersionID)";
+
+            using (SqlConnection connection = new SqlConnection(_connectionstring))
             {
                 connection.Open();
-                SqlTransaction transaction = connection.BeginTransaction();
+                
+                using var transaction = connection.BeginTransaction();
 
-                Dictionary<string, int> municipalityLookup;
+                var municipalityCache = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+                var unknownMunicipalityCache = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                var knownMunicipalityCache = new HashSet<(string Municipality, string Street)>();
 
                 var addressList = addresses.ToList();
                 int total = addressList.Count;
                 int processed = 0;
 
-                const int REPORT_EVERY = 1;
+                const int REPORT_EVERY = 100;
                 
                 try
                 {
-                    foreach (var address in addresses)
+                    using var municipalityCmd = new SqlCommand(SQLMunicipality, connection, transaction);
+                    using var municipalitySelectCmd = new SqlCommand(SQLMunicipalitySelect, connection, transaction);
+                    using var addressCmd = new SqlCommand(SQLAddress, connection, transaction);
+
+                    municipalityCmd.Parameters.Add("@CountryVersionID", SqlDbType.Int);
+                    municipalityCmd.Parameters.Add("@Name", SqlDbType.NVarChar, 100);
+
+
+                    municipalitySelectCmd.Parameters.Add("@CountryVersionID", SqlDbType.Int);
+                    municipalitySelectCmd.Parameters.Add("@Name", SqlDbType.NVarChar, 100);
+
+                    addressCmd.Parameters.Add("@MunicipalityID", SqlDbType.Int);
+                    addressCmd.Parameters.Add("@StreetName", SqlDbType.NVarChar, 100);
+                    addressCmd.Parameters.Add("@CountryVersionID", SqlDbType.Int);
+
+                    municipalityCmd.Prepare();
+                    municipalitySelectCmd.Prepare();
+                    addressCmd.Prepare();
+
+                    foreach (var address in addressList)
                     {
-                        InsertAddress(address, countryVersionID, connection, transaction);
+                        InsertAddress(address, countryVersionID, municipalityCache, unknownMunicipalityCache, knownMunicipalityCache, municipalityCmd, municipalitySelectCmd, addressCmd);
 
                         processed++;
 
@@ -54,74 +86,60 @@ namespace CustomerSimulationDL.Repositories
                 catch(Exception ex)
                 {
                     transaction.Rollback();
-                    throw ex;
+                    throw;
                 }
             }
         }
-        private void InsertAddress(Address address, int countryVersionId, SqlConnection conn, SqlTransaction tran)
+        private void InsertAddress(Address address, int countryVersionId, Dictionary<string, int> municipalityCache, HashSet<string> unknownMunicipalityCache, HashSet<(string Municipality, string Street)> knownAddressCache, SqlCommand municipalityCmd, SqlCommand municipalitySelectCmd, SqlCommand addressCmd)
         {
-            string SQLMunicipality = "INSERT INTO Municipality (CountryVersionID, Name) " +
-                                     "OUTPUT INSERTED.ID VALUES (@CountryVersionID, @Name)";
+            string streetName = address.Street;
+            bool isUnknownMunicipality = address.Municipality == null || address.Municipality.Name.Equals("unknown", StringComparison.OrdinalIgnoreCase);
+            int? municipalityId = null;
 
-            string SQLAddress = "INSERT INTO [Address] (MunicipalityID, StreetName, CountryVersionID) " +
-                                "OUTPUT INSERTED.ID VALUES (@MunicipalityID, @StreetName, @CountryVersionID)";
-
-            using(SqlCommand municipalityCmd = new SqlCommand())
-            using(SqlCommand addressCmd = new SqlCommand())
+            if (isUnknownMunicipality)
             {
-                municipalityCmd.Connection = conn;
-                municipalityCmd.Transaction = tran;
-                municipalityCmd.CommandText = SQLMunicipality;
-
-                addressCmd.Connection = conn;
-                addressCmd.Transaction = tran;
-                addressCmd.CommandText = SQLAddress;
-
-                municipalityCmd.Parameters.Add("@CountryVersionID", SqlDbType.Int);
-                municipalityCmd.Parameters.Add("@Name", SqlDbType.NVarChar, 100);
-
-                addressCmd.Parameters.Add("@MunicipalityID", SqlDbType.Int);
-                addressCmd.Parameters.Add("@StreetName", SqlDbType.NVarChar, 100);
-                addressCmd.Parameters.Add("@CountryVersionID", SqlDbType.Int);
-
-                int? municipalityId = null;
-
-                if(address.Municipality != null)
+                if (!unknownMunicipalityCache.Add(streetName))
                 {
+                    return;
+                }
+            }
+            else
+            {
+                string municipalityName = address.Municipality.Name;
+
+                if (!knownAddressCache.Add((municipalityName, streetName)))
+                {
+                    return;
+                }
+
+                if (!municipalityCache.TryGetValue(municipalityName, out int cachedId))
+                {
+                    municipalityCmd.Parameters["@CountryVersionID"].Value = countryVersionId;
+                    municipalityCmd.Parameters["@Name"].Value = municipalityName;
+
                     try
                     {
-                        municipalityCmd.Parameters["@CountryVersionID"].Value = countryVersionId;
-                        municipalityCmd.Parameters["@Name"].Value = address.Municipality.Name;
-                        municipalityId = (int)municipalityCmd.ExecuteScalar();
+                        cachedId = (int)municipalityCmd.ExecuteScalar();
                     }
                     catch (SqlException ex) when (ex.Number == 2627 || ex.Number == 2601)
                     {
-                        //If duplicate => fetch existing ID
-                        municipalityCmd.CommandText = "SELECT ID FROM Municipality WHERE CountryVersionID = @CountryVersionID AND Name = @Name";
-
-                        municipalityId = (int)municipalityCmd.ExecuteScalar();
+                        municipalitySelectCmd.Parameters["@CountryVersionID"].Value = countryVersionId;
+                        municipalitySelectCmd.Parameters["@Name"].Value = municipalityName;
+                        cachedId = (int)municipalitySelectCmd.ExecuteScalar();
                     }
+
+                    municipalityCache[municipalityName] = cachedId;
                 }
 
-                int addressId;
-
-                try
-                {
-                    addressCmd.Parameters["@MunicipalityID"].Value = (object?)municipalityId ?? DBNull.Value;
-                    addressCmd.Parameters["@StreetName"].Value = address.Street;
-                    addressCmd.Parameters["@CountryVersionID"].Value = countryVersionId;
-                    addressId = (int)addressCmd.ExecuteScalar();
-                }
-                catch(SqlException ex) when (ex.Number == 2627 || ex.Number == 2601)
-                {
-                    //If duplicate => fetch ID
-                    addressCmd.CommandText = "SELECT ID FROM [Address] WHERE StreetName = @StreetName AND CountryVersionID = @CountryVersionID " +
-                                             "AND (MunicipalityID = @MunicipalityID OR (MunicipalityID IS NULL AND @MunicipalityID IS NULL))";
-                    addressId = (int)addressCmd.ExecuteScalar();
-                }
+                municipalityId = cachedId;
             }
-        }
 
+            addressCmd.Parameters["@MunicipalityID"].Value = (object?)municipalityId ?? DBNull.Value;
+            addressCmd.Parameters["@StreetName"].Value = streetName;
+            addressCmd.Parameters["@CountryVersionID"].Value = countryVersionId;
+
+            int addressId = (int)addressCmd.ExecuteScalar();
+        }
         public List<Address> GetAddressesByCountryVersionID(int countryVersionId)
         {
             List<Address> addresses = new List<Address>();

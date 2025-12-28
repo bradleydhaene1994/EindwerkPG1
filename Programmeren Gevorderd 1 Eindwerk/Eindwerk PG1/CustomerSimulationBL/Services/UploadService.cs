@@ -47,9 +47,9 @@ namespace CustomerSimulationBL.Services
                 _ => throw new InvalidOperationException("Unsupported file format")
             };
         }
-        public void Upload(string filePath, CountryVersion countryVersion, UploadDataType dataType, int countryId, IProgress<int> progress)
+        public void Upload(string filePath, int year, UploadDataType dataType, int countryId, IProgress<int> progress)
         {
-            int countryVersionId = _countryVersionRepository.UploadCountryVersion(countryVersion, countryId);
+            int countryVersionId = _countryVersionRepository.GetOrUploadCountryVersion(countryId, year);
             
 
             FileFormat format = GetFileFormat(filePath);
