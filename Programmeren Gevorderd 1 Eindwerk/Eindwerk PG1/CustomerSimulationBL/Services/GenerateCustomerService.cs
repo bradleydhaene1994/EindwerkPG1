@@ -33,13 +33,16 @@ namespace CustomerSimulationBL.Managers
             int houseNumberRulesId = _simulationDataManager.UploadHouseNumberRules(simSettings);
 
             //Save SimulationSettings
-            _simulationDataManager.UploadSimulationSettings(simSettings, simulationDataId, houseNumberRulesId);
+            int simulationSettingsId = _simulationDataManager.UploadSimulationSettings(simSettings, simulationDataId, houseNumberRulesId);
+
+            //Save Selected Municipalities
+            _simulationDataManager.UploadSelectedMunicipalities(simulationSettingsId, simSettings.SelectedMunicipalities);
 
             //Generate Customers
             List<CustomerDTO> customerDTOs = GenerateCustomers(simData, simSettings, countryVersionId);
 
             //Save Customers
-            _customermanager.UploadCustomer(customerDTOs, simulationDataId);
+            _customermanager.UploadCustomer(customerDTOs, simulationDataId, countryVersionId);
 
             //Calculate statistics
             SimulationStatistics stats = CalculateStatistics(customerDTOs);
@@ -51,18 +54,31 @@ namespace CustomerSimulationBL.Managers
         {   
             List<CustomerDTO> customers = new List<CustomerDTO>();
 
-            var addresses = _addressmanager.GetAddressesByCountryVersionID(countryVersionId);
             var municipalities = _municipalitymanager.GetMunicipalityByCountryVersionID(countryVersionId);
+            var addresses = _addressmanager.GetAddressesByCountryVersionID(countryVersionId, municipalities);
             var firstNames = _namemanager.GetFirstNamesByCountryVersionID(countryVersionId);
             var lastNames = _namemanager.GetLastNamesByCountryVersionID(countryVersionId);
 
             for (int i = 0; i < settings.TotalCustomers; i++)
             {
-                Address randomAddres = _addressmanager.GetRandomAddress(addresses);
+                Municipality municipality;
+
+                if(settings.SelectedMunicipalities == null)
+                {
+                    municipality = _municipalitymanager.GetRandomMunicipality(municipalities);
+                }
+                else
+                {
+                    Municipality selected = _municipalitymanager.GetRandomMunicipalityByPercentage(settings.SelectedMunicipalities);
+
+                    municipality = municipalities.First(m => m.Id == selected.Id);
+                }
+                
+                Address randomAddres = _addressmanager.GetRandomAddressByMunicipality(addresses, municipality);
                 string addressStreet = randomAddres.Street;
 
-                Municipality randomMunicipality = _municipalitymanager.GetRandomMunicipality(municipalities);
-                string municipalityName = randomMunicipality.Name;
+                string municipalityName = municipality.Name; ;
+
                 FirstName randomFirstName = _namemanager.GetRandomFirstName(firstNames);
                 string nameFirst = randomFirstName.Name;
 

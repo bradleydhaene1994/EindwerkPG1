@@ -74,6 +74,8 @@ namespace CustomerSimulationDL.Repositories
                         string name = reader.GetString(reader.GetOrdinal("Name"));
 
                         Municipality Municipality = new Municipality(id, name);
+
+                        municipalities.Add(Municipality);
                     }
                 }
             }

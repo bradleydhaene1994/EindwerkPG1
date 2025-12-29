@@ -140,15 +140,14 @@ namespace CustomerSimulationDL.Repositories
 
             int addressId = (int)addressCmd.ExecuteScalar();
         }
-        public List<Address> GetAddressesByCountryVersionID(int countryVersionId)
+        public List<Address> GetAddressesByCountryVersionID(int countryVersionId, List<Municipality> municipalities)
         {
             List<Address> addresses = new List<Address>();
 
-            string SQL = "SELECT a.StreetName, m.Name " +
+            string SQL = "SELECT a.StreetName, a.MunicipalityID, m.Name " +
                          "FROM Address a " +
                          "LEFT JOIN Municipality m ON a.MunicipalityID = m.ID " +
-                         "WHERE m.CountryVersionID = @CountryVersionID " +
-                         "OR a.MunicipalityID IS NULL";
+                         "WHERE m.CountryVersionID = @CountryVersionID";
 
             using(SqlConnection conn =  new SqlConnection(_connectionstring))
             using(SqlCommand cmd = conn.CreateCommand())
@@ -160,12 +159,23 @@ namespace CustomerSimulationDL.Repositories
                 {
                     while (reader.Read())
                     {
-                        string Street = reader.GetString(reader.GetOrdinal("StreetName"));
-                        string MunicipalityName = reader.IsDBNull(reader.GetOrdinal("Name")) ? null : reader.GetString(reader.GetOrdinal("Name"));
+                        string street = reader.GetString(reader.GetOrdinal("StreetName"));
 
-                        Municipality municipality = MunicipalityName == null ? null : new Municipality(MunicipalityName);
+                        Municipality? municipality = null;
 
-                        Address address = new Address(municipality, Street);
+                        if(!reader.IsDBNull(reader.GetOrdinal("MunicipalityID")))
+                        {
+                            int municipalityId = reader.GetInt32(reader.GetOrdinal("MunicipalityID"));
+
+                            municipality = municipalities.FirstOrDefault(m => m.Id == municipalityId);
+
+                            if(municipality == null)
+                            {
+                                throw new InvalidOperationException($"Municipality {municipalityId} not found for address {street}");
+                            }
+                        }
+
+                        Address address = new Address(municipality, street);
 
                         addresses.Add(address);
                     }

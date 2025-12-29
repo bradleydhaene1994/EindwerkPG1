@@ -17,7 +17,7 @@ namespace CustomerSimulationBL.Mappers
                 throw new ArgumentNullException(nameof(dto));
             }
 
-            SimulationSettings domain = new SimulationSettings(dto.Id, dto.SelectedMunicipalityIds, dto.TotalCustomers, dto.MinAge, dto.MaxAge, dto.minNumber, dto.maxNumber, dto.HasLetters, dto.PercentageLetters);
+            SimulationSettings domain = new SimulationSettings(dto.Id, dto.SelectedMunicipalities, dto.TotalCustomers, dto.MinAge, dto.MaxAge, dto.minNumber, dto.maxNumber, dto.HasLetters, dto.PercentageLetters);
 
             return domain;
         }
@@ -28,7 +28,7 @@ namespace CustomerSimulationBL.Mappers
                 throw new ArgumentNullException(nameof(domain));
             }
 
-            SimulationSettingsDTO dto = new SimulationSettingsDTO(domain.SelectedMunicipalityIds, domain.TotalCustomers, domain.MinAge, domain.MaxAge, domain.MinNumber, domain.MaxNumber, domain.HasLetters, domain.PercentageLetters);
+            SimulationSettingsDTO dto = new SimulationSettingsDTO(domain.SelectedMunicipalities, domain.TotalCustomers, domain.MinAge, domain.MaxAge, domain.MinNumber, domain.MaxNumber, domain.HasLetters, domain.PercentageLetters);
 
             return dto;
 

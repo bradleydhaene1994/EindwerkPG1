@@ -25,6 +25,8 @@ namespace CustomerSimulationUI
         private readonly ICountryVersionRepository _countryVersionRepository;
         private readonly IUploadService _uploadService;
         private readonly GenerateCustomerService _generateCustomerService;
+        private readonly MunicipalityManager _municipalityManager;
+        private readonly SimulationDataManager _simulationDataManager;
         public MainWindow()
         {
             var builder = new ConfigurationBuilder().
@@ -48,12 +50,12 @@ namespace CustomerSimulationUI
             ITxtReader txtReader = readerFactory.GetTxtReader();
 
             var addressManager = new AddressManager(addressRepository);
-            var municipalityManager = new MunicipalityManager(municipalityRepository);
+            _municipalityManager = new MunicipalityManager(municipalityRepository);
             var nameManager = new NameManager(nameRepository);
             var customerManager = new CustomerManager(customerRepository);
-            var simulationDataManager = new SimulationDataManager(simulationRepo);
+            _simulationDataManager = new SimulationDataManager(simulationRepo);
 
-            _generateCustomerService = new GenerateCustomerService(addressManager, municipalityManager, nameManager, customerManager, simulationDataManager);
+            _generateCustomerService = new GenerateCustomerService(addressManager, _municipalityManager, nameManager, customerManager, _simulationDataManager);
 
             _uploadService = new UploadService(addressRepository, municipalityRepository, nameRepository, _countryVersionRepository, csvReader, txtReader, jsonReader);
         }
@@ -66,7 +68,7 @@ namespace CustomerSimulationUI
 
         private void ButtionSimulation_Click(object sender, RoutedEventArgs e)
         {
-            SimulationWindow simulationWindow = new SimulationWindow(_countryVersionRepository, _generateCustomerService);
+            SimulationWindow simulationWindow = new SimulationWindow(_countryVersionRepository, _generateCustomerService, _municipalityManager, _simulationDataManager);
             simulationWindow.Show();
         }
     }

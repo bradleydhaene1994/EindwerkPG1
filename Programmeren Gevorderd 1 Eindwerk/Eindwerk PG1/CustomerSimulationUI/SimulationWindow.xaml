@@ -26,7 +26,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <TextBlock Grid.Row="0" Grid.Column="0" Margin="5" Text="Country Version" Grid.ColumnSpan="2"/>
-        <ComboBox Grid.Row="0" Grid.Column="2" Margin="5" Name="SelectedCountryVersion" SelectedValuePath="ID" Grid.ColumnSpan="2">
+        <ComboBox Grid.Row="0" Grid.Column="2" Margin="5" Name="SelectedCountryVersion" SelectedValuePath="Id" Grid.ColumnSpan="2">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock>
@@ -37,26 +37,40 @@
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
-        <TextBlock Grid.Row="1" Grid.Column="0" Margin="5" Text="Municipalities" Grid.ColumnSpan="2"/>
-        <ListBox Grid.Row="1" Grid.Column="2" Margin="5" Name="SelectMunicipalities" SelectionMode="Extended" Grid.ColumnSpan="2"/>
+        <TextBlock Grid.Row="1" Grid.Column="0" Margin="5" Text="Select specific municipalities?"/>
+        <CheckBox Grid.Row="1" Grid.Column="1" Margin="5" Name="UseSpecificMunicipalitiesCheckBox"/>
+        <Button Grid.Row="1" Grid.Column="2" Margin="5" Content="Select Municipalities" IsEnabled="{Binding IsChecked, ElementName=UseSpecificMunicipalitiesCheckBox}" Click="SelectMunicipalities_Click"/>
+        <TextBlock Grid.Row="1" Grid.Column="3" Margin="5" Foreground="Gray"/>
         <TextBlock Grid.Row="2" Grid.Column="0" Margin="5" Text="Number of Customers"/>
-        <TextBox Grid.Row="2" Grid.Column="1" Margin="5" Name="CustomerNumber"/>
+        <TextBox Grid.Row="2" Grid.Column="1" Margin="5" Name="CustomerNumber" Text="100"/>
         <TextBlock Grid.Row="2" Grid.Column="2" Margin="5" Text="Your Name"/>
-        <TextBox Grid.Row="2" Grid.Column="3" Margin="5" Name="ClientName"/>
+        <TextBox Grid.Row="2" Grid.Column="3" Margin="5" Name="ClientName" Text="Bradley"/>
         <TextBlock Grid.Row="3" Grid.Column="0" Margin="5" Text="Minimum Age"/>
-        <TextBox Grid.Row="3" Grid.Column="1" Margin="5" Name="MinimumAge"/>
+        <TextBox Grid.Row="3" Grid.Column="1" Margin="5" Name="MinimumAge" Text="20"/>
         <TextBlock Grid.Row="3" Grid.Column="2" Margin="5" Text="Maximum Age"/>
-        <TextBox Grid.Row="3" Grid.Column="3" Margin="5" Name="MaximumAge"/>
+        <TextBox Grid.Row="3" Grid.Column="3" Margin="5" Name="MaximumAge" Text="50"/>
         <TextBlock Grid.Row="4" Grid.Column="0" Margin="5" Text="Minimum House Number"/>
-        <TextBox Grid.Row="4" Grid.Column="1" Margin="5" Name="MinHouseNumber"/>
+        <TextBox Grid.Row="4" Grid.Column="1" Margin="5" Name="MinHouseNumber" Text="10"/>
         <TextBlock Grid.Row="4" Grid.Column="2" Margin="5" Text="Maximum House Number"/>
-        <TextBox Grid.Row="4" Grid.Column="3" Margin="5" Name="MaxHouseNumber"/>
+        <TextBox Grid.Row="4" Grid.Column="3" Margin="5" Name="MaxHouseNumber" Text="100"/>
         <TextBlock Grid.Row="5" Grid.Column="0" Margin="5" Text="House Number can have letters: "/>
         <CheckBox Grid.Row="5" Grid.Column="1" Margin="5" Name="HasLetters"/>
         <TextBlock Grid.Row="5" Grid.Column="2" Margin="5" Text="Percentage of house numbers with letters"/>
-        <TextBox Grid.Row="5" Grid.Column="3" Margin="5" Name="PercentageLetters"/>
+        <TextBox Grid.Row="5" Grid.Column="3" Margin="5" Name="PercentageLetters" Text="0"/>
         <Button Grid.Row="6" Grid.Column="0" Margin="5" Name="ButtonSimulation" Content="Simulate Customerset" Grid.ColumnSpan="4" Click="ButtonSimulation_Click"/>
-        <DataGrid Grid.Row="7" Grid.Column="0" Margin="5" Name="DataGridSimulatedCustomersets" SelectionMode="Single" Grid.ColumnSpan="4" Grid.RowSpan="2"/>
+        <DataGrid ItemsSource="{Binding Simulations}" Grid.Row="7" Grid.Column="0" Margin="5" Name="DataGridSimulatedCustomersets" SelectionMode="Single" Grid.ColumnSpan="4" Grid.RowSpan="2" IsReadOnly="True" AutoGenerateColumns="False">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="View Settings" Click="ViewSettings_Click"/>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Country" Binding="{Binding CountryName}"/>
+                <DataGridTextColumn Header="Year" Binding="{Binding Year}"/>
+                <DataGridTextColumn Header="Client" Binding="{Binding ClientName}"/>
+                <DataGridTextColumn Header="Created On" Binding="{Binding DateCreated}"/>
+            </DataGrid.Columns>
+        </DataGrid>
         <Button Grid.Row="9" Grid.Column="0" Margin="5" Name="ButtonExportTxt" Content="Export to Txt" Grid.ColumnSpan="4"/>
     </Grid>
 </Window>

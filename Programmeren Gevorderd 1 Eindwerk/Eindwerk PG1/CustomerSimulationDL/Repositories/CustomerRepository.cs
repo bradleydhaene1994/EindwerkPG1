@@ -20,7 +20,7 @@ namespace CustomerSimulationDL.Repositories
             _connectionstring = connectionstring;
         }
 
-        public void UploadCustomer(IEnumerable<CustomerDTO> customers, int simulationDataId)
+        public void UploadCustomer(IEnumerable<CustomerDTO> customers, int simulationDataId, int countryVersionId)
         {
             string SQL = "INSERT INTO Customer(CountryVersionID, SimulationDataID, FirstName, LastName, Municipality, Street, HouseNumber ,BirthDate) " +
                          "OUTPUT inserted.ID VALUES(@CountryVersionID, @SimulationDataID, @FirstName, @LastName, @Municipality, @Street, @HouseNumber, @BirthDate)";
@@ -45,6 +45,7 @@ namespace CustomerSimulationDL.Repositories
                 {
                     foreach(var c in customers)
                     {
+                        cmd.Parameters["@CountryVersionID"].Value = countryVersionId;
                         cmd.Parameters["@SimulationDataID"].Value = simulationDataId;
                         cmd.Parameters["@FirstName"].Value = c.FirstName;
                         cmd.Parameters["@LastName"].Value = c.LastName;

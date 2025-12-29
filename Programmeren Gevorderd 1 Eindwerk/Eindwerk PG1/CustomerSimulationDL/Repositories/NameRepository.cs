@@ -8,6 +8,7 @@ using CustomerSimulationBL.Interfaces;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using CustomerSimulationBL.Enumerations;
+using System.Diagnostics;
 
 namespace CustomerSimulationDL.Repositories
 {
@@ -20,7 +21,7 @@ namespace CustomerSimulationDL.Repositories
             _connectionstring = connectionstring;
         }
 
-        public void UploadFirstName(IEnumerable<FirstName> firstNames, int countryVersionId)
+        public void UploadFirstName(IEnumerable<FirstName> firstNames, int countryVersionId, IProgress<int> progress)
         {
             string SQL = "INSERT INTO FirstName(CountryVersionID, Name, Gender, Frequency) " +
                          "OUTPUT inserted.ID VALUES(@CountryVersionID, @Name, @Gender, @Frequency)";
@@ -29,6 +30,13 @@ namespace CustomerSimulationDL.Repositories
             {
                 conn.Open();
                 SqlTransaction sqlTransaction = conn.BeginTransaction();
+
+                var firstNameList = firstNames.ToList();
+                int total = firstNames.Count();
+                int processed = 0;
+
+                const int REPORT_EVERY = 100;
+
                 cmd.Transaction = sqlTransaction;
                 cmd.CommandText = SQL;
                 cmd.Parameters.Add(new SqlParameter("@CountryVersionID", SqlDbType.Int));
@@ -45,6 +53,14 @@ namespace CustomerSimulationDL.Repositories
                         cmd.Parameters["@Gender"].Value = (object?)firstName.Gender ?? DBNull.Value;
                         cmd.Parameters["@Frequency"].Value = (object?)firstName.Frequency ?? DBNull.Value;
                         firstNameId = (int)cmd.ExecuteScalar();
+
+                        processed++;
+
+                        if (processed % REPORT_EVERY == 0 || processed == total)
+                        {
+                            int percent = (int)((processed / (double)total) * 100);
+                            progress?.Report(percent);
+                        }
                     }
                     sqlTransaction.Commit();
                 }
@@ -55,15 +71,23 @@ namespace CustomerSimulationDL.Repositories
                 }
             }
         }
-        public void UploadLastName(IEnumerable<LastName> lastNames, int countryVersionId)
+        public void UploadLastName(IEnumerable<LastName> lastNames, int countryVersionId, IProgress<int> progress)
         {
             string SQL = "INSERT INTO LastName(CountryVersionID, Name, Gender, Frequency) " +
                          "OUTPUT inserted.ID VALUES(@CountryVersionID, @Name, @Gender, @Frequency)";
+
             using (SqlConnection conn = new SqlConnection(_connectionstring))
             using (SqlCommand cmd = conn.CreateCommand())
             {
                 conn.Open();
                 SqlTransaction sqlTransaction = conn.BeginTransaction();
+
+                var lastNameList = lastNames.ToList();
+                int total = lastNames.Count();
+                int processed = 0;
+
+                const int REPORT_EVERY = 100;
+
                 cmd.Transaction = sqlTransaction;
                 cmd.CommandText = SQL;
                 cmd.Parameters.Add(new SqlParameter("@CountryVersionID", SqlDbType.Int));
@@ -80,6 +104,14 @@ namespace CustomerSimulationDL.Repositories
                         cmd.Parameters["@Gender"].Value = (object?)lastName.Gender ?? DBNull.Value;
                         cmd.Parameters["@Frequency"].Value = (object?)lastName.Frequency ?? DBNull.Value;
                         lastNameID = (int)cmd.ExecuteScalar();
+
+                        processed++;
+
+                        if (processed % REPORT_EVERY == 0 || processed == total)
+                        {
+                            int percent = (int)((processed / (double)total) * 100);
+                            progress?.Report(percent);
+                        }
                     }
                     sqlTransaction.Commit();
                 }

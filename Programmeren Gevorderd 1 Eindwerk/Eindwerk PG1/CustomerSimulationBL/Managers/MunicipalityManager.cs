@@ -11,6 +11,7 @@ namespace CustomerSimulationBL.Managers
     public class MunicipalityManager
     {
         private IMunicipalityRepository _municipalityRepo;
+        private readonly Random _random = new Random();
         public MunicipalityManager(IMunicipalityRepository municipalityRepo)
         {
             _municipalityRepo = municipalityRepo;
@@ -27,7 +28,43 @@ namespace CustomerSimulationBL.Managers
         }
         public Municipality GetRandomMunicipality(List<Municipality> municipalities)
         {
-            throw new NotImplementedException();
+            if(municipalities == null)
+            {
+                throw new ArgumentNullException(nameof(municipalities));
+            }
+            if(municipalities.Count == 0)
+            {
+                throw new ArgumentException("List of municipalities can not be empty.", nameof(municipalities));
+            }
+
+            int index = _random.Next(municipalities.Count);
+            return municipalities[index];
+        }
+        public void GetMunicipalitiesByCountryVersionID(int countryVersionId)
+        {
+            _municipalityRepo.GetMunicipalityByCountryVersionID(countryVersionId);
+        }
+        public Municipality GetRandomMunicipalityByPercentage(IReadOnlyList<MunicipalitySelection> municipalitySelection)
+        {
+            if(municipalitySelection == null || municipalitySelection.Count == 0)
+            {
+                throw new InvalidOperationException("No municipality selection provided.");
+            }
+
+            int randomValue = _random.Next(1, 101);
+            int cumulative = 0;
+
+            foreach(var selection in municipalitySelection)
+            {
+                cumulative += selection.Percentage;
+
+                if(randomValue <= cumulative)
+                {
+                    return selection.Municipality;
+                }
+            }
+
+            throw new InvalidOperationException("Selection failed.");
         }
     }
 }

@@ -26,7 +26,7 @@ namespace CustomerSimulationUI.Model
         public int MaxNumber { get; set; }
         public bool HasLetters { get; set; }
         public int PercentageLetters { get; set; }
-        public ObservableCollection<int> SelectedMunicipalityIds { get; } = new ObservableCollection<int>();
+        public ObservableCollection<MunicipalitySelection> SelectedMunicipalities { get; } = new ObservableCollection<MunicipalitySelection>();
 
         public ObservableCollection<CustomerDTO> Customers { get; } = new ObservableCollection<CustomerDTO>();
 
@@ -36,7 +36,7 @@ namespace CustomerSimulationUI.Model
             var simulationData = new SimulationData(clientName, DateTime.Now);
 
             //Create SimulationSettingsDTO
-            var settingsDTO = new SimulationSettingsDTO(SelectedMunicipalityIds.ToList(), TotalCustomers, MinAge, MaxAge, MinNumber, MaxNumber, HasLetters, PercentageLetters);
+            var settingsDTO = new SimulationSettingsDTO(SelectedMunicipalities.ToList(), TotalCustomers, MinAge, MaxAge, MinNumber, MaxNumber, HasLetters, PercentageLetters);
 
             //Map DTO => Domain
             var settings = SimulationSettingsMapper.ToDomain(settingsDTO);

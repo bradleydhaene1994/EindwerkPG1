@@ -7,6 +7,7 @@ using CustomerSimulationBL.Domein;
 using CustomerSimulationBL.Interfaces;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using CustomerSimulationBL.DTOs;
 
 namespace CustomerSimulationDL.Repositories
 {
@@ -50,7 +51,7 @@ namespace CustomerSimulationDL.Repositories
                 }
             }
         }
-        public void UploadSimulationSettings(SimulationSettings simulationSettings, int simulationDataId, int houseNumberRulesId)
+        public int UploadSimulationSettings(SimulationSettings simulationSettings, int simulationDataId, int houseNumberRulesId)
         {
             string SQLSimulationSettings = "INSERT INTO SimulationSettings(SimulationDataID, NumberCustomers, MinAge, MaxAge, HouseNumberRulesID) " +
                                            "OUTPUT inserted.ID VALUES(@SimulationDataID, @NumberCustomers, @MinAge, @MaxAge, @HouseNumberRulesID)";
@@ -84,12 +85,14 @@ namespace CustomerSimulationDL.Repositories
                     tran.Rollback();
                     throw;
                 }
+
+                return simulationSettingsId;
             }
 
         }
         public int UploadHouseNumberRules(SimulationSettings simulationSettings)
         {
-            string SQL = "INSERT INTO HouseNumberRules(MinNumber, MaxNumber, HasLetters, PercentageLetters " +
+            string SQL = "INSERT INTO HouseNumberRules(MinNumber, MaxNumber, HasLetters, PercentageLetters) " +
                          "OUTPUT inserted.ID VALUES(@MinNumber, @MaxNumber, @HasLetters, @PercentageLetters)";
 
             using(SqlConnection conn = new SqlConnection(_connectionstring))
@@ -161,43 +164,88 @@ namespace CustomerSimulationDL.Repositories
                 }
             }
         }
-        public List<SimulationData> GetAllSimulationData()
+        public void UploadSelectedMunicipalities(
+    int simulationSettingsId,
+    List<MunicipalitySelection> selections)
         {
-            List<SimulationData> simulationDatas = new List<SimulationData>();
+            if (selections == null || selections.Count == 0)
+                return;
 
-            string SQL = "SELECT sd.ID, sd.Client, sd.DateCreated " +
-                         "FROM SimulationData sd";
+            string sql = @"
+        INSERT INTO SimulationMunicipality
+        (SimulationSettingsID, MunicipalityID, Percentage)
+        VALUES (@SettingsID, @MunicipalityID, @Percentage)";
 
-            using (SqlConnection conn = new SqlConnection(_connectionstring))
-            using (SqlCommand cmd = conn.CreateCommand())
+            using SqlConnection conn = new(_connectionstring);
+            conn.Open();
+
+            using SqlTransaction tx = conn.BeginTransaction();
+
+            try
+            {
+                foreach (var selection in selections)
+                {
+                    using SqlCommand cmd = conn.CreateCommand();
+                    cmd.Transaction = tx;
+                    cmd.CommandText = sql;
+
+                    cmd.Parameters.AddWithValue("@SettingsID", simulationSettingsId);
+                    cmd.Parameters.AddWithValue("@MunicipalityID", selection.Municipality.Id);
+                    cmd.Parameters.AddWithValue("@Percentage", selection.Percentage);
+
+                    cmd.ExecuteNonQuery();
+                }
+
+                tx.Commit();
+            }
+            catch
+            {
+                tx.Rollback();
+                throw;
+            }
+        }
+        public List<SimulationOverviewDTO> GetAllSimulationOverviews()
+        {
+            var list = new List<SimulationOverviewDTO>();
+
+            string SQL = "SELECT sd.ID AS SimulationDataId, c.Name AS CountryName, cv.Year, sd.Client AS ClientName, sd.DateCreated " +
+                         "FROM SimulationData sd " +
+                         "JOIN COuntryVersion cv on cv.ID = sd.CountryVersionID " +
+                         "JOIN Country c on c.ID = cv.CountryID " +
+                         "ORDER BY sd.DateCreated DESC";
+
+            using(SqlConnection conn = new SqlConnection(_connectionstring))
+            using(SqlCommand cmd = conn.CreateCommand())
             {
                 conn.Open();
                 cmd.CommandText = SQL;
 
-                using (SqlDataReader reader = cmd.ExecuteReader())
+                using(SqlDataReader reader = cmd.ExecuteReader())
                 {
-                    while (reader.Read())
+                    while(reader.Read())
                     {
-                        int id = reader.GetInt32(reader.GetOrdinal("ID"));
-                        string client = reader.GetString(reader.GetOrdinal("Client"));
+                        int simulationDataId = reader.GetInt32(reader.GetOrdinal("SimulationDataId"));
+                        string countryName = reader.GetString(reader.GetOrdinal("CountryName"));
+                        int year = reader.GetInt32(reader.GetOrdinal("Year"));
+                        string clientName = reader.GetString(reader.GetOrdinal("ClientName"));
                         DateTime dateCreated = reader.GetDateTime(reader.GetOrdinal("DateCreated"));
 
-                        SimulationData simulationData = new SimulationData(id, client, dateCreated);
+                        SimulationOverviewDTO simulationOverviewDTO = new SimulationOverviewDTO(simulationDataId, countryName, year, clientName, dateCreated);
 
-                        simulationDatas.Add(simulationData);
+                        list.Add(simulationOverviewDTO);
                     }
                 }
+
+                return list;
             }
-            return simulationDatas;
         }
         public SimulationSettings GetSimulationSettingsBySimulationDataID(int simulationDataId)
         {
             SimulationSettings simSettings = null;
 
-            string SQL = "SELECT ss.Id, ss.NumberCustomers, ss.MinAge, ss.MaxAge, hnr.MinNumber, hnr.MaxNumer, hnr.HasLetters, hnr.PercentageLetters " +
+            string SQL = "SELECT ss.Id, ss.NumberCustomers, ss.MinAge, ss.MaxAge, hnr.MinNumber, hnr.MaxNumber, hnr.HasLetters, hnr.PercentageLetters " +
                          "FROM SimulationSettings ss " +
-                         "JOIN HouseNumberRules hnr " +
-                         "ONT ss.HouseNumberRulesID = hnr.ID " +
+                         "JOIN HouseNumberRules hnr ON hnr.ID = ss.HouseNumberRulesID " +
                          "Where ss.SimulationDataID = @SimulationDataID";
 
             using(SqlConnection conn = new SqlConnection(_connectionstring))
@@ -224,6 +272,11 @@ namespace CustomerSimulationDL.Repositories
                         simSettings = new SimulationSettings(id, null, numberCustomers, minAge, maxAge, minNumber, maxNumber, hasLetters, percentageLetters);
                     }
                 }
+            }
+
+            if(simSettings == null)
+            {
+                throw new InvalidOperationException("SimulationSettings not found");
             }
             return simSettings;
         }
@@ -259,6 +312,41 @@ namespace CustomerSimulationDL.Repositories
                 }
             }
             return simulationStatistics;
+        }
+        public List<MunicipalitySelection> GetSelectedMunicipalities(int simulationSettingsId, List<Municipality> municipalities)
+        {
+            List<MunicipalitySelection> result = new();
+
+            string sql = "SELECT MunicipalityID, Percentage " +
+                         "FROM SimulationMunicipality " +
+                         "WHERE SimulationSettingsID = @SettingsID";
+
+            using SqlConnection conn = new(_connectionstring);
+            using SqlCommand cmd = conn.CreateCommand();
+
+            cmd.CommandText = sql;
+            cmd.Parameters.AddWithValue("@SettingsID", simulationSettingsId);
+
+            conn.Open();
+
+            using SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                int municipalityId = reader.GetInt32(0);
+                int percentage = reader.GetInt32(1);
+
+                Municipality municipality = municipalities.FirstOrDefault(m => m.Id == municipalityId);
+
+                if(municipality == null)
+                {
+                    throw new InvalidOperationException($"Municipality with ID {municipalityId} not found in provided list.");
+                }
+
+                MunicipalitySelection selection = new MunicipalitySelection(municipality, percentage, isSelected: true);
+
+                result.Add(selection);
+            }
+            return result;
         }
     }
 }

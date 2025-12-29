@@ -79,7 +79,7 @@ namespace CustomerSimulationDL.Repositories
         {
             List<CountryVersion> countryVersions = new List<CountryVersion>();
 
-            string SQL = "SELECT cv.ID, cv.CountryID, cv.Year, c.Name AS CountryName " +
+            string SQL = "SELECT cv.ID as Id, cv.CountryID, cv.Year, c.Name AS CountryName " +
                          "FROM CountryVersion cv " +
                          "JOIN Country c ON c.ID = cv.CountryID " +
                          "ORDER BY c.Name, cv.Year";
@@ -94,12 +94,12 @@ namespace CustomerSimulationDL.Repositories
                 {
                     while(reader.Read())
                     {
-                        int id = reader.GetInt32(reader.GetOrdinal("ID"));
+                        int id = reader.GetInt32(reader.GetOrdinal("Id"));
                         int countryId = reader.GetInt32(reader.GetOrdinal("CountryID"));
                         int year = reader.GetInt32(reader.GetOrdinal("Year"));
                         string countryName = reader.GetString(reader.GetOrdinal("CountryName"));
 
-                        Country country = new Country(id, countryName);
+                        Country country = new Country(countryId, countryName);
 
                         CountryVersion countryVersion = new CountryVersion(id, year, country);
 

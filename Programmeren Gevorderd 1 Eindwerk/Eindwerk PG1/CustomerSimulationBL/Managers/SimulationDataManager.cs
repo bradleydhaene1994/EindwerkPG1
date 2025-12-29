@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CustomerSimulationBL.Domein;
+using CustomerSimulationBL.DTOs;
 using CustomerSimulationBL.Interfaces;
 
 namespace CustomerSimulationBL.Managers
@@ -21,9 +22,10 @@ namespace CustomerSimulationBL.Managers
             int simulationDataId = _simulationRepo.UploadSimulationData(simulationData, countryVersionId);
             return simulationDataId;
         }
-        public void UploadSimulationSettings(SimulationSettings simulationSettings, int simulationDataId, int houseNumberRulesId)
+        public int UploadSimulationSettings(SimulationSettings simulationSettings, int simulationDataId, int houseNumberRulesId)
         {
-            _simulationRepo.UploadSimulationSettings(simulationSettings, simulationDataId, houseNumberRulesId);
+            int simulationSettingsId = _simulationRepo.UploadSimulationSettings(simulationSettings, simulationDataId, houseNumberRulesId);
+            return simulationSettingsId;
         }
         public void UploadSimulationStatistics(SimulationStatistics simulationStatistics, int simulationDataId)
         {
@@ -34,11 +36,11 @@ namespace CustomerSimulationBL.Managers
             int HouseNumberRulesId = _simulationRepo.UploadHouseNumberRules(simulationSettings);
             return HouseNumberRulesId;
         }
-        public List<SimulationData> GetAllSimulationData()
+        /*public List<SimulationData> GetAllSimulationData()
         {
             var simData = _simulationRepo.GetAllSimulationData();
             return simData;
-        }
+        }*/
         public SimulationSettings GetSimulationSettingsBySimulationDataID(int simulationDataId)
         {
             SimulationSettings simSettings = _simulationRepo.GetSimulationSettingsBySimulationDataID(simulationDataId);
@@ -48,6 +50,20 @@ namespace CustomerSimulationBL.Managers
         {
             SimulationStatistics simStatistics = _simulationRepo.GetSimulationStatisticsBySimulationDataID(simulationDataId);
             return simStatistics;
+        }
+        public List<SimulationOverviewDTO> GetSimulationOverview()
+        {
+            var simulationOverviews = _simulationRepo.GetAllSimulationOverviews();
+            return simulationOverviews;
+        }
+        public void UploadSelectedMunicipalities(int simulationSettingsId, List<MunicipalitySelection> selections)
+        {
+            _simulationRepo.UploadSelectedMunicipalities(simulationSettingsId, selections);
+        }
+        public List<MunicipalitySelection> GetSelectedMunicipalities(int simulationSettingsId, List<Municipality> municipalities)
+        {
+            var selectedMunicipalities = _simulationRepo.GetSelectedMunicipalities(simulationSettingsId, municipalities);
+            return selectedMunicipalities;
         }
     }
 }

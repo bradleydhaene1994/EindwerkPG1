@@ -23,24 +23,26 @@ namespace CustomerSimulationBL.Managers
             _addressRepo.UploadAddress(addresses, countryVersionID, progress);
         }
 
-        public List<Address> GetAddressesByCountryVersionID(int countryVersionId)
+        public List<Address> GetAddressesByCountryVersionID(int countryVersionId, List<Municipality> municipalities)
         {
-            var addresses = _addressRepo.GetAddressesByCountryVersionID(countryVersionId);
+            var addresses = _addressRepo.GetAddressesByCountryVersionID(countryVersionId, municipalities);
             return addresses;
         }
-        public Address GetRandomAddress(List<Address> addresses)
+        public Address GetRandomAddressByMunicipality(List<Address> addresses, Municipality municipality)
         {
-            if(addresses == null)
+            if (municipality == null)
             {
-                throw new ArgumentNullException(nameof(addresses));
-            }
-            if(addresses.Count == 0)
-            {
-                throw new ArgumentException("Address list can not be empty.", nameof(addresses));
+                throw new ArgumentNullException(nameof(municipality));
             }
 
-            int index = _random.Next(addresses.Count);
-            return addresses[index];
+            var filtered = addresses.Where(a => a.Municipality == municipality).ToList();
+
+            if (filtered.Count == 0)
+            {
+                throw new InvalidOperationException($"No addresses found for municipality {municipality.Name}");
+            }
+
+            return filtered[_random.Next(filtered.Count)];
         }
     }
 }

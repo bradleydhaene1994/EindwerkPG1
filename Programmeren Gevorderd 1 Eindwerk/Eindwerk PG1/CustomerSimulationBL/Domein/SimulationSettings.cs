@@ -9,9 +9,9 @@ namespace CustomerSimulationBL.Domein
 {
     public class SimulationSettings
     {
-        public SimulationSettings(List<int> selectedMunicipalityIds, int totalCustomers, int minAge, int maxAge, int minNumber, int maxNumber, bool hasLetters, int percentageLetters)
+        public SimulationSettings(List<MunicipalitySelection> selectedMunicipalities, int totalCustomers, int minAge, int maxAge, int minNumber, int maxNumber, bool hasLetters, int percentageLetters)
         {
-            SelectedMunicipalityIds = selectedMunicipalityIds;
+            SelectedMunicipalities = selectedMunicipalities;
             TotalCustomers = totalCustomers;
             MinAge = minAge;
             MaxAge = maxAge;
@@ -21,10 +21,10 @@ namespace CustomerSimulationBL.Domein
             PercentageLetters = percentageLetters;
         }
 
-        public SimulationSettings(int id, List<int> selectedMunicipalityIds, int totalCustomers, int minAge, int maxAge, int minNumber, int maxNumber, bool hasLetters, int percentageLetters)
+        public SimulationSettings(int id, List<MunicipalitySelection> selectedMunicipalities, int totalCustomers, int minAge, int maxAge, int minNumber, int maxNumber, bool hasLetters, int percentageLetters)
         {
             Id = id;
-            SelectedMunicipalityIds = selectedMunicipalityIds;
+            SelectedMunicipalities = selectedMunicipalities;
             TotalCustomers = totalCustomers;
             this.MinAge = minAge;
             this.MaxAge = maxAge;
@@ -35,7 +35,7 @@ namespace CustomerSimulationBL.Domein
         }
 
         public int Id { get; set; }
-        public List<int> SelectedMunicipalityIds { get; }
+        public List<MunicipalitySelection> SelectedMunicipalities { get; set; }
         public int TotalCustomers { get; }
         public int MinAge { get; }
         public int MaxAge { get; }

@@ -17,13 +17,13 @@ namespace CustomerSimulationBL.Managers
         {
             _nameRepo = nameRepo;
         }
-        public void UploadFirstName(IEnumerable<FirstName> firstNames, int countryVersionId)
+        public void UploadFirstName(IEnumerable<FirstName> firstNames, int countryVersionId, IProgress<int> progress)
         {
-            _nameRepo.UploadFirstName(firstNames, countryVersionId);
+            _nameRepo.UploadFirstName(firstNames, countryVersionId, progress);
         }
-        public void UploadLastName(IEnumerable<LastName> lastNames, int countryVersionId)
+        public void UploadLastName(IEnumerable<LastName> lastNames, int countryVersionId, IProgress<int> progress)
         {
-            _nameRepo.UploadLastName(lastNames, countryVersionId);
+            _nameRepo.UploadLastName(lastNames, countryVersionId, progress);
         }
         public List<FirstName> GetFirstNamesByCountryVersionID(int countryVersionID)
         {

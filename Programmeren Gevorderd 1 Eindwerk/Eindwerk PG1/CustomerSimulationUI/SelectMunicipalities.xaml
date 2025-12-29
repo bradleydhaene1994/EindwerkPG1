@@ -1,0 +1,26 @@
+﻿<Window x:Class="CustomerSimulationUI.SelectMunicipalities"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CustomerSimulationUI"
+        mc:Ignorable="d"
+        Title="SelectMunicipalities" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <DataGrid Grid.Row="0" ItemsSource="{Binding MunicipalitySelections}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="False" Margin="5">
+            <DataGrid.Columns>
+                <DataGridCheckBoxColumn Header="Select" Binding="{Binding IsSelected, Mode=TwoWay}"/>
+                <DataGridTextColumn Header="Municipality" Binding="{Binding Municipality.Name}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Percentage" Binding="{Binding Percentage, Mode=TwoWay}" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <StackPanel Grid.Row="1" Orientation="Vertical" VerticalAlignment="Bottom">
+            <Button Content="OK" Click="Ok_Click" Margin="5"/>
+            <Button Content="Cancel" Click="Cancel_Click" Margin="5"/>
+        </StackPanel>
+    </Grid>
+</Window>

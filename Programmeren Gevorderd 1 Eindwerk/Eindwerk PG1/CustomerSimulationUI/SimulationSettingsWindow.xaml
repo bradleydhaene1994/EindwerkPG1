@@ -1,0 +1,44 @@
+﻿<Window x:Class="CustomerSimulationUI.SimulationSettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CustomerSimulationUI"
+        mc:Ignorable="d"
+        Title="SimulationSettings" Height="auto" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="1" Grid.Column="0" Margin="5" Text="Municipalities" Grid.ColumnSpan="2"/>
+        <TextBox Grid.Row="1" Grid.Column="2" Margin="5" Name="SelectedMunicipalities" Grid.ColumnSpan="2" IsReadOnly="True" Text="{Binding SelectedMunicipalitiesSummary, Mode=OneWay}"/>
+        <TextBlock Grid.Row="2" Grid.Column="0" Margin="5" Text="Number of Customers" Grid.ColumnSpan="2"/>
+        <TextBox Grid.Row="2" Grid.Column="2" Margin="5" Name="CustomerNumber" Grid.ColumnSpan="2" IsReadOnly="True" Text="{Binding Settings.TotalCustomers, Mode=OneWay}"/>
+        <TextBlock Grid.Row="3" Grid.Column="0" Margin="5" Text="Minimum Age"/>
+        <TextBox Grid.Row="3" Grid.Column="1" Margin="5" Name="MinimumAge" IsReadOnly="True" Text="{Binding Settings.MinAge, Mode=OneWay}"/>
+        <TextBlock Grid.Row="3" Grid.Column="2" Margin="5" Text="Maximum Age"/>
+        <TextBox Grid.Row="3" Grid.Column="3" Margin="5" Name="MaximumAge" IsReadOnly="True" Text="{Binding Settings.MaxAge, Mode=OneWay}"/>
+        <TextBlock Grid.Row="4" Grid.Column="0" Margin="5" Text="Minimum Housenumber"/>
+        <TextBox Grid.Row="4" Grid.Column="1" Margin="5" Name="MinimumHousenumber" IsReadOnly="True" Text="{Binding Settings.MinNumber, Mode=OneWay}"/>
+        <TextBlock Grid.Row="4" Grid.Column="2" Margin="5" Text="Maximum Housenumber"/>
+        <TextBox Grid.Row="4" Grid.Column="3" Margin="5" Name="MaximumHousenumber" IsReadOnly="True" Text="{Binding Settings.MaxNumber, Mode=OneWay}"/>
+        <TextBlock Grid.Row="5" Grid.Column="0" Margin="5" Text="Do housenumbers have letters?"/>
+        <TextBox Grid.Row="5" Grid.Column="1" Margin="5" Name="HousenumbersLettersBoolean" IsReadOnly="True" Text="{Binding Settings.HasLetters, Mode=OneWay}"/>
+        <TextBlock Grid.Row="5" Grid.Column="2" Margin="5" Text="Percentage of housenumbers that have letters"/>
+        <TextBox Grid.Row="5" Grid.Column="3" Margin="5" Name="PercentageLetters" IsReadOnly="True" Text="{Binding Settings.PercentageLetters, Mode=OneWay}"/>
+        <Button Grid.Row="6" Grid.Column="0" Margin="5" Content="Close" Grid.ColumnSpan="4" Click="Close_Click"/>
+    </Grid>
+</Window>

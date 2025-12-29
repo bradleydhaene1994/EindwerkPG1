@@ -61,11 +61,11 @@ namespace CustomerSimulationBL.Services
                     break;
 
                 case UploadDataType.FirstName:
-                    UploadFirstNames(filePath, format, countryVersionId);
+                    UploadFirstNames(filePath, format, countryVersionId, progress);
                     break;
 
                 case UploadDataType.LastName:
-                    UploadLastNames(filePath, format, countryVersionId);
+                    UploadLastNames(filePath, format, countryVersionId, progress);
                     break;
 
                 case UploadDataType.Municipality:
@@ -84,7 +84,7 @@ namespace CustomerSimulationBL.Services
 
             _addressRepository.UploadAddress(addresses, countryVersionId, progress);
         }
-        private void UploadFirstNames(string filePath, FileFormat format, int countryVersionId)
+        private void UploadFirstNames(string filePath, FileFormat format, int countryVersionId, IProgress<int> progress)
         {
             IEnumerable<FirstName> firstNames = format switch
             {
@@ -94,9 +94,9 @@ namespace CustomerSimulationBL.Services
                 _ => throw new InvalidOperationException()
             };
 
-            _nameRepository.UploadFirstName(firstNames, countryVersionId);
+            _nameRepository.UploadFirstName(firstNames, countryVersionId, progress);
         }
-        private void UploadLastNames(string filePath, FileFormat format, int countryVersionId)
+        private void UploadLastNames(string filePath, FileFormat format, int countryVersionId, IProgress<int> progress)
         {
             IEnumerable<LastName> lastNames = format switch
             {
@@ -106,7 +106,7 @@ namespace CustomerSimulationBL.Services
                 _ => throw new InvalidOperationException()
             };
 
-            _nameRepository.UploadLastName(lastNames, countryVersionId);
+            _nameRepository.UploadLastName(lastNames, countryVersionId, progress);
         }
         private void UploadMunicipality(string filePath, FileFormat format, int countryVersionId)
         {
