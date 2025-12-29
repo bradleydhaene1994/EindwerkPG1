@@ -348,5 +348,38 @@ namespace CustomerSimulationDL.Repositories
             }
             return result;
         }
+        public void UploadMunicipalityStatistics(int simulationStatisticsId, List<MunicipalityStatistics> stats)
+        {
+            string SQL = "INSERT INTO SimulationMunicipalityStatistics (SimulationStatisticsID, MunicipalityID, CustomerCount) " +
+                         "VALUES (@SimulationStatisticsID, @MunicipalityID, @CustomerCount";
+
+            using SqlConnection conn = new(_connectionstring);
+            conn.Open();
+
+            using SqlTransaction tran = conn.BeginTransaction();
+
+            try
+            {
+                foreach(var stat in stats)
+                {
+                    using SqlCommand cmd = conn.CreateCommand();
+                    cmd.Transaction = tran;
+                    cmd.CommandText = SQL;
+
+                    cmd.Parameters.Add("@SimulationStatisticsID", SqlDbType.Int).Value = simulationStatisticsId;
+                    cmd.Parameters.Add("@MuncipalityID", SqlDbType.Int).Value = stat.Municipality.Id;
+                    cmd.Parameters.Add("@CustomerCount", SqlDbType.Int).Value = stat.CustomerCount;
+
+                    cmd.ExecuteNonQuery();
+                }
+
+                tran.Commit();
+            }
+            catch
+            {
+                tran.Rollback();
+                throw;
+            }
+        }
     }
 }

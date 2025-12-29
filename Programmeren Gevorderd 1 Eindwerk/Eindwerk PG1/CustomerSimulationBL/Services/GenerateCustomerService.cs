@@ -121,5 +121,17 @@ namespace CustomerSimulationBL.Managers
 
             return age;
         }
+        public List<MunicipalityStatistics> CalculateMunicipalityStatistics(List<CustomerDTO> customers, List<Municipality> municipalities)
+        {
+            return customers
+                   .GroupBy(c => c.Municipality)
+                   .Select(g =>
+                   {
+                       Municipality municipality = municipalities.First(m => m.Name == g.Key);
+
+                       return new MunicipalityStatistics(municipality, g.Count());
+                   })
+                   .ToList();
+        }
     }
 }
