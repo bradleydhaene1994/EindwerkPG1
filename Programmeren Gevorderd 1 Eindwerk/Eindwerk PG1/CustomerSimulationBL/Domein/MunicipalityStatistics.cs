@@ -8,14 +8,14 @@ namespace CustomerSimulationBL.Domein
 {
     public class MunicipalityStatistics
     {
-        public MunicipalityStatistics(Municipality municipality, int customerCount)
+        public MunicipalityStatistics(Municipality municipality, int count)
         {
             Municipality = municipality;
-            CustomerCount = customerCount;
+            Count = count;
         }
 
         public Municipality Municipality { get; }
-        public int CustomerCount { get; }
+        public int Count { get; }
 
     }
 }

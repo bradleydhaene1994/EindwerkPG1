@@ -126,7 +126,7 @@ namespace CustomerSimulationDL.Repositories
                 }
             }
         }
-        public void UploadSimulationStatistics(SimulationStatistics simulationStatistics, int simulationDataId)
+        public int UploadSimulationStatistics(SimulationStatistics simulationStatistics, int simulationDataId)
         {
             string SQL = "INSERT INTO SimulationStatistics(SimulationDataID, TotalCustomers, AverageAgeSimulationDate, AverageAgeCurrentDate, AgeYoungestCustomer, AgeOldestCustomer) " +
                          "OUTPUT inserted.ID VALUES(@SimulationDataID, @TotalCustomers, @AverageAgeSimulationDate, @AverageAgeCurrentDate, @AgeYoungestCustomer, @AgeOldestCustomer)";
@@ -156,6 +156,8 @@ namespace CustomerSimulationDL.Repositories
                     simulationStatisticsId = (int)cmd.ExecuteScalar();
 
                     tran.Commit();
+
+                    return simulationStatisticsId;
                 }
                 catch (Exception)
                 {

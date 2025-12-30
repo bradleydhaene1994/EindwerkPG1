@@ -27,9 +27,10 @@ namespace CustomerSimulationBL.Managers
             int simulationSettingsId = _simulationRepo.UploadSimulationSettings(simulationSettings, simulationDataId, houseNumberRulesId);
             return simulationSettingsId;
         }
-        public void UploadSimulationStatistics(SimulationStatistics simulationStatistics, int simulationDataId)
+        public int UploadSimulationStatistics(SimulationStatistics simulationStatistics, int simulationDataId)
         {
-            _simulationRepo.UploadSimulationStatistics(simulationStatistics, simulationDataId);
+            int simulationStatisticsId = _simulationRepo.UploadSimulationStatistics(simulationStatistics, simulationDataId);
+            return simulationStatisticsId;
         }
         public int UploadHouseNumberRules(SimulationSettings simulationSettings)
         {
@@ -64,6 +65,10 @@ namespace CustomerSimulationBL.Managers
         {
             var selectedMunicipalities = _simulationRepo.GetSelectedMunicipalities(simulationSettingsId, municipalities);
             return selectedMunicipalities;
+        }
+        public void UploadMunicipalityStatistics(int simulationStatisticsId, List<MunicipalityStatistics> stats)
+        {
+            _simulationRepo.UploadMunicipalityStatistics(simulationStatisticsId, stats);
         }
     }
 }

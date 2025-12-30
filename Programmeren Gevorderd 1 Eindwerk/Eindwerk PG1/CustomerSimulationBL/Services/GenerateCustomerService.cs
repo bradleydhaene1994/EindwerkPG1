@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CustomerSimulationBL.Domein;
 using CustomerSimulationBL.DTOs;
+using CustomerSimulationBL.Enumerations;
 using CustomerSimulationBL.Interfaces;
 
 namespace CustomerSimulationBL.Managers
@@ -24,7 +26,7 @@ namespace CustomerSimulationBL.Managers
             _customermanager = customermanager;
             _simulationDataManager = simulationDataManager;
         }
-        public void RunSimulation(SimulationData simData, SimulationSettings simSettings, int countryVersionId)
+        public void RunSimulation(SimulationData simData, SimulationSettings simSettings, int countryVersionId, List<Municipality> municipalities)
         {
             //Save SimulationData
             int simulationDataId = _simulationDataManager.UploadSimulationData(simData, countryVersionId);
@@ -48,10 +50,16 @@ namespace CustomerSimulationBL.Managers
             SimulationStatistics stats = CalculateStatistics(customerDTOs);
 
             //Save Statistics
-            _simulationDataManager.UploadSimulationStatistics(stats, simulationDataId);
+            int simulationStatsId = _simulationDataManager.UploadSimulationStatistics(stats, simulationDataId);
+
+            //Calculate Municipality Statistics
+            var municipalityStatistics = CalculateCustomersPerMunicipality(customerDTOs, municipalities);
+
+            //upload Municipality Statistics
+            _simulationDataManager.UploadMunicipalityStatistics(simulationStatsId, municipalityStatistics);
         }
         private List<CustomerDTO> GenerateCustomers(SimulationData simulationData, SimulationSettings settings, int countryVersionId)
-        {   
+        {
             List<CustomerDTO> customers = new List<CustomerDTO>();
 
             var municipalities = _municipalitymanager.GetMunicipalityByCountryVersionID(countryVersionId);
@@ -63,7 +71,7 @@ namespace CustomerSimulationBL.Managers
             {
                 Municipality municipality;
 
-                if(settings.SelectedMunicipalities == null)
+                if (settings.SelectedMunicipalities == null)
                 {
                     municipality = _municipalitymanager.GetRandomMunicipality(municipalities);
                 }
@@ -73,7 +81,7 @@ namespace CustomerSimulationBL.Managers
 
                     municipality = municipalities.First(m => m.Id == selected.Id);
                 }
-                
+
                 Address randomAddres = _addressmanager.GetRandomAddressByMunicipality(addresses, municipality);
                 string addressStreet = randomAddres.Street;
 
@@ -81,6 +89,7 @@ namespace CustomerSimulationBL.Managers
 
                 FirstName randomFirstName = _namemanager.GetRandomFirstName(firstNames);
                 string nameFirst = randomFirstName.Name;
+                Gender gender = randomFirstName.Gender;
 
                 LastName randomLastName = _namemanager.GetRandomLastName(lastNames);
                 string nameLast = randomLastName.Name;
@@ -88,7 +97,7 @@ namespace CustomerSimulationBL.Managers
                 DateTime randomBirthday = _customermanager.GetRandomBirthdate(settings);
                 string houseNumber = _customermanager.GetRandomHouseNumber(settings);
 
-                CustomerDTO customer = new CustomerDTO(nameFirst, nameLast, municipalityName, addressStreet, randomBirthday, houseNumber);
+                CustomerDTO customer = new CustomerDTO(nameFirst, nameLast, municipalityName, addressStreet, randomBirthday, houseNumber, gender);
 
                 customers.Add(customer);
             }
@@ -102,26 +111,26 @@ namespace CustomerSimulationBL.Managers
 
             int totalCustomers = customers.Count;
             double averageAgeSimulationDate = agesToday.Average();
-            double averageAgeToday= agesToday.Average();
+            double averageAgeToday = agesToday.Average();
             int youngestAge = agesToday.Min();
             int oldestAge = agesToday.Max();
 
-            SimulationStatistics simStatistics = new SimulationStatistics(totalCustomers, null, averageAgeSimulationDate, averageAgeToday, youngestAge, oldestAge);
+            SimulationStatistics simStatistics = new SimulationStatistics(totalCustomers, averageAgeSimulationDate, averageAgeToday, youngestAge, oldestAge);
 
             return simStatistics;
         }
         private int CalculateAge(DateTime birthDate, DateTime referenceDate)
         {
             int age = referenceDate.Year - birthDate.Year;
-            
-            if(referenceDate < birthDate.AddYears(age))
+
+            if (referenceDate < birthDate.AddYears(age))
             {
                 age--;
             }
 
             return age;
         }
-        public List<MunicipalityStatistics> CalculateMunicipalityStatistics(List<CustomerDTO> customers, List<Municipality> municipalities)
+        public List<MunicipalityStatistics> CalculateCustomersPerMunicipality(List<CustomerDTO> customers, List<Municipality> municipalities)
         {
             return customers
                    .GroupBy(c => c.Municipality)
@@ -132,6 +141,114 @@ namespace CustomerSimulationBL.Managers
                        return new MunicipalityStatistics(municipality, g.Count());
                    })
                    .ToList();
+        }
+        public List<MunicipalityStatistics> CalculateStreetsPerMunicipality(List<Address> addresses)
+        {
+            return addresses
+                   .Where(a => a.Municipality != null)
+                   .GroupBy(a => a.Municipality)
+                   .Select(g => new MunicipalityStatistics(g.Key, g.Select(a => a.Street).Distinct().Count()))
+                   .ToList();
+        }
+        public List<NameStatistics> CalculateNameStatistics(IEnumerable<string> names)
+        {
+            return names
+                   .GroupBy(n => n)
+                   .Select(g => new NameStatistics(g.Key, g.Count()))
+                   .OrderByDescending(n => n.Count)
+                   .ToList();
+        }
+        public SimulationStatisticsResult BuildStatisticsResult(SimulationStatistics general, List<CustomerDTO> customers, List<Address> addresses, List<Municipality> municipalities)
+        {
+            var municipalityStatistics = CalculateCustomersPerMunicipality(customers, municipalities);
+            var streetStatistics = CalculateStreetsPerMunicipality(addresses);
+            var maleNameStatistics = CalculateNameStatistics(customers.Where(c => c.Gender == Gender.Male).Select(c => c.FirstName));
+            var femaleNameStatistics = CalculateNameStatistics(customers.Where(c => c.Gender == Gender.Female).Select(c => c.FirstName));
+            var lastNameStatistics = CalculateNameStatistics(customers.Select(c => c.LastName));
+
+            return new SimulationStatisticsResult(general, municipalityStatistics, streetStatistics, maleNameStatistics, femaleNameStatistics, lastNameStatistics);
+        }
+        public SimulationExport BuildSimulationExport(SimulationData simData, SimulationSettings simSettings, List<CustomerDTO> customers, List<Address> addresses, List<Municipality> municipalities)
+        {
+            //Calculate General Statistics
+            SimulationStatistics generalStatistics = CalculateStatistics(customers);
+
+            //Build StatisticsResult
+            SimulationStatisticsResult statisticsResult = BuildStatisticsResult(generalStatistics, customers, addresses, municipalities);
+
+            //Combine into one export object
+            return new SimulationExport(simData, simSettings, statisticsResult);
+        }
+        public void ExportStatisticsToTxt(SimulationExport export, string filePath, CountryVersion countryVersion)
+        {
+            using StreamWriter writer = new StreamWriter(filePath);
+
+            //Simulation Data
+            writer.WriteLine("=== SIMULATION DATA ===");
+            writer.WriteLine($"Client name: {export.SimulationData.Client}");
+            writer.WriteLine($"Date created: {export.SimulationData.DateCreated}");
+            writer.WriteLine($"Country: {countryVersion.Country}");
+            writer.WriteLine($"Year: {countryVersion.Year}");
+
+            //Simulation Settings
+            writer.WriteLine("=== SIMULATION SETTINGS");
+            writer.WriteLine($"Total customers: {export.SimulationSettings.TotalCustomers}");
+            writer.WriteLine($"Age range: {export.SimulationSettings.MinAge} - {export.SimulationSettings.MaxAge}");
+            writer.WriteLine($"House number range: {export.SimulationSettings.MinNumber} - {export.SimulationSettings.MaxNumber}");
+            writer.WriteLine($"House numbers can have letters: {export.SimulationSettings.HasLetters}");
+            writer.WriteLine($"Percentage of house numbers that can have letters: {export.SimulationSettings.PercentageLetters}%");
+            writer.WriteLine("Municipalities selected: ");
+            if(export.SimulationSettings.SelectedMunicipalities == null)
+            {
+                writer.WriteLine("No municipalities specified");
+            }
+            else
+            {
+                foreach(var sel in export.SimulationSettings.SelectedMunicipalities)
+                {
+                    writer.WriteLine($"{sel.Municipality.Name}: {sel.Percentage}%");
+                }
+            }
+
+            //General Statistics
+            writer.WriteLine("--- GENERAL STATISTICS ---");
+            writer.WriteLine($"Youngest Customer: {export.SimulationStatisticsResult.General.AgeYoungestCustomer}");
+            writer.WriteLine($"Oldest Customer: {export.SimulationStatisticsResult.General.AgeOldestCustomer}");
+            writer.WriteLine($"Average age at date of simumlation: {export.SimulationStatisticsResult.General.AverageAgeOnSimulationDate}");
+            writer.WriteLine($"Average age at current duate: {export.SimulationStatisticsResult.General.AverageAgeOnCurrentDate}");
+
+            //Customers per municipality
+            writer.WriteLine("--- CUSTOMERS PER MUNICIPALITY ---");
+            foreach(var stat in export.SimulationStatisticsResult.CustomersPerMunicipality)
+            {
+                writer.WriteLine($"{stat.Municipality.Name}: {stat.Count}");
+            }
+
+            //Streets per municipality
+            writer.WriteLine("--- STREETS PER MUNICIPALITY ---");
+            foreach(var stat in export.SimulationStatisticsResult.StreetsPerMunicipality)
+            {
+                writer.WriteLine($"{stat.Municipality.Name}: {stat.Count}");
+            }
+
+            //Name statistics
+            writer.WriteLine("--- MALE NAMES ---");
+            foreach(var mn in export.SimulationStatisticsResult.MaleNames)
+            {
+                writer.WriteLine($"{mn.Name}: {mn.Count}");
+            }
+
+            writer.WriteLine("--- FEMALE NAMES ---");
+            foreach(var fn in export.SimulationStatisticsResult.FemaleName)
+            {
+                writer.WriteLine($"{fn.Name}: {fn.Count}");
+            }
+
+            writer.WriteLine("--- LAST NAMES ---");
+            foreach(var ln in export.SimulationStatisticsResult.LastNames)
+            {
+                writer.WriteLine($"{ln.Name}: {ln.Count}");
+            }
         }
     }
 }
