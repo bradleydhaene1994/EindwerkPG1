@@ -30,7 +30,7 @@ namespace CustomerSimulationUI.Model
 
         public ObservableCollection<CustomerDTO> Customers { get; } = new ObservableCollection<CustomerDTO>();
 
-        public void RunSimulation(int countryVersionId, string clientName)
+        public void RunSimulation(int countryVersionId, string clientName, List<Municipality> municipalities)
         {
             //Create SimulationData
             var simulationData = new SimulationData(clientName, DateTime.Now);
@@ -41,7 +41,7 @@ namespace CustomerSimulationUI.Model
             //Map DTO => Domain
             var settings = SimulationSettingsMapper.ToDomain(settingsDTO);
 
-            _generateCustomerService.RunSimulation(simulationData, settings, countryVersionId);
+            _generateCustomerService.RunSimulation(simulationData, settings, countryVersionId, municipalities);
         }
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string propertyName)

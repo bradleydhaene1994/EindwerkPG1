@@ -112,16 +112,18 @@ namespace CustomerSimulationUI
             var countryVersionId = (int)SelectedCountryVersion.SelectedValue;
 
             List<MunicipalitySelection>? municipalitySelections = null;
+            List<Municipality>? allowedMunicipalities = null;
 
             if((UseSpecificMunicipalitiesCheckBox.IsChecked == true) && SelectedMunicipalities.Any())
             {
                 municipalitySelections = SelectedMunicipalities.ToList();
+                allowedMunicipalities = SelectedMunicipalities.Select(s => s.Municipality).ToList();
             }
 
             var simulationData = new SimulationData(ClientName.Text, DateTime.Now);
             var simulationSettings = new SimulationSettings(municipalitySelections, totalCustomers, minAge, maxAge, minHouseNumber, maxHouseNumber, hasLetters, percentageLetters);
 
-            _generateCustomerService.RunSimulation(simulationData, simulationSettings, countryVersionId);
+            _generateCustomerService.RunSimulation(simulationData, simulationSettings, countryVersionId, allowedMunicipalities);
 
             MessageBox.Show("Simulation created succesfully.");
 

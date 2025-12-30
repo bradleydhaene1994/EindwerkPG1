@@ -309,7 +309,7 @@ namespace CustomerSimulationDL.Repositories
                         int ageYoungestCustomer = reader.GetInt32(reader.GetOrdinal("AgeYoungestCustomer"));
                         int ageOldestCustomer = reader.GetInt32(reader.GetOrdinal("AgeOldestCustomer"));
 
-                        simulationStatistics = new SimulationStatistics(id, totalCustomers, null, averageAgeSimulationDate, averageAgeCurrentDate, ageYoungestCustomer, ageOldestCustomer);
+                        simulationStatistics = new SimulationStatistics(id, totalCustomers, averageAgeSimulationDate, averageAgeCurrentDate, ageYoungestCustomer, ageOldestCustomer);
                     }
                 }
             }
@@ -370,7 +370,7 @@ namespace CustomerSimulationDL.Repositories
 
                     cmd.Parameters.Add("@SimulationStatisticsID", SqlDbType.Int).Value = simulationStatisticsId;
                     cmd.Parameters.Add("@MuncipalityID", SqlDbType.Int).Value = stat.Municipality.Id;
-                    cmd.Parameters.Add("@CustomerCount", SqlDbType.Int).Value = stat.CustomerCount;
+                    cmd.Parameters.Add("@CustomerCount", SqlDbType.Int).Value = stat.Count;
 
                     cmd.ExecuteNonQuery();
                 }

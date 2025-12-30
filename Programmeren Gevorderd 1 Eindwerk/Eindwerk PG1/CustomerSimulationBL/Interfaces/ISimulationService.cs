@@ -10,6 +10,6 @@ namespace CustomerSimulationBL.Interfaces
 {
     public interface ISimulationService
     {
-        void RunSimulation(SimulationData simData, SimulationSettings simSettings, int countryVersionId);
+        void RunSimulation(SimulationData simData, SimulationSettings simSettings, int countryVersionId, List<Municipality> municipalities);
     }
 }

@@ -11,7 +11,7 @@ namespace CustomerSimulationBL.Domein
         public NameStatistics(string name, int count)
         {
             Name = name;
-            this.count = count;
+            this.Count = count;
         }
 
         public string Name { get; }

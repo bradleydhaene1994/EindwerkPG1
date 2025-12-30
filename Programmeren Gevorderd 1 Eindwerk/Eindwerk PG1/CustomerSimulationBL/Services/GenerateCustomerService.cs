@@ -26,7 +26,7 @@ namespace CustomerSimulationBL.Managers
             _customermanager = customermanager;
             _simulationDataManager = simulationDataManager;
         }
-        public void RunSimulation(SimulationData simData, SimulationSettings simSettings, int countryVersionId, List<Municipality> municipalities)
+        public void RunSimulation(SimulationData simData, SimulationSettings simSettings, int countryVersionId, List<Municipality>? allowedMunicipalities)
         {
             //Save SimulationData
             int simulationDataId = _simulationDataManager.UploadSimulationData(simData, countryVersionId);
@@ -38,10 +38,19 @@ namespace CustomerSimulationBL.Managers
             int simulationSettingsId = _simulationDataManager.UploadSimulationSettings(simSettings, simulationDataId, houseNumberRulesId);
 
             //Save Selected Municipalities
-            _simulationDataManager.UploadSelectedMunicipalities(simulationSettingsId, simSettings.SelectedMunicipalities);
+            if(simSettings.SelectedMunicipalities != null)
+            {
+                _simulationDataManager.UploadSelectedMunicipalities(simulationSettingsId, simSettings.SelectedMunicipalities);
+            }
+
+            //Determine municipalities for simulation
+            List<Municipality> municipalities = allowedMunicipalities ?? _municipalitymanager.GetMunicipalityByCountryVersionID(countryVersionId);
+
+            //load addresses of municipality
+            List<Address> addresses = _addressmanager.GetAddressesByCountryVersionID(countryVersionId, municipalities);
 
             //Generate Customers
-            List<CustomerDTO> customerDTOs = GenerateCustomers(simData, simSettings, countryVersionId);
+            List<CustomerDTO> customerDTOs = GenerateCustomers(simData, simSettings, countryVersionId, municipalities, addresses);
 
             //Save Customers
             _customermanager.UploadCustomer(customerDTOs, simulationDataId, countryVersionId);
@@ -53,17 +62,15 @@ namespace CustomerSimulationBL.Managers
             int simulationStatsId = _simulationDataManager.UploadSimulationStatistics(stats, simulationDataId);
 
             //Calculate Municipality Statistics
-            var municipalityStatistics = CalculateCustomersPerMunicipality(customerDTOs, municipalities);
+            var municipalityStatistics = CalculateCustomersPerMunicipality(customerDTOs, allowedMunicipalities);
 
             //upload Municipality Statistics
             _simulationDataManager.UploadMunicipalityStatistics(simulationStatsId, municipalityStatistics);
         }
-        private List<CustomerDTO> GenerateCustomers(SimulationData simulationData, SimulationSettings settings, int countryVersionId)
+        private List<CustomerDTO> GenerateCustomers(SimulationData simulationData, SimulationSettings settings, int countryVersionId, List<Municipality> municipalities, List<Address> addresses)
         {
             List<CustomerDTO> customers = new List<CustomerDTO>();
 
-            var municipalities = _municipalitymanager.GetMunicipalityByCountryVersionID(countryVersionId);
-            var addresses = _addressmanager.GetAddressesByCountryVersionID(countryVersionId, municipalities);
             var firstNames = _namemanager.GetFirstNamesByCountryVersionID(countryVersionId);
             var lastNames = _namemanager.GetLastNamesByCountryVersionID(countryVersionId);
 
@@ -248,6 +255,25 @@ namespace CustomerSimulationBL.Managers
             foreach(var ln in export.SimulationStatisticsResult.LastNames)
             {
                 writer.WriteLine($"{ln.Name}: {ln.Count}");
+            }
+        }
+        public void ExportCustomerDataToTxt(SimulationData simulationData, List<CustomerDTO> customers, string filePath, CountryVersion countryVersion)
+        {
+            using StreamWriter writer = new StreamWriter(filePath);
+
+            //Header data
+            writer.WriteLine("--- SIMULATION DATA ---");
+            writer.WriteLine($"Client: {simulationData.Client}");
+            writer.WriteLine($"Date Created: {simulationData.DateCreated}");
+            writer.WriteLine($"Country: {countryVersion.Country}");
+            writer.WriteLine($"Year: {countryVersion.Year}");
+
+            //Customer Data
+            writer.WriteLine("First Name; Last Name; Municipality; Street; HouseNumber; BirthDate");
+
+            foreach(CustomerDTO c in customers)
+            {
+                writer.WriteLine($"{c.FirstName}; {c.LastName}, {c.Municipality}; {c.Street}; {c.HouseNumber}; {c.BirthDate}");
             }
         }
     }
