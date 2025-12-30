@@ -14,7 +14,7 @@ namespace CustomerSimulationBL.Domein
             CustomersPerMunicipality = customersPerMunicipality;
             StreetsPerMunicipality = streetsPerMunicipality;
             MaleNames = maleNames;
-            FemaleName = femaleName;
+            FemaleNames = femaleName;
             LastNames = lastNames;
         }
 
@@ -22,7 +22,7 @@ namespace CustomerSimulationBL.Domein
         public List<MunicipalityStatistics> CustomersPerMunicipality { get; }
         public List<MunicipalityStatistics> StreetsPerMunicipality { get; }
         public List<NameStatistics> MaleNames { get; }
-        public List<NameStatistics> FemaleName { get; }
+        public List<NameStatistics> FemaleNames { get; }
         public List<NameStatistics> LastNames { get; }
     }
 }

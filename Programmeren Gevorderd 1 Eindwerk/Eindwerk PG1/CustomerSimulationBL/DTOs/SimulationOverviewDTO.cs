@@ -9,9 +9,10 @@ namespace CustomerSimulationBL.DTOs
 {
     public class SimulationOverviewDTO
     {
-        public SimulationOverviewDTO(int simulationDataId, string countryName, int year, string clientName, DateTime dateCreated)
+        public SimulationOverviewDTO(int simulationDataId, int countryVersionId, string countryName, int year, string clientName, DateTime dateCreated)
         {
             SimulationDataId = simulationDataId;
+            CountryVersionId = countryVersionId;
             CountryName = countryName;
             Year = year;
             ClientName = clientName;
@@ -19,6 +20,7 @@ namespace CustomerSimulationBL.DTOs
         }
 
         public int SimulationDataId { get; set; }
+        public int CountryVersionId { get; set; }
         public string CountryName { get; set; }
         public int Year { get; set; }
         public string ClientName { get; set; }

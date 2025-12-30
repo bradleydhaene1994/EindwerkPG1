@@ -26,16 +26,19 @@ namespace CustomerSimulationUI
 
         private readonly SimulationDataManager _simulationDataManager;
         public string SelectedMunicipalitiesSummary => Settings.SelectedMunicipalities == null ? "All municipalities" : string.Join(", ", Settings.SelectedMunicipalities.Select(m => $"{m.Municipality.Name} {m.Percentage}"));
-        public SimulationSettingsWindow(SimulationSettings settings, SimulationDataManager dataManager, List<Municipality> municipalities)
+        public SimulationSettingsWindow(int countryVersionId, SimulationSettings settings, SimulationDataManager dataManager, MunicipalityManager municipalityManager)
         {
             InitializeComponent();
 
-            _simulationDataManager = dataManager;
+            //Load all municipalities for country version
+            List<Municipality> allMunicipalities = municipalityManager.GetMunicipalityByCountryVersionID(countryVersionId);
 
-            var selections = _simulationDataManager.GetSelectedMunicipalities(settings.Id, municipalities);
+            //load selected municipalities from settings
+            List<MunicipalitySelection> selections = dataManager.GetSelectedMunicipalities(settings.Id, allMunicipalities);
 
-            settings.SelectedMunicipalities = selections.Count == 0 ? null : selections;
-
+            //Assign to settings
+            settings.SetSelectedMunicipalities(selections);
+            
             Settings = settings;
 
             DataContext = this;

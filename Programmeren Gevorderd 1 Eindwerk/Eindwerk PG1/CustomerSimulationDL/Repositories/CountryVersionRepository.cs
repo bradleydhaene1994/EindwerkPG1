@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Data;
 using System.Data;
 using CustomerSimulationBL.Domein;
+using Microsoft.Identity.Client;
 
 namespace CustomerSimulationDL.Repositories
 {
@@ -106,8 +107,38 @@ namespace CustomerSimulationDL.Repositories
                         countryVersions.Add(countryVersion);
                     }
                 }
-                return countryVersions;
             }
+            return countryVersions;
+        }
+        public CountryVersion GetCountryVersionById(int countryVersionId)
+        {
+            string SQL = "SELECT cv.ID, cv.Year, c.ID AS CountryId, c.Name AS CountryName " +
+                         "FROM countryVersion cv " +
+                         "JOIN Country c on c.ID = cv.CountryID " +
+                         "WHERE cv.ID = @CountryVersionId";
+
+            using SqlConnection conn = new SqlConnection(_connectionstring);
+            using SqlCommand cmd = conn.CreateCommand();
+
+            cmd.CommandText = SQL;
+            cmd.Parameters.Add("@CountryVersionId", SqlDbType.Int).Value = countryVersionId;
+
+            conn.Open();
+
+            using SqlDataReader reader = cmd.ExecuteReader();
+
+            if(!reader.Read())
+            {
+                throw new InvalidOperationException($"CountryVersion with ID {countryVersionId} could not be found");
+            }
+
+            int id = reader.GetInt32(reader.GetOrdinal("ID"));
+            int year = reader.GetInt32(reader.GetOrdinal("Year"));
+            int countryId = reader.GetInt32(reader.GetOrdinal("CountryId"));
+            string countryName = reader.GetString(reader.GetOrdinal("CountryName"));
+
+            Country country = new Country(countryId, countryName);
+            return new CountryVersion(id, year, country);
         }
     }
 }

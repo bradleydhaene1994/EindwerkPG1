@@ -16,6 +16,5 @@ namespace CustomerSimulationBL.Mappers
 
             return cDto;
         }
-
     }
 }

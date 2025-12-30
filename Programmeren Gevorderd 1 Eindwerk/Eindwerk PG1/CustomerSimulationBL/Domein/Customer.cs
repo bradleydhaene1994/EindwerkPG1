@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CustomerSimulationBL.Enumerations;
 
 namespace CustomerSimulationBL.Domein
 {
     public class Customer
     {
-        public Customer(string firstName, string lastName, string municipality, string street, DateTime birthDate, string houseNumber)
+        public Customer(string firstName, string lastName, string municipality, string street, DateTime birthDate, string houseNumber, Gender gender)
         {
             FirstName = firstName;
             LastName = lastName;
@@ -16,6 +17,7 @@ namespace CustomerSimulationBL.Domein
             Street = street;
             BirthDate = birthDate;
             HouseNumber = houseNumber;
+            Gender = gender;
         }
 
         public Customer(int id, string firstName, string lastName, string municipality, string street, DateTime birthDate, string houseNumber)
@@ -36,5 +38,6 @@ namespace CustomerSimulationBL.Domein
         public string Street { get; }
         public DateTime BirthDate { get; }
         public string HouseNumber { get; }
+        public Gender Gender { get; }
     }
 }

@@ -165,26 +165,31 @@ namespace CustomerSimulationBL.Managers
                    .OrderByDescending(n => n.Count)
                    .ToList();
         }
-        public SimulationStatisticsResult BuildStatisticsResult(SimulationStatistics general, List<CustomerDTO> customers, List<Address> addresses, List<Municipality> municipalities)
+        public SimulationStatisticsResult BuildStatisticsResult(int simulationDataId, int countryVersionId)
         {
-            var municipalityStatistics = CalculateCustomersPerMunicipality(customers, municipalities);
-            var streetStatistics = CalculateStreetsPerMunicipality(addresses);
-            var maleNameStatistics = CalculateNameStatistics(customers.Where(c => c.Gender == Gender.Male).Select(c => c.FirstName));
-            var femaleNameStatistics = CalculateNameStatistics(customers.Where(c => c.Gender == Gender.Female).Select(c => c.FirstName));
-            var lastNameStatistics = CalculateNameStatistics(customers.Select(c => c.LastName));
+            SimulationStatistics general = _simulationDataManager.GetSimulationStatisticsBySimulationDataID(simulationDataId);
+            List<Customer> domainCustomers = _customermanager.GetCustomerBySimulationDataID(simulationDataId);
+            List<CustomerDTO> customers = domainCustomers.Select(ToDTO).ToList();
+            List<Municipality> municipalities = _municipalitymanager.GetMunicipalityByCountryVersionID(countryVersionId);
+            List<Address> addresses = _addressmanager.GetAddressesByCountryVersionID(countryVersionId, municipalities);
 
-            return new SimulationStatisticsResult(general, municipalityStatistics, streetStatistics, maleNameStatistics, femaleNameStatistics, lastNameStatistics);
+            return new SimulationStatisticsResult(
+                       general,
+                       CalculateCustomersPerMunicipality(customers, municipalities),
+                       CalculateStreetsPerMunicipality(addresses),
+                       CalculateNameStatistics(customers.Where(c => c.Gender == Gender.Male).Select(c => c.FirstName)),
+                       CalculateNameStatistics(customers.Where(c => c.Gender == Gender.Female).Select(c => c.FirstName)),
+                       CalculateNameStatistics(customers.Select(c => c.LastName)));
         }
-        public SimulationExport BuildSimulationExport(SimulationData simData, SimulationSettings simSettings, List<CustomerDTO> customers, List<Address> addresses, List<Municipality> municipalities)
+        public SimulationExport BuildSimulationExport(int simulationDataId, int countryVersionId)
         {
-            //Calculate General Statistics
-            SimulationStatistics generalStatistics = CalculateStatistics(customers);
+            SimulationData simData = _simulationDataManager.GetSimulationDataById(simulationDataId);
 
-            //Build StatisticsResult
-            SimulationStatisticsResult statisticsResult = BuildStatisticsResult(generalStatistics, customers, addresses, municipalities);
+            SimulationSettings simSettings = _simulationDataManager.GetSimulationSettingsBySimulationDataID(simulationDataId);
 
-            //Combine into one export object
-            return new SimulationExport(simData, simSettings, statisticsResult);
+            SimulationStatisticsResult simStatResults = BuildStatisticsResult(simulationDataId, countryVersionId);
+
+            return new SimulationExport(simData, simSettings, simStatResults);
         }
         public void ExportStatisticsToTxt(SimulationExport export, string filePath, CountryVersion countryVersion)
         {
@@ -246,7 +251,7 @@ namespace CustomerSimulationBL.Managers
             }
 
             writer.WriteLine("--- FEMALE NAMES ---");
-            foreach(var fn in export.SimulationStatisticsResult.FemaleName)
+            foreach(var fn in export.SimulationStatisticsResult.FemaleNames)
             {
                 writer.WriteLine($"{fn.Name}: {fn.Count}");
             }
@@ -275,6 +280,18 @@ namespace CustomerSimulationBL.Managers
             {
                 writer.WriteLine($"{c.FirstName}; {c.LastName}, {c.Municipality}; {c.Street}; {c.HouseNumber}; {c.BirthDate}");
             }
+        }
+        private CustomerDTO ToDTO(Customer customer)
+        {
+            CustomerDTO cDto = new CustomerDTO(customer.FirstName, customer.LastName, customer.Municipality, customer.Street, customer.BirthDate, customer.HouseNumber, customer.Gender);
+
+            return cDto;
+        }
+        public List<CustomerDTO> GetCustomerDTOBySimulationDataId(int simulationDataId)
+        {
+            List<Customer> domainCustomers = _customermanager.GetCustomerBySimulationDataID(simulationDataId);
+
+            return domainCustomers.Select(ToDTO).ToList();
         }
     }
 }

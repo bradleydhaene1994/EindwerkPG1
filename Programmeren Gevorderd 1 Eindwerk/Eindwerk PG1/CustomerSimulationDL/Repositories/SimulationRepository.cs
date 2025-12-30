@@ -210,9 +210,9 @@ namespace CustomerSimulationDL.Repositories
         {
             var list = new List<SimulationOverviewDTO>();
 
-            string SQL = "SELECT sd.ID AS SimulationDataId, c.Name AS CountryName, cv.Year, sd.Client AS ClientName, sd.DateCreated " +
+            string SQL = "SELECT sd.ID AS SimulationDataId, sd.CountryVersionID AS CountryVersionId, c.Name AS CountryName, cv.Year, sd.Client AS ClientName, sd.DateCreated " +
                          "FROM SimulationData sd " +
-                         "JOIN COuntryVersion cv on cv.ID = sd.CountryVersionID " +
+                         "JOIN CountryVersion cv on cv.ID = sd.CountryVersionID " +
                          "JOIN Country c on c.ID = cv.CountryID " +
                          "ORDER BY sd.DateCreated DESC";
 
@@ -227,12 +227,13 @@ namespace CustomerSimulationDL.Repositories
                     while(reader.Read())
                     {
                         int simulationDataId = reader.GetInt32(reader.GetOrdinal("SimulationDataId"));
+                        int countryVersionId = reader.GetInt32(reader.GetOrdinal("CountryVersionId"));
                         string countryName = reader.GetString(reader.GetOrdinal("CountryName"));
                         int year = reader.GetInt32(reader.GetOrdinal("Year"));
                         string clientName = reader.GetString(reader.GetOrdinal("ClientName"));
                         DateTime dateCreated = reader.GetDateTime(reader.GetOrdinal("DateCreated"));
 
-                        SimulationOverviewDTO simulationOverviewDTO = new SimulationOverviewDTO(simulationDataId, countryName, year, clientName, dateCreated);
+                        SimulationOverviewDTO simulationOverviewDTO = new SimulationOverviewDTO(simulationDataId, countryVersionId, countryName, year, clientName, dateCreated);
 
                         list.Add(simulationOverviewDTO);
                     }
@@ -304,8 +305,8 @@ namespace CustomerSimulationDL.Repositories
                     {
                         int id = reader.GetInt32(reader.GetOrdinal("ID"));
                         int totalCustomers = reader.GetInt32(reader.GetOrdinal("TotalCustomers"));
-                        double averageAgeSimulationDate = reader.GetFloat(reader.GetOrdinal("AverageAgeSimulationDate"));
-                        double averageAgeCurrentDate = reader.GetFloat(reader.GetOrdinal("AverageAgeCurrentDate"));
+                        double averageAgeSimulationDate = reader.GetDouble(reader.GetOrdinal("AverageAgeSimulationDate"));
+                        double averageAgeCurrentDate = reader.GetDouble(reader.GetOrdinal("AverageAgeCurrentDate"));
                         int ageYoungestCustomer = reader.GetInt32(reader.GetOrdinal("AgeYoungestCustomer"));
                         int ageOldestCustomer = reader.GetInt32(reader.GetOrdinal("AgeOldestCustomer"));
 
@@ -382,6 +383,32 @@ namespace CustomerSimulationDL.Repositories
                 tran.Rollback();
                 throw;
             }
+        }
+        public SimulationData GetSimulationDataById(int simulationDataId)
+        {
+            string SQL = "SELECT Client, DateCreated " +
+                         "FROM SimulationData " +
+                         "WHERE ID = @SimulationDataId";
+
+            using SqlConnection conn = new(_connectionstring);
+            using SqlCommand cmd = conn.CreateCommand();
+
+            cmd.CommandText = SQL;
+            cmd.Parameters.Add("@SimulationDataId", SqlDbType.Int).Value = simulationDataId;
+
+            conn.Open();
+
+            using SqlDataReader reader = cmd.ExecuteReader();
+
+            if(!reader.Read())
+            {
+                throw new InvalidOperationException($"SimulationData with ID {simulationDataId} not found.");
+            }
+
+            string client = reader.GetString(reader.GetOrdinal("Client"));
+            DateTime dateCreated = reader.GetDateTime(reader.GetOrdinal("DateCreated"));
+
+            return new SimulationData(client, dateCreated);
         }
     }
 }

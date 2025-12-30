@@ -48,5 +48,10 @@ namespace CustomerSimulationBL.Domein
         {
             return $"Minimum number: {MinNumber}, Maximum number: {MaxNumber}, Has Letters: {HasLetters}, Percentage appearance letters in housenumbers: {PercentageLetters}%";
         }
+
+        public void SetSelectedMunicipalities(List<MunicipalitySelection> selections)
+        {
+            SelectedMunicipalities = selections;
+        }
     }
 }

@@ -70,5 +70,9 @@ namespace CustomerSimulationBL.Managers
         {
             _simulationRepo.UploadMunicipalityStatistics(simulationStatisticsId, stats);
         }
+        public SimulationData GetSimulationDataById(int simulationDataId)
+        {
+            return _simulationRepo.GetSimulationDataById(simulationDataId);
+        }
     }
 }

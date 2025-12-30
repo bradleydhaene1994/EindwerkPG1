@@ -12,5 +12,6 @@ namespace CustomerSimulationBL.Interfaces
         int GetOrUploadCountryVersion(int countryId, int year);
         List<Country> GetAllCountries();
         List<CountryVersion> GetAllCountryVersions();
+        CountryVersion GetCountryVersionById(int countryVersionId);
     }
 }

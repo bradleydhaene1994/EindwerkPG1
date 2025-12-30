@@ -20,5 +20,6 @@ namespace CustomerSimulationBL.Interfaces
         SimulationStatistics GetSimulationStatisticsBySimulationDataID(int simulationDataId);
         public List<MunicipalitySelection> GetSelectedMunicipalities(int simulationSettingsId, List<Municipality> municipalities);
         public void UploadMunicipalityStatistics(int simulationStatisticsId, List<MunicipalityStatistics> stats);
+        public SimulationData GetSimulationDataById(int simulationDataId);
     }
 }

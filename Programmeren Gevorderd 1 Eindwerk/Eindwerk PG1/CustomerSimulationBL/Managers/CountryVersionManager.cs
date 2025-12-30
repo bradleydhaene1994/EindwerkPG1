@@ -22,5 +22,9 @@ namespace CustomerSimulationBL.Managers
             int countryVersionId = _countryVersionRepo.GetOrUploadCountryVersion(countryId, simulationDataId);
             return countryVersionId;
         }
+        public CountryVersion GetCountryVersionById(int countryVersionId)
+        {
+            return _countryVersionRepo.GetCountryVersionById(countryVersionId);
+        }
     }
 }
