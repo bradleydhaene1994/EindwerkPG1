@@ -11,5 +11,6 @@ namespace CustomerSimulationBL.Interfaces
     {
         void UploadAddress(IEnumerable<Address> addresses, int countryVersionIDn, IProgress<int> progress);
         List<Address> GetAddressesByCountryVersionID(int countryVersionId, List<Municipality> municipalities);
+        List<Address> GetAddressesBySimulationDataID(int simulationDataId);
     }
 }

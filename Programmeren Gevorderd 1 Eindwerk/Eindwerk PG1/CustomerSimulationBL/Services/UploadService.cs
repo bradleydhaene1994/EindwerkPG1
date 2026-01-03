@@ -47,7 +47,7 @@ namespace CustomerSimulationBL.Services
                 _ => throw new InvalidOperationException("Unsupported file format")
             };
         }
-        public void Upload(string filePath, int year, UploadDataType dataType, int countryId, IProgress<int> progress)
+        public void Upload(string filePath, int year, UploadDataType dataType, int countryId, IProgress<int> progress, string countryName)
         {
             int countryVersionId = _countryVersionRepository.GetOrUploadCountryVersion(countryId, year);
             
@@ -61,11 +61,11 @@ namespace CustomerSimulationBL.Services
                     break;
 
                 case UploadDataType.FirstName:
-                    UploadFirstNames(filePath, format, countryVersionId, progress);
+                    UploadFirstNames(filePath, format, countryVersionId, progress, countryName);
                     break;
 
                 case UploadDataType.LastName:
-                    UploadLastNames(filePath, format, countryVersionId, progress);
+                    UploadLastNames(filePath, format, countryVersionId, progress, countryName);
                     break;
 
                 case UploadDataType.Municipality:
@@ -84,25 +84,25 @@ namespace CustomerSimulationBL.Services
 
             _addressRepository.UploadAddress(addresses, countryVersionId, progress);
         }
-        private void UploadFirstNames(string filePath, FileFormat format, int countryVersionId, IProgress<int> progress)
+        private void UploadFirstNames(string filePath, FileFormat format, int countryVersionId, IProgress<int> progress, string countryName)
         {
             IEnumerable<FirstName> firstNames = format switch
             {
                 FileFormat.Csv => _csvReader.ReadFirstNames(filePath),
-                FileFormat.Json => _jsonReader.ReadFirstNames(filePath),
-                FileFormat.Txt => _txtReader.ReadFirstNames(filePath),
+                FileFormat.Json => _jsonReader.ReadFirstNames(filePath, countryName),
+                FileFormat.Txt => _txtReader.ReadFirstNames(filePath, countryName),
                 _ => throw new InvalidOperationException()
             };
 
             _nameRepository.UploadFirstName(firstNames, countryVersionId, progress);
         }
-        private void UploadLastNames(string filePath, FileFormat format, int countryVersionId, IProgress<int> progress)
+        private void UploadLastNames(string filePath, FileFormat format, int countryVersionId, IProgress<int> progress, string countryName)
         {
             IEnumerable<LastName> lastNames = format switch
             {
                 FileFormat.Csv => _csvReader.ReadLastNames(filePath),
-                FileFormat.Json => _jsonReader.ReadLastNames(filePath),
-                FileFormat.Txt => _txtReader.ReadLastNames(filePath),
+                FileFormat.Json => _jsonReader.ReadLastNames(filePath, countryName),
+                FileFormat.Txt => _txtReader.ReadLastNames(filePath, countryName),
                 _ => throw new InvalidOperationException()
             };
 

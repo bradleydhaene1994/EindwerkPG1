@@ -22,7 +22,7 @@ namespace CustomerSimulationBL.Managers
             _jsonReader = jsonReader;
         }
 
-        public IEnumerable<FirstName> ReadFirstNames(string path)
+        public IEnumerable<FirstName> ReadFirstNames(string path, string countryName)
         {
             IEnumerable<FirstName> firstNames;
 
@@ -32,11 +32,11 @@ namespace CustomerSimulationBL.Managers
             }
             else if(path.Contains("json"))
             {
-                firstNames = _jsonReader.ReadFirstNames(path);
+                firstNames = _jsonReader.ReadFirstNames(path, countryName);
             }
             else if(path.Contains(".txt"))
             {
-                firstNames = _txtReader.ReadFirstNames(path);
+                firstNames = _txtReader.ReadFirstNames(path, countryName);
             }
             else
             {
@@ -45,7 +45,7 @@ namespace CustomerSimulationBL.Managers
 
             return firstNames;
         }
-        public IEnumerable<LastName> ReadLastNames(string path)
+        public IEnumerable<LastName> ReadLastNames(string path, string countryName)
         {
             IEnumerable<LastName> lastNames;
 
@@ -55,11 +55,11 @@ namespace CustomerSimulationBL.Managers
             }
             else if (path.Contains("json"))
             {
-                lastNames = _jsonReader.ReadLastNames(path);
+                lastNames = _jsonReader.ReadLastNames(path, countryName);
             }
             else if (path.Contains(".txt"))
             {
-                lastNames = _txtReader.ReadLastNames(path);
+                lastNames = _txtReader.ReadLastNames(path, countryName);
             }
             else
             {
@@ -81,7 +81,7 @@ namespace CustomerSimulationBL.Managers
             {
                 addresses = _csvReader.ReadAddresses(path);
             }
-            else if(path.Contains("json"))
+            else if(path.Contains(".json"))
             {
                 addresses = _jsonReader.ReadAddresses(path);
             }

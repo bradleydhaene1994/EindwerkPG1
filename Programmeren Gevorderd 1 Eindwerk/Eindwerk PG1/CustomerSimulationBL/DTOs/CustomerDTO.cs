@@ -9,7 +9,7 @@ namespace CustomerSimulationBL.DTOs
 {
     public class CustomerDTO
     {
-        public CustomerDTO(string firstName, string lastName, string municipality, string street, DateTime birthDate, string houseNumber, Gender gender)
+        public CustomerDTO(string firstName, string lastName, string municipality, string street, DateTime birthDate, string houseNumber, Gender? gender)
         {
             FirstName = firstName;
             LastName = lastName;
@@ -27,6 +27,6 @@ namespace CustomerSimulationBL.DTOs
         public string Street { get; set; }
         public DateTime BirthDate { get; set; }
         public string HouseNumber { get; set; }
-        public Gender Gender { get; set; }
+        public Gender? Gender { get; set; }
     }
 }

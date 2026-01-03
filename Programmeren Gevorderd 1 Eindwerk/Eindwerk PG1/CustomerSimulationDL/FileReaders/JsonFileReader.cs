@@ -12,7 +12,7 @@ namespace CustomerSimulationDL.FileReaders
 {
     public class JsonFileReader : IJsonReader
     {
-        public IEnumerable<FirstName> ReadFirstNames(string path)
+        public IEnumerable<FirstName> ReadFirstNames(string path, string countryName)
         {
             var FirstNames = new List<FirstName>();
             string JsonString = File.ReadAllText(path);
@@ -22,7 +22,7 @@ namespace CustomerSimulationDL.FileReaders
                 JsonElement root = doc.RootElement;
                 JsonElement nameSection = root.GetProperty("name");
 
-                if(path.Contains("pl"))
+                if(countryName == "Poland")
                 {
                     foreach (var item in nameSection.GetProperty("first_name_male").EnumerateArray())
                     {
@@ -35,7 +35,7 @@ namespace CustomerSimulationDL.FileReaders
                         FirstNames.Add(FirstName);
                     }
                 }
-                else if(path.Contains("cz"))
+                else if(countryName == "Tsjech Republic")
                 {
                     foreach (var item in nameSection.GetProperty("male_first_name").EnumerateArray())
                     {
@@ -51,7 +51,7 @@ namespace CustomerSimulationDL.FileReaders
             }
             return FirstNames;
         }
-        public IEnumerable<LastName> ReadLastNames(string path)
+        public IEnumerable<LastName> ReadLastNames(string path, string countryName)
         {
             var LastNames = new List<LastName>();
             string JsonString = File.ReadAllText(path);
@@ -61,7 +61,7 @@ namespace CustomerSimulationDL.FileReaders
                 JsonElement root = doc.RootElement;
                 JsonElement nameSection = root.GetProperty("name");
 
-                if(path.Contains("pl"))
+                if(countryName == "Poland")
                 {
                     foreach (var item in nameSection.GetProperty("last_name").EnumerateArray())
                     {
@@ -69,7 +69,7 @@ namespace CustomerSimulationDL.FileReaders
                         LastNames.Add(LastName);
                     }
                 }
-                else if(path.Contains("cz"))
+                else if(countryName == "Tsjech Republic")
                 {
                     foreach (var item in nameSection.GetProperty("male_last_name").EnumerateArray())
                     {

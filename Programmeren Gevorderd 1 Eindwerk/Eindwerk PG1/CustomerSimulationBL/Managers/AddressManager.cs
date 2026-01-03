@@ -44,5 +44,10 @@ namespace CustomerSimulationBL.Managers
 
             return filtered[_random.Next(filtered.Count)];
         }
+        public List<Address> GetAddressesBySimulationDataID(int simulationDataId)
+        {
+            List<Address> addresses = _addressRepo.GetAddressesBySimulationDataID(simulationDataId);
+            return addresses;
+        }
     }
 }

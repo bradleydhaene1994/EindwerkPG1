@@ -183,5 +183,33 @@ namespace CustomerSimulationDL.Repositories
             }
             return addresses;
         }
+        public List<Address> GetAddressesBySimulationDataID(int simulationDataId)
+        {
+            List<Address> addresses = new List<Address>();
+
+            string SQL = "SELECT DISTINCT c.Street, c.Municipality " +
+                         "FROM Customer c WHERE c.SimulationDataID = @SimulationDataId";
+
+            using SqlConnection conn = new SqlConnection(_connectionstring);
+            using SqlCommand cmd = conn.CreateCommand();
+            cmd.CommandText = SQL;
+            cmd.Parameters.Add("@SimulationDataID", SqlDbType.Int).Value = simulationDataId;
+
+            conn.Open();
+
+            using SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                string street = reader.GetString(reader.GetOrdinal("Street"));
+                string municipalityName = reader.GetString(reader.GetOrdinal("Municipality"));
+
+                Municipality municipality = new Municipality(street);
+
+                Address address = new Address(municipality, street);
+
+                addresses.Add(address);
+            }
+            return addresses;
+        }
     }
 }

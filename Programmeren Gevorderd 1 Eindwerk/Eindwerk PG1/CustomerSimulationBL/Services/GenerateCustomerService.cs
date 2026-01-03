@@ -96,7 +96,6 @@ namespace CustomerSimulationBL.Managers
 
                 FirstName randomFirstName = _namemanager.GetRandomFirstName(firstNames);
                 string nameFirst = randomFirstName.Name;
-                Gender gender = randomFirstName.Gender;
 
                 LastName randomLastName = _namemanager.GetRandomLastName(lastNames);
                 string nameLast = randomLastName.Name;
@@ -104,7 +103,7 @@ namespace CustomerSimulationBL.Managers
                 DateTime randomBirthday = _customermanager.GetRandomBirthdate(settings);
                 string houseNumber = _customermanager.GetRandomHouseNumber(settings);
 
-                CustomerDTO customer = new CustomerDTO(nameFirst, nameLast, municipalityName, addressStreet, randomBirthday, houseNumber, gender);
+                CustomerDTO customer = new CustomerDTO(nameFirst, nameLast, municipalityName, addressStreet, randomBirthday, houseNumber, null);
 
                 customers.Add(customer);
             }
@@ -169,9 +168,10 @@ namespace CustomerSimulationBL.Managers
         {
             SimulationStatistics general = _simulationDataManager.GetSimulationStatisticsBySimulationDataID(simulationDataId);
             List<Customer> domainCustomers = _customermanager.GetCustomerBySimulationDataID(simulationDataId);
+            AssignGender(domainCustomers);
             List<CustomerDTO> customers = domainCustomers.Select(ToDTO).ToList();
             List<Municipality> municipalities = _municipalitymanager.GetMunicipalityByCountryVersionID(countryVersionId);
-            List<Address> addresses = _addressmanager.GetAddressesByCountryVersionID(countryVersionId, municipalities);
+            List<Address> addresses = _addressmanager.GetAddressesBySimulationDataID(simulationDataId);
 
             return new SimulationStatisticsResult(
                        general,
@@ -292,6 +292,13 @@ namespace CustomerSimulationBL.Managers
             List<Customer> domainCustomers = _customermanager.GetCustomerBySimulationDataID(simulationDataId);
 
             return domainCustomers.Select(ToDTO).ToList();
+        }
+        private void AssignGender(List<Customer> domainCustomers)
+        {
+            foreach(var c in  domainCustomers)
+            {
+                c.Gender = _namemanager.GetGenderByFirstName(c.FirstName);
+            }
         }
     }
 }

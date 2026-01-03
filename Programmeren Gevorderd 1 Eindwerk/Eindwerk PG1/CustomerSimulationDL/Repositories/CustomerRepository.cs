@@ -8,6 +8,8 @@ using CustomerSimulationBL.Interfaces;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using CustomerSimulationBL.DTOs;
+using CustomerSimulationBL.Enumerations;
+using CustomerSimulationBL.Managers;
 
 namespace CustomerSimulationDL.Repositories
 {
@@ -65,38 +67,38 @@ namespace CustomerSimulationDL.Repositories
             }
         }
 
-        public List<Customer> GetCustomerBySimulationDataID(int simulationDataID)
+        public List<Customer> GetCustomerBySimulationDataID(int simulationDataId)
         {
             List<Customer> customers = new List<Customer>();
 
-            string SQL = "SELECT c.ID, c.FirstName, c.LastName, c.Municipality, c.Street, c.HouseNumber, c.BirthDate " +
-                         "FROM Customer c " +
-                         "WHERE c.SimulationDataID = @SimulationDataID";
+            string SQL = "SELECT c.ID, c.FirstName, c.LastName, c.Municipality, c.Municipality, c.Street, c.HouseNumber, c.BirthDate " +
+                         "FROM Customer c WHERE c.SimulationDataID = @SimulationDataId";
 
-            using(SqlConnection conn = new SqlConnection(_connectionstring))
-            using(SqlCommand cmd = conn.CreateCommand())
+            using SqlConnection conn = new SqlConnection(_connectionstring);
+            using SqlCommand cmd = conn.CreateCommand();
+
+            cmd.CommandText = SQL;
+            cmd.Parameters.Add("@SimulationDataID", SqlDbType.Int).Value = simulationDataId;
+
+            conn.Open();
+
+            using SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
             {
-                conn.Open();
-                cmd.Parameters.AddWithValue("@SimulationDataID", simulationDataID);
-                cmd.CommandText = SQL;
-                using(SqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while(reader.Read())
-                    {
-                        int id = reader.GetInt32(reader.GetOrdinal("ID"));
-                        string firstName = reader.GetString(reader.GetOrdinal("FirstName"));
-                        string lastName = reader.GetString(reader.GetOrdinal("LastName"));
-                        string municipality = reader.GetString(reader.GetOrdinal("Municipality"));
-                        string street = reader.GetString(reader.GetOrdinal("Street"));
-                        string houseNumber = reader.GetString(reader.GetOrdinal("HouseNumber"));
-                        DateTime birthDate = reader.GetDateTime(reader.GetOrdinal("BirthDate"));
+                int id = reader.GetInt32(reader.GetOrdinal("ID"));
+                string firstName = reader.GetString(reader.GetOrdinal("FirstName"));
+                string lastName = reader.GetString(reader.GetOrdinal("LastName"));
+                string municipality = reader.GetString(reader.GetOrdinal("Municipality"));
+                string street = reader.GetString(reader.GetOrdinal("Street"));
+                string houseNumber = reader.GetString(reader.GetOrdinal("HouseNumber"));
+                DateTime birthData = reader.GetDateTime(reader.GetOrdinal("BirthDate"));
+                Gender gender = default;
 
-                        Customer customer = new Customer(id, firstName, lastName, municipality, street, birthDate, houseNumber);
+                Customer customer = new Customer(id, firstName, lastName, municipality, street, birthData, houseNumber, gender);
 
-                        customers.Add(customer);
-                    }
-                }
+                customers.Add(customer);
             }
+
             return customers;
         }
     }

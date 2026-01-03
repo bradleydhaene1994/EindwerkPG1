@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CustomerSimulationBL.Domein;
+using CustomerSimulationBL.Enumerations;
 using CustomerSimulationBL.Interfaces;
 
 namespace CustomerSimulationBL.Managers
@@ -104,6 +105,10 @@ namespace CustomerSimulationBL.Managers
             }
 
             throw new InvalidOperationException("Failed to select a last name .");
+        }
+        public Gender GetGenderByFirstName(string firstName)
+        {
+            return _nameRepo.GetGenderByFirstName(firstName);
         }
     }
 }

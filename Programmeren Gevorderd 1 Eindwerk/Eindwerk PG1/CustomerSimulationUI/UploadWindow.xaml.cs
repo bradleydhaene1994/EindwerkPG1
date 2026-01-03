@@ -81,6 +81,7 @@ namespace CustomerSimulationUI
             }
 
             string filePath = FilePath.Text;
+            string countryName = selectedCountry.Name;
 
             int countryId = selectedCountry.Id;
 
@@ -95,7 +96,7 @@ namespace CustomerSimulationUI
 
             try
             {
-                await Task.Run(() => _uploadService.Upload(filePath, year, dataType, countryId, progress));
+                await Task.Run(() => _uploadService.Upload(filePath, year, dataType, countryId, progress, countryName));
             }
             finally
             {

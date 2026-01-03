@@ -27,6 +27,7 @@ namespace CustomerSimulationUI
         private readonly GenerateCustomerService _generateCustomerService;
         private readonly MunicipalityManager _municipalityManager;
         private readonly SimulationDataManager _simulationDataManager;
+        private readonly NameManager _nameManager;
         public MainWindow()
         {
             var builder = new ConfigurationBuilder().

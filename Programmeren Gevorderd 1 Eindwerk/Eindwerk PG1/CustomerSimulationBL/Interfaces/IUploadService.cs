@@ -11,6 +11,6 @@ namespace CustomerSimulationBL.Interfaces
 {
     public interface IUploadService
     {
-        void Upload(string filePath, int year, UploadDataType dataType, int countryId, IProgress<int> progress);
+        void Upload(string filePath, int year, UploadDataType dataType, int countryId, IProgress<int> progress, string countryName);
     }
 }

@@ -199,5 +199,26 @@ namespace CustomerSimulationDL.Repositories
             }
             return lastNames;
         }
+        public Gender GetGenderByFirstName(string firstName)
+        {
+            string sql = "SELECT Gender FROM FirstName WHERE Name = @Name";
+
+            using SqlConnection conn = new(_connectionstring);
+            using SqlCommand cmd = conn.CreateCommand();
+
+            cmd.CommandText = sql;
+            cmd.Parameters.Add("@Name", SqlDbType.NVarChar, 100).Value = firstName;
+
+            conn.Open();
+
+            object? result = cmd.ExecuteScalar();
+
+            if (result == null)
+            {
+                throw new InvalidOperationException($"Gender not found for first name '{firstName}'");
+            }
+
+            return Enum.Parse<Gender>(result.ToString()!, true);
+        }
     }
 }

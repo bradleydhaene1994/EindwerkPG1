@@ -20,7 +20,7 @@ namespace CustomerSimulationBL.Domein
             Gender = gender;
         }
 
-        public Customer(int id, string firstName, string lastName, string municipality, string street, DateTime birthDate, string houseNumber)
+        public Customer(int id, string firstName, string lastName, string municipality, string street, DateTime birthDate, string houseNumber, Gender? gender)
         {
             Id = id;
             FirstName = firstName;
@@ -29,6 +29,7 @@ namespace CustomerSimulationBL.Domein
             Street = street;
             BirthDate = birthDate;
             HouseNumber = houseNumber;
+            Gender = gender;
         }
 
         public int Id { get; set; }
@@ -38,6 +39,6 @@ namespace CustomerSimulationBL.Domein
         public string Street { get; }
         public DateTime BirthDate { get; }
         public string HouseNumber { get; }
-        public Gender Gender { get; }
+        public Gender? Gender { get; set; }
     }
 }

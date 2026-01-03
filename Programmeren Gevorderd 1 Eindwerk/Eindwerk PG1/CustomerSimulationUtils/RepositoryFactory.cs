@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CustomerSimulationBL.Interfaces;
+using CustomerSimulationBL.Managers;
 using CustomerSimulationDL.Repositories;
 
 namespace CustomerSimulationUtils

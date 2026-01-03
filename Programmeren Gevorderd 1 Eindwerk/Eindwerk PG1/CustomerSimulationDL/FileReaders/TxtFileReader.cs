@@ -13,15 +13,15 @@ namespace CustomerSimulationDL.FileReaders
 {
     public class TxtFileReader : ITxtReader
     {
-        public IEnumerable<FirstName> ReadFirstNames(string path)
+        public IEnumerable<FirstName> ReadFirstNames(string path, string countryName)
         {
             var FirstNames = new List<FirstName>();
 
-            bool isDanish = path.ToLower().Contains("navne");
-            bool isFinish = path.ToLower().Contains("mitilasto");
-            bool isSpanish = path.ToLower().Contains("nombres");
-            bool isSwedish = path.ToLower().Contains("namn");
-            bool isSwiss = path.ToLower().Contains("su-q");
+            bool isDanish = countryName.Equals("Denmark", StringComparison.OrdinalIgnoreCase);
+            bool isFinish = countryName.Equals("Finland", StringComparison.OrdinalIgnoreCase);
+            bool isSpanish = countryName.Equals("Spain", StringComparison.OrdinalIgnoreCase);
+            bool isSwedish = countryName.Equals("Sweden", StringComparison.OrdinalIgnoreCase);
+            bool isSwiss = countryName.Equals("Switserland", StringComparison.OrdinalIgnoreCase);
 
             int? skiplines;
 
@@ -110,15 +110,15 @@ namespace CustomerSimulationDL.FileReaders
                 return FirstNames;
             }
         }
-        public IEnumerable<LastName> ReadLastNames(string path)
+        public IEnumerable<LastName> ReadLastNames(string path, string countryName)
         {
             var LastNames = new List<LastName>();
 
-            bool isDanish = path.ToLower().Contains("navne");
-            bool isFinish = path.ToLower().Contains("mitilasto");
-            bool isSpanish = path.ToLower().Contains("apellidos");
-            bool isSwedish = path.ToLower().Contains("namn");
-            bool isSwiss = path.ToLower().Contains("ch");
+            bool isDanish = countryName.Equals("Denmark", StringComparison.OrdinalIgnoreCase);
+            bool isFinish = countryName.Equals("Finland", StringComparison.OrdinalIgnoreCase);
+            bool isSpanish = countryName.Equals("Spain", StringComparison.OrdinalIgnoreCase);
+            bool isSwedish = countryName.Equals("Sweden", StringComparison.OrdinalIgnoreCase);
+            bool isSwiss = countryName.Equals("Switserland", StringComparison.OrdinalIgnoreCase);
 
             int? skiplines;
 
