@@ -33,7 +33,7 @@ namespace CustomerSimulationDL.FileReaders
 
                     if (RawMunicipalityName == "(unknown)")
                     {
-                        Municipality = new Municipality("unknown");
+                        continue;
                     }
                     else
                     {
@@ -44,9 +44,18 @@ namespace CustomerSimulationDL.FileReaders
                     string StreetName = parts[1].Trim();
                     string HighwayType = parts[2].Trim();
 
-                    Address Address = new Address(Municipality, StreetName);
+                    Address address;
 
-                    Addresses.Add(Address);
+                    if(HighwayType == "primary" || HighwayType == "secondary" || HighwayType == "tertiary" || HighwayType == "residential" || HighwayType == "unclassified" || HighwayType == "living_street")
+                    {
+                        address = new Address(Municipality, StreetName);
+                    }
+                    else
+                    {
+                        continue;
+                    }
+
+                    Addresses.Add(address);
                 }
             }
             return Addresses;

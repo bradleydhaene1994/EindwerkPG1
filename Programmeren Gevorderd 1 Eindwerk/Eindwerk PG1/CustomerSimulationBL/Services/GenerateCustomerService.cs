@@ -44,13 +44,16 @@ namespace CustomerSimulationBL.Managers
             }
 
             //Determine municipalities for simulation
-            List<Municipality> municipalities = allowedMunicipalities ?? _municipalitymanager.GetMunicipalityByCountryVersionID(countryVersionId);
+            List<Municipality> allMunicipalities = _municipalitymanager.GetMunicipalityByCountryVersionID(countryVersionId);
+
+            //determine which municipality list statistics needs
+            List<Municipality> effectiveMunicipalities = (allowedMunicipalities != null && allowedMunicipalities.Any()) ? allowedMunicipalities : allMunicipalities;
 
             //load addresses of municipality
-            List<Address> addresses = _addressmanager.GetAddressesByCountryVersionID(countryVersionId, municipalities);
+            List<Address> addresses = _addressmanager.GetAddressesByCountryVersionID(countryVersionId, effectiveMunicipalities);
 
             //Generate Customers
-            List<CustomerDTO> customerDTOs = GenerateCustomers(simData, simSettings, countryVersionId, municipalities, addresses);
+            List<CustomerDTO> customerDTOs = GenerateCustomers(simData, simSettings, countryVersionId, effectiveMunicipalities, addresses);
 
             //Save Customers
             _customermanager.UploadCustomer(customerDTOs, simulationDataId, countryVersionId);
@@ -62,7 +65,7 @@ namespace CustomerSimulationBL.Managers
             int simulationStatsId = _simulationDataManager.UploadSimulationStatistics(stats, simulationDataId);
 
             //Calculate Municipality Statistics
-            var municipalityStatistics = CalculateCustomersPerMunicipality(customerDTOs, allowedMunicipalities);
+            var municipalityStatistics = CalculateCustomersPerMunicipality(customerDTOs, effectiveMunicipalities);
 
             //upload Municipality Statistics
             _simulationDataManager.UploadMunicipalityStatistics(simulationStatsId, municipalityStatistics);

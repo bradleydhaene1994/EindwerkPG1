@@ -18,7 +18,6 @@ namespace CustomerSimulationBL.DTOs
             ClientName = clientName;
             DateCreated = dateCreated;
         }
-
         public int SimulationDataId { get; set; }
         public int CountryVersionId { get; set; }
         public string CountryName { get; set; }

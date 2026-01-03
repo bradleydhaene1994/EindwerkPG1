@@ -24,7 +24,6 @@ namespace CustomerSimulationBL.Domein
         public int Id { get; set; }
         public Municipality? Municipality { get; set; }
         public string Street { get; set; }
-
         public override string ToString()
         {
             return $"{Municipality?.Name}, {Street}";

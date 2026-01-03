@@ -20,7 +20,6 @@ namespace CustomerSimulationBL.DTOs
             HasLetters = hasLetters;
             PercentageLetters = percentageLetters;
         }
-
         public int Id {  get; set; }
         public List<MunicipalitySelection> SelectedMunicipalities { get; set; } = new();
         public int TotalCustomers { get; set; }

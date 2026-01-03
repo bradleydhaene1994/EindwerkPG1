@@ -354,7 +354,7 @@ namespace CustomerSimulationDL.Repositories
         public void UploadMunicipalityStatistics(int simulationStatisticsId, List<MunicipalityStatistics> stats)
         {
             string SQL = "INSERT INTO SimulationMunicipalityStatistics (SimulationStatisticsID, MunicipalityID, CustomerCount) " +
-                         "VALUES (@SimulationStatisticsID, @MunicipalityID, @CustomerCount";
+                         "VALUES (@SimulationStatisticsID, @MunicipalityID, @CustomerCount)";
 
             using SqlConnection conn = new(_connectionstring);
             conn.Open();
@@ -370,7 +370,7 @@ namespace CustomerSimulationDL.Repositories
                     cmd.CommandText = SQL;
 
                     cmd.Parameters.Add("@SimulationStatisticsID", SqlDbType.Int).Value = simulationStatisticsId;
-                    cmd.Parameters.Add("@MuncipalityID", SqlDbType.Int).Value = stat.Municipality.Id;
+                    cmd.Parameters.Add("@MunicipalityID", SqlDbType.Int).Value = stat.Municipality.Id;
                     cmd.Parameters.Add("@CustomerCount", SqlDbType.Int).Value = stat.Count;
 
                     cmd.ExecuteNonQuery();
