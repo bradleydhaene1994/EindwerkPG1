@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using CustomerSimulationBL.Domein;
 using CustomerSimulationBL.Enumerations;
 using CustomerSimulationBL.Interfaces;
+using Microsoft.Identity.Client;
 
 namespace CustomerSimulationBL.Services
 {
@@ -51,6 +52,10 @@ namespace CustomerSimulationBL.Services
         {
             int countryVersionId = _countryVersionRepository.GetOrUploadCountryVersion(countryId, year);
             
+            if(DataAlreadyExists(countryVersionId, dataType))
+            {
+                throw new Exception("Data of this type has already been uploaded for the selected country and year.");
+            }
 
             FileFormat format = GetFileFormat(filePath);
 
@@ -117,6 +122,16 @@ namespace CustomerSimulationBL.Services
             };
 
             _municipalityRepository.UploadMunicipality(municipalities, countryVersionId);
+        }
+        public bool DataAlreadyExists(int countryVersionId, UploadDataType dataType)
+        {
+            return dataType switch
+            {
+                UploadDataType.FirstName => _nameRepository.HasFirstNames(countryVersionId),
+                UploadDataType.LastName => _nameRepository.HasLastNames(countryVersionId),
+                UploadDataType.Municipality => _municipalityRepository.HasMunicipalities(countryVersionId),
+                _ => false
+            };
         }
     }
 }

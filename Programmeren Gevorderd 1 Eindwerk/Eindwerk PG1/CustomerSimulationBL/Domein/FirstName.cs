@@ -30,8 +30,7 @@ namespace CustomerSimulationBL.Domein
             get => _id;
             private set
             {
-                if (value <= 0) throw new NameException("FirstName ID <= 0");
-                else _id = value;
+                _id = value;
             }
         }
         private string _name;

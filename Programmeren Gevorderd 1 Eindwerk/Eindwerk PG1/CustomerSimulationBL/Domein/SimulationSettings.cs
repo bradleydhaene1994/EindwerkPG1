@@ -27,10 +27,10 @@ namespace CustomerSimulationBL.Domein
             Id = id;
             SelectedMunicipalities = selectedMunicipalities;
             TotalCustomers = totalCustomers;
-            this.MinAge = minAge;
-            this.MaxAge = maxAge;
-            this.MinNumber = minNumber;
-            this.MaxNumber = maxNumber;
+            MinAge = minAge;
+            MaxAge = maxAge;
+            MinNumber = minNumber;
+            MaxNumber = maxNumber;
             HasLetters = hasLetters;
             PercentageLetters = percentageLetters;
         }
@@ -40,8 +40,7 @@ namespace CustomerSimulationBL.Domein
             get => _id;
             private set
             {
-                if (value <= 0) throw new SimulationException("SimulationSettings: ID <= 0");
-                else _id = value;
+                _id = value;
             }
         }
         private List<MunicipalitySelection> _selectedMunicipalities;
@@ -60,8 +59,7 @@ namespace CustomerSimulationBL.Domein
             get => _totalCustomers;
             private set
             {
-                if (value <= 0) throw new SimulationException("SimulationSettings: number of total customers must be greater than 0");
-                else _totalCustomers = value;
+                _totalCustomers = value;
             }
         }
         private int _minAge;

@@ -42,21 +42,21 @@
         <Button Grid.Row="1" Grid.Column="2" Margin="5" Content="Select Municipalities" IsEnabled="{Binding IsChecked, ElementName=UseSpecificMunicipalitiesCheckBox}" Click="SelectMunicipalities_Click"/>
         <TextBlock Grid.Row="1" Grid.Column="3" Margin="5" Foreground="Gray"/>
         <TextBlock Grid.Row="2" Grid.Column="0" Margin="5" Text="Number of Customers"/>
-        <TextBox Grid.Row="2" Grid.Column="1" Margin="5" Name="CustomerNumber" Text="100"/>
+        <TextBox Grid.Row="2" Grid.Column="1" Margin="5" Name="CustomerNumber" Text="{Binding TotalCustomers, UpdateSourceTrigger=PropertyChanged}"/>
         <TextBlock Grid.Row="2" Grid.Column="2" Margin="5" Text="Your Name"/>
-        <TextBox Grid.Row="2" Grid.Column="3" Margin="5" Name="ClientName" Text="Bradley"/>
+        <TextBox Grid.Row="2" Grid.Column="3" Margin="5" Name="ClientName" Text="{Binding ClientName, UpdateSourceTrigger=PropertyChanged}"/>
         <TextBlock Grid.Row="3" Grid.Column="0" Margin="5" Text="Minimum Age"/>
-        <TextBox Grid.Row="3" Grid.Column="1" Margin="5" Name="MinimumAge" Text="20"/>
+        <TextBox Grid.Row="3" Grid.Column="1" Margin="5" Name="MinimumAge" Text="{Binding MinAge, UpdateSourceTrigger=PropertyChanged}"/>
         <TextBlock Grid.Row="3" Grid.Column="2" Margin="5" Text="Maximum Age"/>
-        <TextBox Grid.Row="3" Grid.Column="3" Margin="5" Name="MaximumAge" Text="50"/>
+        <TextBox Grid.Row="3" Grid.Column="3" Margin="5" Name="MaximumAge" Text="{Binding MaxAge, UpdateSourceTrigger=PropertyChanged}"/>
         <TextBlock Grid.Row="4" Grid.Column="0" Margin="5" Text="Minimum House Number"/>
-        <TextBox Grid.Row="4" Grid.Column="1" Margin="5" Name="MinHouseNumber" Text="10"/>
+        <TextBox Grid.Row="4" Grid.Column="1" Margin="5" Name="MinHouseNumber" Text="{Binding MinNumber, UpdateSourceTrigger=PropertyChanged}"/>
         <TextBlock Grid.Row="4" Grid.Column="2" Margin="5" Text="Maximum House Number"/>
-        <TextBox Grid.Row="4" Grid.Column="3" Margin="5" Name="MaxHouseNumber" Text="100"/>
+        <TextBox Grid.Row="4" Grid.Column="3" Margin="5" Name="MaxHouseNumber" Text="{Binding MaxNumber, UpdateSourceTrigger=PropertyChanged}"/>
         <TextBlock Grid.Row="5" Grid.Column="0" Margin="5" Text="House Number can have letters: "/>
-        <CheckBox Grid.Row="5" Grid.Column="1" Margin="5" Name="HasLetters"/>
+        <CheckBox Grid.Row="5" Grid.Column="1" Margin="5" Name="HasLetters" IsChecked="{Binding HasLetters}"/>
         <TextBlock Grid.Row="5" Grid.Column="2" Margin="5" Text="Percentage of house numbers with letters"/>
-        <TextBox Grid.Row="5" Grid.Column="3" Margin="5" Name="PercentageLetters" Text="0"/>
+        <TextBox Grid.Row="5" Grid.Column="3" Margin="5" Name="PercentageLetters" Text="{Binding PercentageLetters, UpdateSourceTrigger=PropertyChanged}"/>
         <Button Grid.Row="6" Grid.Column="0" Margin="5" Name="ButtonSimulation" Content="Simulate Customerset" Grid.ColumnSpan="4" Click="ButtonSimulation_Click"/>
         <DataGrid ItemsSource="{Binding Simulations}" Grid.Row="7" Grid.Column="0" Margin="5" Name="DataGridSimulatedCustomersets" SelectionMode="Single" Grid.ColumnSpan="4" Grid.RowSpan="2" IsReadOnly="True" AutoGenerateColumns="False">
             <DataGrid.ContextMenu>

@@ -33,8 +33,7 @@ namespace CustomerSimulationBL.Domein
             get => _id;
             set
             {
-                if (value <= 0) throw new SimulationException("ID <= 0");
-                else _id = value;
+                _id = value;
             }
         }
         private int _totalCustomers;
@@ -85,7 +84,7 @@ namespace CustomerSimulationBL.Domein
             set
             {
                 if (value < _ageYoungestCustomer) throw new SimulationException("Age oldest customer cannot be smaller than age youngest customer.");
-                else _ageYoungestCustomer = value;
+                else _ageOldestCustomer = value;
             }
         }
     }

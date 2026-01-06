@@ -79,15 +79,24 @@ namespace CustomerSimulationBL.Managers
 
             for (int i = 0; i < settings.TotalCustomers; i++)
             {
+
+                var explicitlySelectedMunicipalities =
+                    settings.SelectedMunicipalities?
+                        .Where(m => m.IsSelected)
+                        .ToList();
+
                 Municipality municipality;
 
-                if (settings.SelectedMunicipalities == null)
+                if (explicitlySelectedMunicipalities == null || !explicitlySelectedMunicipalities.Any())
                 {
+                    // No specific municipalities chosen → random from all
                     municipality = _municipalitymanager.GetRandomMunicipality(municipalities);
                 }
                 else
                 {
-                    Municipality selected = _municipalitymanager.GetRandomMunicipalityByPercentage(settings.SelectedMunicipalities);
+                    // Specific municipalities chosen → weighted selection
+                    Municipality selected =
+                        _municipalitymanager.GetRandomMunicipalityByPercentage(explicitlySelectedMunicipalities);
 
                     municipality = municipalities.First(m => m.Id == selected.Id);
                 }

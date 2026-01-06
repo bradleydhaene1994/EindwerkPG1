@@ -11,5 +11,6 @@ namespace CustomerSimulationBL.Interfaces
     {
         void UploadMunicipality(IEnumerable<Municipality> Municipalities, int countryVersionId);
         List<Municipality> GetMunicipalityByCountryVersionID(int countryVersionID);
+        bool HasMunicipalities(int countryVersionID);
     }
 }

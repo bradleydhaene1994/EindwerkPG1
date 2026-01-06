@@ -25,7 +25,7 @@ namespace CustomerSimulationBL.Domein
             get => _id;
             set
             {
-                if (value <= 0) throw new MunicipalityException("ID <= 0");
+                _id = value;
             }
         }
         private string _name;
@@ -35,7 +35,7 @@ namespace CustomerSimulationBL.Domein
             set
             {
                 if (string.IsNullOrWhiteSpace(value)) throw new MunicipalityException("Name cannot be empty");
-                else _name = value;
+                else _name = value.Trim();
             }
         }
 

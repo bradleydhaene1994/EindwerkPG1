@@ -28,7 +28,7 @@ namespace CustomerSimulationBL.Domein
             get => _id;
             private set
             {
-                if (value <= 0) throw new SimulationException("ID <= 0");
+                _id = value;
             }
         }
         private string _client;

@@ -43,12 +43,13 @@ namespace CustomerSimulationUI
             _countryVersionRepository = countryVersionRepo;
             _municipalityManager = municipalityManager;
             _simulationDataManager = simulationDataManager;
+            _generateCustomerService = genCustomer;
 
             _simulationViewModel = new SimulationViewModel(genCustomer);
             DataContext = _simulationViewModel;
 
             SelectedCountryVersion.ItemsSource = _countryVersionRepository.GetAllCountryVersions();
-            Simulations = new ObservableCollection<SimulationOverviewDTO>(_simulationDataManager.GetSimulationOverview());
+            _simulationViewModel.Simulations = new ObservableCollection<SimulationOverviewDTO>(_simulationDataManager.GetSimulationOverview());
         }
 
         private void ButtonSimulation_Click(object sender, RoutedEventArgs e)
@@ -73,11 +74,11 @@ namespace CustomerSimulationUI
 
             MessageBox.Show("Simulation created successfully");
 
-            Simulations.Clear();
+            _simulationViewModel.Simulations.Clear();
 
             foreach(var sim in _simulationDataManager.GetSimulationOverview())
             {
-                Simulations.Add(sim);
+                _simulationViewModel.Simulations.Add(sim);
             }
         }
         private void SelectMunicipalities_Click(object sender, EventArgs e)
@@ -149,6 +150,8 @@ namespace CustomerSimulationUI
             }
 
             SimulationStatisticsResult simStatResults = _generateCustomerService.BuildStatisticsResult(selected.SimulationDataId, selected.CountryVersionId);
+
+            MessageBox.Show("result built");
 
             var window = new SimulationStatisticsWindow(simStatResults);
 

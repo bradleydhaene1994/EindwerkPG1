@@ -213,12 +213,44 @@ namespace CustomerSimulationDL.Repositories
 
             object? result = cmd.ExecuteScalar();
 
-            if (result == null)
+            if (result == null || result == DBNull.Value)
             {
-                throw new InvalidOperationException($"Gender not found for first name '{firstName}'");
+                return Gender.Unknown;
             }
 
             return Enum.Parse<Gender>(result.ToString()!, true);
+        }
+        public bool HasFirstNames(int countryVersionId)
+        {
+            const string SQL = "SELECT 1 FROM FirstName WHERE CountryVersionID = @CountryVersionID";
+
+            using SqlConnection conn = new SqlConnection(_connectionstring);
+            using SqlCommand cmd = conn.CreateCommand();
+
+            cmd.CommandText = SQL;
+            cmd.Parameters.Add("@CountryVersionID", SqlDbType.Int).Value = countryVersionId;
+
+            conn.Open();
+
+            using SqlDataReader reader = cmd.ExecuteReader();
+
+            return reader.HasRows;
+        }
+        public bool HasLastNames(int countryVersionId)
+        {
+            const string SQL = "SELECT 1 FROM LastName WHERE CountryVersionID = @CountryVersionID";
+
+            using SqlConnection conn = new SqlConnection(_connectionstring);
+            using SqlCommand cmd = conn.CreateCommand();
+
+            cmd.CommandText = SQL;
+            cmd.Parameters.Add("@CountryVersionID", SqlDbType.Int).Value = countryVersionId;
+
+            conn.Open();
+
+            using SqlDataReader reader = cmd.ExecuteReader();
+
+            return reader.HasRows;
         }
     }
 }

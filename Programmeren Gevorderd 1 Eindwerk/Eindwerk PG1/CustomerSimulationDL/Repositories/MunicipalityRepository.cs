@@ -82,5 +82,20 @@ namespace CustomerSimulationDL.Repositories
 
             return municipalities;
         }
+        public bool HasMunicipalities(int countryVersionId)
+        {
+            const string SQL = "SELECT 1 FROM Municipality WHERE CountryVersionID = @CountryVersionID";
+
+            using SqlConnection conn = new(_connectionstring);
+            using SqlCommand cmd = conn.CreateCommand();
+
+            cmd.CommandText = SQL;
+            cmd.Parameters.Add("@CountryVersionID", SqlDbType.Int).Value = countryVersionId;
+
+            conn.Open();
+            using SqlDataReader reader = cmd.ExecuteReader();
+
+            return reader.HasRows;
+        }
     }
 }

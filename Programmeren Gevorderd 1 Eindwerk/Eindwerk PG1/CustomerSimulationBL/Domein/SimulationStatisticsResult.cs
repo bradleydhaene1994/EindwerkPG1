@@ -9,13 +9,13 @@ namespace CustomerSimulationBL.Domein
 {
     public class SimulationStatisticsResult
     {
-        public SimulationStatisticsResult(SimulationStatistics general, List<MunicipalityStatistics> customersPerMunicipality, List<MunicipalityStatistics> streetsPerMunicipality, List<NameStatistics> maleNames, List<NameStatistics> femaleName, List<NameStatistics> lastNames)
+        public SimulationStatisticsResult(SimulationStatistics general, List<MunicipalityStatistics> customersPerMunicipality, List<MunicipalityStatistics> streetsPerMunicipality, List<NameStatistics> maleNames, List<NameStatistics> femaleNames, List<NameStatistics> lastNames)
         {
             General = general;
             CustomersPerMunicipality = customersPerMunicipality;
             StreetsPerMunicipality = streetsPerMunicipality;
             MaleNames = maleNames;
-            FemaleNames = femaleName;
+            FemaleNames = femaleNames;
             LastNames = lastNames;
         }
         private SimulationStatistics _general;

@@ -14,6 +14,8 @@ namespace CustomerSimulationBL.Interfaces
         void UploadLastName(IEnumerable<LastName> lastNames, int countryVersionId, IProgress<int> progress);
         List<FirstName> GetFirstNamesByCountryVersionID(int countryVersionID);
         List<LastName> GetLastNamesByCountryVersionID(int countryVersionID);
-        Gender GetGenderByFirstName(string firstName); 
+        Gender GetGenderByFirstName(string firstName);
+        bool HasFirstNames(int countryVersionId);
+        bool HasLastNames(int countryVersionId);
     }
 }

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CustomerSimulationBL.Domein;
 using CustomerSimulationBL.DTOs;
+using CustomerSimulationBL.Exceptions;
 using CustomerSimulationBL.Managers;
 using CustomerSimulationBL.Mappers;
 
@@ -15,6 +16,7 @@ namespace CustomerSimulationUI.Model
     public class SimulationViewModel : INotifyPropertyChanged
     {
         private readonly GenerateCustomerService _generateCustomerService;
+        public ObservableCollection<SimulationOverviewDTO> Simulations { get; set; }
         public SimulationViewModel(GenerateCustomerService generateCustomerService)
         {
             _generateCustomerService = generateCustomerService;
@@ -37,6 +39,18 @@ namespace CustomerSimulationUI.Model
 
             //Create SimulationSettingsDTO
             var settingsDTO = new SimulationSettingsDTO(SelectedMunicipalities.ToList(), TotalCustomers, MinAge, MaxAge, MinNumber, MaxNumber, HasLetters, PercentageLetters);
+
+            if (TotalCustomers <= 0)
+                throw new SimulationException("Total customers must be greater than 0");
+
+            if (MinAge < 0 || MaxAge < MinAge)
+                throw new SimulationException("Invalid age range");
+
+            if (MinNumber <= 0 || MaxNumber < MinNumber)
+                throw new SimulationException("Invalid house number range");
+
+            if (PercentageLetters < 0 || PercentageLetters > 100)
+                throw new SimulationException("Percentage letters must be between 0 and 100");
 
             //Map DTO => Domain
             var settings = SimulationSettingsMapper.ToDomain(settingsDTO);

@@ -48,7 +48,7 @@ namespace CustomerSimulationBL.Managers
         {
             if(municipalitySelection == null || municipalitySelection.Count == 0)
             {
-                throw new InvalidOperationException("No municipality selection provided.");
+                return null;
             }
 
             int randomValue = _random.Next(1, 101);

@@ -34,6 +34,5 @@ namespace CustomerSimulationBL.Domein
                 else _count = value;
             }
         }
-
     }
 }
