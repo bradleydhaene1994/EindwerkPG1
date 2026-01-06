@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CustomerSimulationBL.Exceptions;
 
 namespace CustomerSimulationBL.Domein
 {
@@ -20,10 +21,35 @@ namespace CustomerSimulationBL.Domein
             Municipality = municipality;
             Street = street;
         }
-
-        public int Id { get; set; }
-        public Municipality? Municipality { get; set; }
-        public string Street { get; set; }
+        private int _id;
+        public int Id
+        {
+            get => _id;
+            private set
+            {
+                if (value <= 0) throw new AddressException("ID <= 0");
+                else _id = value;
+            }
+        }
+        private Municipality? _municipality;
+        public Municipality? Municipality
+        {
+            get => _municipality;
+            set
+            {
+                _municipality = value;
+            }
+        }
+        private string _street;
+        public string Street
+        {
+            get => _street;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value)) throw new AddressException("Street name cannot be empty.");
+                else _street = value.Trim();
+            }
+        }
         public override string ToString()
         {
             return $"{Municipality?.Name}, {Street}";

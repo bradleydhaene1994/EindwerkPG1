@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Identity.Client;
+using CustomerSimulationBL.Exceptions;
 
 namespace CustomerSimulationBL.Domein
 {
@@ -15,9 +16,34 @@ namespace CustomerSimulationBL.Domein
             Percentage = percentage;
             IsSelected = isSelected;
         }
-
-        public Municipality Municipality { get; set; }
-        public int Percentage { get; set; }
-        public bool IsSelected { get; set; }
+        private Municipality _municipality;
+        public Municipality Municipality
+        {
+            get => _municipality;
+            set
+            {
+                if (value == null) throw new MunicipalityException("No municipality selected");
+                else _municipality = value;
+            }
+        }
+        private int _percentage;
+        public int Percentage
+        {
+            get => _percentage;
+            set
+            {
+                if (value < 0 || value > 100) throw new MunicipalityException("percentage must be between 0 and 100");
+                else _percentage = value;
+            }
+        }
+        private bool _isSelected;
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                _isSelected = value;
+            }
+        }
     }
 }

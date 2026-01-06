@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CustomerSimulationBL.Exceptions;
 
 namespace CustomerSimulationBL.Domein
 {
@@ -23,11 +24,46 @@ namespace CustomerSimulationBL.Domein
             Frequency = frequency;
             Gender = gender;
         }
-
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int? Frequency { get; set; }
-        public Gender? Gender { get; set; }
+        private int _id;
+        public int Id
+        {
+            get => _id;
+            private set
+            {
+                if (value <= 0) throw new NameException("LastName ID <= 0");
+                else _id = value;
+            }
+        }
+        private string _name;
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value)) throw new NameException("Name of last name cannot be empty");
+                else _name = value;
+            }
+        }
+        private int? _frequency;
+        public int? Frequency
+        {
+            get => _frequency;
+            set
+            {
+                if (value < 0) throw new NameException("Frequency of last name cannot be lower than 0");
+                else _frequency = value;
+            }
+        }
+        public Gender? _gender;
+        public Gender? Gender
+        {
+            get => _gender;
+            set
+            {
+                if (value != null && !Enum.IsDefined(typeof(Gender), value)) throw new NameException("Invalid gender value in last name.");
+                else _gender = value;
+            }
+        }
         public override string ToString()
         {
             return $"{Name}, {Frequency}, {Gender}";

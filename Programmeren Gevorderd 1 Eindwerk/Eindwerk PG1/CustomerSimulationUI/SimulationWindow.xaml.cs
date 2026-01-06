@@ -18,6 +18,7 @@ using CustomerSimulationBL.Domein;
 using CustomerSimulationBL.DTOs;
 using CustomerSimulationBL.Interfaces;
 using CustomerSimulationBL.Managers;
+using CustomerSimulationUI.Model;
 using Microsoft.Identity.Client;
 using Microsoft.Win32;
 
@@ -26,109 +27,51 @@ namespace CustomerSimulationUI
     /// <summary>
     /// Interaction logic for SimulationWindow.xaml
     /// </summary>
-    public partial class SimulationWindow : Window, INotifyPropertyChanged
+    public partial class SimulationWindow : Window
     {
         private readonly ICountryVersionRepository _countryVersionRepository;
         private readonly GenerateCustomerService _generateCustomerService;
         private readonly MunicipalityManager _municipalityManager;
         private readonly SimulationDataManager _simulationDataManager;
-        private List<Municipality> _allMunicipalities;
         private readonly CustomerManager _customerManager;
-        public List<Municipality> AllMunicipalities
-        {
-            get => _allMunicipalities;
-            set
-            {
-                _allMunicipalities = value;
-                OnPropertyChanged(nameof(AllMunicipalities));
-            }
-        }
-        private ObservableCollection<MunicipalitySelection> _selectedMunicipalities;
-        public ObservableCollection<MunicipalitySelection> SelectedMunicipalities
-        {
-            get => _selectedMunicipalities;
-            set
-            {
-                _selectedMunicipalities = value;
-                OnPropertyChanged(nameof(SelectedMunicipalities));
-            }
-        }
-        public string SelectedMunicipalitiesSummary
-        {
-            get
-            {
-                if(SelectedMunicipalities == null || SelectedMunicipalities.Count == 0)
-                {
-                    return "All Municipalities";
-                }
-
-                return string.Join(", ", SelectedMunicipalities.Select(m => $"{m.Municipality.Name}{m.Percentage}"));
-            }
-        }
+        private readonly SimulationViewModel _simulationViewModel;
         public ObservableCollection<SimulationOverviewDTO> Simulations { get; set; }
         public SimulationWindow(ICountryVersionRepository countryVersionRepo, GenerateCustomerService genCustomer, MunicipalityManager municipalityManager, SimulationDataManager simulationDataManager)
         {
             InitializeComponent();
 
             _countryVersionRepository = countryVersionRepo;
-            _generateCustomerService = genCustomer;
             _municipalityManager = municipalityManager;
             _simulationDataManager = simulationDataManager;
 
-            List<CountryVersion> countryVersions = _countryVersionRepository.GetAllCountryVersions();
-            AllMunicipalities = new List<Municipality>();
+            _simulationViewModel = new SimulationViewModel(genCustomer);
+            DataContext = _simulationViewModel;
 
-            SelectedCountryVersion.ItemsSource = countryVersions;
-
-            SelectedCountryVersion.SelectionChanged += SelectedCountryVersion_SelectionChanged;
-            SelectedMunicipalities = new ObservableCollection<MunicipalitySelection>();
-
+            SelectedCountryVersion.ItemsSource = _countryVersionRepository.GetAllCountryVersions();
             Simulations = new ObservableCollection<SimulationOverviewDTO>(_simulationDataManager.GetSimulationOverview());
-
-            DataContext = this;
         }
 
         private void ButtonSimulation_Click(object sender, RoutedEventArgs e)
         {
             if(string.IsNullOrWhiteSpace(ClientName.Text))
             {
-                MessageBox.Show("Please fill in your name");
+                MessageBox.Show("Please fill in your name.");
                 return;
             }
-            if(!int.TryParse(CustomerNumber.Text, out int totalCustomers))
-            {
-                MessageBox.Show("Please fill in how many customers you would like to simulate");
-            }
-            if (SelectedCountryVersion.SelectedValue == null)
+            if(SelectedCountryVersion.SelectedValue == null)
             {
                 MessageBox.Show("Please select a country version.");
                 return;
             }
 
-            int minAge = int.Parse(MinimumAge.Text);
-            int maxAge = int.Parse(MaximumAge.Text);
-            int minHouseNumber = int.Parse(MinHouseNumber.Text);
-            int maxHouseNumber = int.Parse(MaxHouseNumber.Text);
-            bool hasLetters = HasLetters.IsChecked == true;
-            int percentageLetters = int.Parse(PercentageLetters.Text);
-            var selectedCountryVersion = SelectedCountryVersion.SelectedItem as CountryVersion;
-            var countryVersionId = (int)SelectedCountryVersion.SelectedValue;
+            int countryVersionId = (int)SelectedCountryVersion.SelectedValue;
+            string clientName = ClientName.Text;
+            List<Municipality> allowedMunicipalities = _simulationViewModel.SelectedMunicipalities.Any() ? _simulationViewModel.SelectedMunicipalities.Select(m => m.Municipality).ToList()
+                                                                                                         : _municipalityManager.GetMunicipalityByCountryVersionID(countryVersionId);
 
-            List<MunicipalitySelection>? municipalitySelections = null;
-            List<Municipality>? allowedMunicipalities = null;
+            _simulationViewModel.RunSimulation(countryVersionId, clientName, allowedMunicipalities);
 
-            if((UseSpecificMunicipalitiesCheckBox.IsChecked == true) && SelectedMunicipalities.Any())
-            {
-                municipalitySelections = SelectedMunicipalities.ToList();
-                allowedMunicipalities = SelectedMunicipalities.Select(s => s.Municipality).ToList();
-            }
-
-            var simulationData = new SimulationData(ClientName.Text, DateTime.Now);
-            var simulationSettings = new SimulationSettings(municipalitySelections, totalCustomers, minAge, maxAge, minHouseNumber, maxHouseNumber, hasLetters, percentageLetters);
-
-            _generateCustomerService.RunSimulation(simulationData, simulationSettings, countryVersionId, allowedMunicipalities);
-
-            MessageBox.Show("Simulation created succesfully.");
+            MessageBox.Show("Simulation created successfully");
 
             Simulations.Clear();
 
@@ -139,45 +82,44 @@ namespace CustomerSimulationUI
         }
         private void SelectMunicipalities_Click(object sender, EventArgs e)
         {   
-            if(AllMunicipalities == null || AllMunicipalities.Count == 0)
+            if(_simulationViewModel == null || SelectedCountryVersion.SelectedValue == null)
             {
                 MessageBox.Show("Please select a country version first.");
             }
-            
-            var dialog = new SelectMunicipalities(AllMunicipalities, SelectedMunicipalities.ToList());
 
-            if(dialog.ShowDialog() == true)
+            int countryVersionId = (int)SelectedCountryVersion.SelectedValue;
+
+            //load municipalities from BL
+            List<Municipality> allMunicipalities = _municipalityManager.GetMunicipalityByCountryVersionID(countryVersionId);
+
+            //Open dialog with current selection from viewModel
+            var dialog = new SelectMunicipalities(allMunicipalities, _simulationViewModel.SelectedMunicipalities.ToList());
+
+            if(dialog.ShowDialog() == true && dialog.Result != null)
             {
-                SelectedMunicipalities.Clear();
+                //update ViewModel state
+                _simulationViewModel.SelectedMunicipalities.Clear();
 
-                if(dialog.Result != null)
+                foreach(var selection in dialog.Result)
                 {
-                    foreach(var selection in dialog.Result)
-                    {
-                        SelectedMunicipalities.Add(selection);
-                    }
+                    _simulationViewModel.SelectedMunicipalities.Add(selection);
                 }
             }
         }
         private void SelectedCountryVersion_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (SelectedCountryVersion.SelectedValue == null)
+            if(_simulationViewModel == null || SelectedCountryVersion.SelectedValue == null)
             {
                 return;
             }
 
             int countryVersionId = (int)SelectedCountryVersion.SelectedValue;
 
-            AllMunicipalities = _municipalityManager.GetMunicipalityByCountryVersionID(countryVersionId);
+            //load municipalities for UI purposes
+            List<Municipality> municipalities = _municipalityManager.GetMunicipalityByCountryVersionID(countryVersionId);
 
-            //clear previous municipality selections
-            SelectedMunicipalities.Clear();
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            //clear previous selections in ViewModel
+            _simulationViewModel.SelectedMunicipalities.Clear();
         }
         private void ViewSettings_Click(object sender, RoutedEventArgs e)
         {

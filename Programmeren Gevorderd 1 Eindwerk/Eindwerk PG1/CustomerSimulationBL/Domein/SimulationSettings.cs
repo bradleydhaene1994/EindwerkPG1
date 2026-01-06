@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Identity.Client;
+using CustomerSimulationBL.Exceptions;
 
 namespace CustomerSimulationBL.Domein
 {
@@ -33,16 +34,95 @@ namespace CustomerSimulationBL.Domein
             HasLetters = hasLetters;
             PercentageLetters = percentageLetters;
         }
-
-        public int Id { get; set; }
-        public List<MunicipalitySelection> SelectedMunicipalities { get; set; }
-        public int TotalCustomers { get; }
-        public int MinAge { get; }
-        public int MaxAge { get; }
-        public int MinNumber { get; }
-        public int MaxNumber { get; }
-        public bool HasLetters { get; }
-        public int PercentageLetters { get; }
+        private int _id;
+        public int Id
+        {
+            get => _id;
+            private set
+            {
+                if (value <= 0) throw new SimulationException("SimulationSettings: ID <= 0");
+                else _id = value;
+            }
+        }
+        private List<MunicipalitySelection> _selectedMunicipalities;
+        public List<MunicipalitySelection> SelectedMunicipalities
+        {
+            get => _selectedMunicipalities;
+            private set
+            {
+                if (value != null && value.Any(m => m == null)) throw new SimulationException("SimulationSettings= selected municipalities are null");
+                else _selectedMunicipalities = value;
+            }
+        }
+        private int _totalCustomers;
+        public int TotalCustomers
+        {
+            get => _totalCustomers;
+            private set
+            {
+                if (value <= 0) throw new SimulationException("SimulationSettings: number of total customers must be greater than 0");
+                else _totalCustomers = value;
+            }
+        }
+        private int _minAge;
+        public int MinAge
+        {
+            get => _minAge;
+            private set
+            {
+                if (value < 0) throw new SimulationException("SimulationSettings: minimum age cannot be lower than 0");
+                else _minAge = value;
+            }
+        }
+        private int _maxAge;
+        public int MaxAge
+        {
+            get => _maxAge;
+            private set
+            {
+                if (value < _minAge) throw new SimulationException("SimulationSettings: maximum age cannot be smaller than minimum age");
+                else _maxAge = value;
+            }
+        }
+        private int _minNumber;
+        public int MinNumber
+        {
+            get => _minNumber;
+            private set
+            {
+                if (value <= 0) throw new SimulationException("SimulationSettings: minimum house number cannot be lower than 0");
+                else _minNumber = value;
+            }
+        }
+        private int _maxNumber;
+        public int MaxNumber
+        {
+            get => _maxNumber;
+            private set
+            {
+                if (value < _minNumber) throw new SimulationException("SimulationSettings: maximum house number cannot be lower than minimum house number");
+                else _maxNumber = value;
+            }
+        }
+        private bool _hasLetters;
+        public bool HasLetters
+        {
+            get => _hasLetters;
+            private set
+            {
+                _hasLetters = value;
+            }
+        }
+        private int _percentageLetters;
+        public int PercentageLetters
+        {
+            get => _percentageLetters;
+            private set
+            {
+                if (value < 0 || value > 100) throw new SimulationException("SimulationSettings: percentage must be between 0 and 100.");
+                else _percentageLetters = value;
+            }
+        }
 
         public string HouseNumberRulesToString()
         {

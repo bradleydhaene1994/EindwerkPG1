@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CustomerSimulationBL.Exceptions;
 
 namespace CustomerSimulationBL.Domein
 {
@@ -14,9 +15,35 @@ namespace CustomerSimulationBL.Domein
             SimulationSettings = simulationSettings;
             SimulationStatisticsResult = simulationStatisticsResult;
         }
-
-        public SimulationData SimulationData { get; }
-        public SimulationSettings SimulationSettings { get; }
-        public SimulationStatisticsResult SimulationStatisticsResult { get; }
+        private SimulationData _simulationData;
+        public SimulationData SimulationData
+        {
+            get => _simulationData;
+            private set
+            {
+                if (value == null) throw new SimulationException("SimulationExport: simulationdata is null.");
+                else _simulationData = value;
+            }
+        }
+        private SimulationSettings _simulationSettings;
+        public SimulationSettings SimulationSettings
+        {
+            get => _simulationSettings;
+            private set
+            {
+                if (value == null) throw new SimulationException("SimulationExport: simulationsettings are null");
+                else _simulationSettings = value;
+            }
+        }
+        public SimulationStatisticsResult _simulationStatisticsResult;
+        public SimulationStatisticsResult SimulationStatisticsResult
+        {
+            get => _simulationStatisticsResult;
+            set
+            {
+                if (value == null) throw new SimulationException("SimulationExport: simulationstatisticsresult is null");
+                else _simulationStatisticsResult = value;
+            }
+        }
     }
 }

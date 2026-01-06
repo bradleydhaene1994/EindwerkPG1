@@ -16,7 +16,7 @@ namespace Debugger
 
             var addresses = csvReader.ReadAddresses(belgiumAddresses);
 
-            addressRepo.UploadAddress()
+            //addressRepo.UploadAddress();
 
         }
     }
