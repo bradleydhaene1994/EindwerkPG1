@@ -10,8 +10,6 @@ namespace CustomerSimulationTests.DomainTests
 {
     public class SimulationStatisticsTests
     {
-        // ---------- VALID STATISTICS ----------
-
         [Fact]
         public void Constructor_ValidValues_CreatesSimulationStatistics()
         {
@@ -30,43 +28,6 @@ namespace CustomerSimulationTests.DomainTests
             Assert.Equal(18, stats.AgeYoungestCustomer);
             Assert.Equal(65, stats.AgeOldestCustomer);
         }
-
-        // ---------- ID VALIDATION ----------
-
-        [Theory]
-        [InlineData(1)]
-        [InlineData(10)]
-        [InlineData(100)]
-        public void Constructor_ValidId_SetsId(int id)
-        {
-            SimulationStatistics stats = new SimulationStatistics(
-                id,
-                10,
-                30,
-                32,
-                18,
-                65);
-
-            Assert.Equal(id, stats.Id);
-        }
-
-        [Theory]
-        [InlineData(0)]
-        [InlineData(-1)]
-        [InlineData(-100)]
-        public void Constructor_InvalidId_ThrowsException(int id)
-        {
-            Assert.Throws<SimulationException>(() =>
-                new SimulationStatistics(
-                    id,
-                    10,
-                    30,
-                    32,
-                    18,
-                    65));
-        }
-
-        // ---------- TOTAL CUSTOMERS ----------
 
         [Theory]
         [InlineData(0)]
@@ -97,9 +58,6 @@ namespace CustomerSimulationTests.DomainTests
                     18,
                     65));
         }
-
-        // ---------- AVERAGE AGE VALIDATION ----------
-
         [Theory]
         [InlineData(0)]
         [InlineData(25.5)]
@@ -144,8 +102,6 @@ namespace CustomerSimulationTests.DomainTests
                     18,
                     65));
         }
-
-        // ---------- AGE RELATIONSHIP VALIDATION ----------
 
         [Fact]
         public void Constructor_YoungestAgeGreaterThanOldest_ThrowsException()

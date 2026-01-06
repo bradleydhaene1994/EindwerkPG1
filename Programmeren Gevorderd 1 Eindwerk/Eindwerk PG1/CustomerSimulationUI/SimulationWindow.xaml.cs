@@ -18,6 +18,7 @@ using CustomerSimulationBL.Domein;
 using CustomerSimulationBL.DTOs;
 using CustomerSimulationBL.Interfaces;
 using CustomerSimulationBL.Managers;
+using CustomerSimulationBL.Services;
 using CustomerSimulationUI.Model;
 using Microsoft.Identity.Client;
 using Microsoft.Win32;
@@ -30,26 +31,31 @@ namespace CustomerSimulationUI
     public partial class SimulationWindow : Window
     {
         private readonly ICountryVersionRepository _countryVersionRepository;
-        private readonly GenerateCustomerService _generateCustomerService;
+        private readonly SimulationService _simulationService;
+        private readonly SimulationStatisticsService _simulationStatisticsService;
+        private readonly SimulationExportService _simulationExportService;
         private readonly MunicipalityManager _municipalityManager;
         private readonly SimulationDataManager _simulationDataManager;
         private readonly CustomerManager _customerManager;
         private readonly SimulationViewModel _simulationViewModel;
         public ObservableCollection<SimulationOverviewDTO> Simulations { get; set; }
-        public SimulationWindow(ICountryVersionRepository countryVersionRepo, GenerateCustomerService genCustomer, MunicipalityManager municipalityManager, SimulationDataManager simulationDataManager)
+        public SimulationWindow(ICountryVersionRepository countryVersionRepo, SimulationService simulationService, MunicipalityManager municipalityManager, SimulationDataManager simulationDataManager, SimulationStatisticsService simulationStatisticsService, SimulationExportService simulationExportService)
         {
             InitializeComponent();
 
             _countryVersionRepository = countryVersionRepo;
             _municipalityManager = municipalityManager;
             _simulationDataManager = simulationDataManager;
-            _generateCustomerService = genCustomer;
+            _simulationService = simulationService;
+            _simulationStatisticsService = simulationStatisticsService;
+            _simulationExportService = simulationExportService;
 
-            _simulationViewModel = new SimulationViewModel(genCustomer);
+            _simulationViewModel = new SimulationViewModel(simulationService);
             DataContext = _simulationViewModel;
 
             SelectedCountryVersion.ItemsSource = _countryVersionRepository.GetAllCountryVersions();
             _simulationViewModel.Simulations = new ObservableCollection<SimulationOverviewDTO>(_simulationDataManager.GetSimulationOverview());
+            _simulationExportService = simulationExportService;
         }
 
         private void ButtonSimulation_Click(object sender, RoutedEventArgs e)
@@ -149,7 +155,7 @@ namespace CustomerSimulationUI
                 return;
             }
 
-            SimulationStatisticsResult simStatResults = _generateCustomerService.BuildStatisticsResult(selected.SimulationDataId, selected.CountryVersionId);
+            SimulationStatisticsResult simStatResults = _simulationStatisticsService.BuildStatisticsResult(selected.SimulationDataId, selected.CountryVersionId);
 
             MessageBox.Show("result built");
 
@@ -185,10 +191,10 @@ namespace CustomerSimulationUI
             }
 
             SimulationData simulationData = _simulationDataManager.GetSimulationDataById(selected.SimulationDataId);
-            List<CustomerDTO> customers = _generateCustomerService.GetCustomerDTOBySimulationDataId(selected.SimulationDataId);
+            List<CustomerDTO> customers = _simulationService.GetCustomerDTOBySimulationDataId(selected.SimulationDataId);
             CountryVersion countryVersion = _countryVersionRepository.GetCountryVersionById(selected.CountryVersionId);
 
-            _generateCustomerService.ExportCustomerDataToTxt(simulationData, customers, dialog.FileName, countryVersion);
+            _simulationExportService.ExportCustomerDataToTxt(simulationData, customers, dialog.FileName, countryVersion);
 
             MessageBox.Show("Customer Data exported successfully.");
         }
@@ -219,11 +225,11 @@ namespace CustomerSimulationUI
                 return;
             }
 
-            SimulationExport export = _generateCustomerService.BuildSimulationExport(selected.SimulationDataId, selected.CountryVersionId);
+            SimulationExport export = _simulationService.BuildSimulationExport(selected.SimulationDataId, selected.CountryVersionId);
 
             CountryVersion countryVersion = _countryVersionRepository.GetCountryVersionById(selected.CountryVersionId);
 
-            _generateCustomerService.ExportStatisticsToTxt(export, dialog.FileName, countryVersion);
+            _simulationExportService.ExportStatisticsToTxt(export, dialog.FileName, countryVersion);
 
             MessageBox.Show("Simulation Data export successfull");
         }

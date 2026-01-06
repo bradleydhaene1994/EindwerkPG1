@@ -10,7 +10,6 @@ namespace CustomerSimulationTests.DomainTests
 {
     public class SimulationStatisticsResultTests
     {
-        // ---------- HELPERS ----------
 
         private SimulationStatistics CreateValidGeneralStatistics()
         {
@@ -37,8 +36,6 @@ namespace CustomerSimulationTests.DomainTests
                 new NameStatistics("John", 5)
             };
         }
-
-        // ---------- VALID RESULT ----------
 
         [Fact]
         public void Constructor_ValidValues_CreatesSimulationStatisticsResult()
@@ -68,8 +65,6 @@ namespace CustomerSimulationTests.DomainTests
             Assert.Equal(femaleNames, result.FemaleNames);
             Assert.Equal(lastNames, result.LastNames);
         }
-
-        // ---------- NULL VALIDATION ----------
 
         [Fact]
         public void Constructor_NullGeneral_ThrowsException()

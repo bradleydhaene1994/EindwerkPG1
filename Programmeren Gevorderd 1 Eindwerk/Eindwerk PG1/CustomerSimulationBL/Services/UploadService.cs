@@ -130,6 +130,7 @@ namespace CustomerSimulationBL.Services
                 UploadDataType.FirstName => _nameRepository.HasFirstNames(countryVersionId),
                 UploadDataType.LastName => _nameRepository.HasLastNames(countryVersionId),
                 UploadDataType.Municipality => _municipalityRepository.HasMunicipalities(countryVersionId),
+                UploadDataType.Address => _addressRepository.HasAddresses(countryVersionId),
                 _ => false
             };
         }

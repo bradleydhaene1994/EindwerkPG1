@@ -15,19 +15,105 @@ namespace CustomerSimulationUI.Model
 {
     public class SimulationViewModel : INotifyPropertyChanged
     {
-        private readonly GenerateCustomerService _generateCustomerService;
+        private readonly SimulationService _generateCustomerService;
         public ObservableCollection<SimulationOverviewDTO> Simulations { get; set; }
-        public SimulationViewModel(GenerateCustomerService generateCustomerService)
+
+        private int _totalCustomers;
+        private int _minAge;
+        private int _maxAge;
+        private int _minNumber;
+        private int _maxNumber;
+        private bool _hasLetters;
+        private int _percentageLetters;
+        public SimulationViewModel(SimulationService generateCustomerService)
         {
             _generateCustomerService = generateCustomerService;
         }
-        public int TotalCustomers { get; set; }
-        public int MinAge { get; set; }
-        public int MaxAge { get; set; }
-        public int MinNumber { get; set; }
-        public int MaxNumber { get; set; }
-        public bool HasLetters { get; set; }
-        public int PercentageLetters { get; set; }
+        public int TotalCustomers
+        {
+            get => _totalCustomers;
+            set
+            {
+                if(_totalCustomers != value)
+                {
+                    _totalCustomers = value;
+                    OnPropertyChanged(nameof(TotalCustomers));
+                }
+            }
+        }
+        public int MinAge
+        {
+            get => _minAge;
+            set
+            {
+                if (_minAge != value)
+                {
+                    _minAge = value;
+                    OnPropertyChanged(nameof(MinAge));
+                }
+            }
+        }
+        public int MaxAge
+        {
+            get => _maxAge;
+            set
+            {
+                if (_maxAge != value)
+                {
+                    _maxAge = value;
+                    OnPropertyChanged(nameof(MaxAge));
+                }
+            }
+        }
+        public int MinNumber
+        {
+            get => _minNumber;
+            set
+            {
+                if (_minNumber != value)
+                {
+                    _minNumber = value;
+                    OnPropertyChanged(nameof(MinNumber));
+                }
+            }
+        }
+        public int MaxNumber
+        {
+            get => _maxNumber;
+            set
+            {
+                if (_maxNumber != value)
+                {
+                    _maxNumber = value;
+                    OnPropertyChanged(nameof(MaxNumber));
+                }
+            }
+        }
+
+        public bool HasLetters
+        {
+            get => _hasLetters;
+            set
+            {
+                if (_hasLetters != value)
+                {
+                    _hasLetters = value;
+                    OnPropertyChanged(nameof(HasLetters));
+                }
+            }
+        }
+        public int PercentageLetters
+        {
+            get => _percentageLetters;
+            set
+            {
+                if (_percentageLetters != value)
+                {
+                    _percentageLetters = value;
+                    OnPropertyChanged(nameof(PercentageLetters));
+                }
+            }
+        }
         public ObservableCollection<MunicipalitySelection> SelectedMunicipalities { get; } = new ObservableCollection<MunicipalitySelection>();
 
         public ObservableCollection<CustomerDTO> Customers { get; } = new ObservableCollection<CustomerDTO>();

@@ -10,6 +10,7 @@ using Microsoft.Data;
 using System.Data;
 using CustomerSimulationBL.Domein;
 using Microsoft.Identity.Client;
+using System.Transactions;
 
 namespace CustomerSimulationDL.Repositories
 {
@@ -24,28 +25,35 @@ namespace CustomerSimulationDL.Repositories
 
         public int GetOrUploadCountryVersion(int countryId, int year)
         {
-            string SQLInsert = "INSERT INTO CountryVersion(CountryID, Year) " +
-                               "OUTPUT inserted.ID VALUES(@CountryID, @Year)";
+            const string SQLSelect = "SELECT ID FROM CountryVersion WHERE CountryID = @CountryID AND Year = @Year";
 
-            string SQLSelect = "SELECT ID FROM CountryVersion " +
-                               "WHERE CountryID = @CountryID AND Year = @Year";
+            const string SQLInsert = "INSERT INTO CountryVersion (CountryID, Year) VALUES (@CountryID, @Year); " +
+                                     "SELECT SCOPE_IDENTITY();";
 
             using SqlConnection conn = new SqlConnection(_connectionstring);
-            using SqlCommand cmd = new SqlCommand(SQLInsert, conn);
-
-            cmd.Parameters.Add("@CountryID", SqlDbType.Int).Value = countryId;
-            cmd.Parameters.Add("@Year", SqlDbType.Int).Value = year;
-
             conn.Open();
 
-            try
+            //Try to get existing
+            using (SqlCommand selectCmd = conn.CreateCommand())
             {
-                return (int)cmd.ExecuteScalar();
+                selectCmd.CommandText = SQLSelect;
+                selectCmd.Parameters.Add("@CountryID", SqlDbType.Int).Value = countryId;
+                selectCmd.Parameters.Add("@Year", SqlDbType.Int).Value = year;
+
+                object existing = selectCmd.ExecuteScalar();
+                if (existing != null && existing != DBNull.Value)
+                {
+                    return Convert.ToInt32(existing);
+                }
             }
-            catch(SqlException ex) when (ex.Number == 2627 || ex.Number == 2601)
+            //Insert only if not found
+            using (SqlCommand insertCmd = conn.CreateCommand())
             {
-                cmd.CommandText = SQLSelect;
-                return (int)cmd.ExecuteScalar();
+                insertCmd.CommandText = SQLInsert;
+                insertCmd.Parameters.Add("@CountryID", SqlDbType.Int).Value = countryId;
+                insertCmd.Parameters.Add("@Year", SqlDbType.Int).Value = year;
+
+                return Convert.ToInt32(insertCmd.ExecuteScalar());
             }
         }
         public List<Country> GetAllCountries()

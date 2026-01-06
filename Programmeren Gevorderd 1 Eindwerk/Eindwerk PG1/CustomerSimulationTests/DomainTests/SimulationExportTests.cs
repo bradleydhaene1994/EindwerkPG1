@@ -46,7 +46,6 @@ namespace CustomerSimulationTests.DomainTests
                 lastNames: new());
         }
 
-        // ---------- VALID EXPORT ----------
 
         [Fact]
         public void Constructor_ValidValues_CreatesSimulationExport()
@@ -64,8 +63,6 @@ namespace CustomerSimulationTests.DomainTests
             Assert.Equal(settings, export.SimulationSettings);
             Assert.Equal(stats, export.SimulationStatisticsResult);
         }
-
-        // ---------- NULL VALIDATION ----------
 
         [Fact]
         public void Constructor_NullSimulationData_ThrowsException()

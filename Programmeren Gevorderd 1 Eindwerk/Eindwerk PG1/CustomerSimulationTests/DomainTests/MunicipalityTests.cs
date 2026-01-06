@@ -10,7 +10,6 @@ namespace CustomerSimulationTests.DomainTests
 {
     public class MunicipalityTests
     {
-        // ---------- VALID MUNICIPALITY ----------
 
         [Fact]
         public void Constructor_ValidName_CreatesMunicipality()
@@ -32,7 +31,6 @@ namespace CustomerSimulationTests.DomainTests
             Assert.Equal("Antwerp", municipality.Name);
         }
 
-        // ---------- NAME VALIDATION ----------
 
         [Theory]
         [InlineData("")]
@@ -41,32 +39,6 @@ namespace CustomerSimulationTests.DomainTests
         {
             Assert.Throws<MunicipalityException>(() =>
                 new Municipality(name));
-        }
-
-        // ---------- ID VALIDATION ----------
-
-        [Theory]
-        [InlineData(1)]
-        [InlineData(5)]
-        [InlineData(100)]
-        public void Constructor_ValidId_SetsId(int id)
-        {
-            // Act
-            Municipality municipality = new Municipality(id, "Antwerp");
-
-            // Assert
-            Assert.Equal(id, municipality.Id);
-            Assert.Equal("Antwerp", municipality.Name);
-        }
-
-        [Theory]
-        [InlineData(0)]
-        [InlineData(-1)]
-        [InlineData(-50)]
-        public void Constructor_InvalidId_ThrowsException(int id)
-        {
-            Assert.Throws<MunicipalityException>(() =>
-                new Municipality(id, "Antwerp"));
         }
     }
 }

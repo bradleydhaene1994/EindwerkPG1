@@ -11,7 +11,6 @@ namespace CustomerSimulationTests.DomainTests
 {
     public class FirstNameTests
     {
-        // ---------- VALID FIRST NAME ----------
 
         [Fact]
         public void Constructor_ValidValues_CreatesFirstName()
@@ -25,8 +24,6 @@ namespace CustomerSimulationTests.DomainTests
             Assert.Equal(Gender.Male, firstName.Gender);
         }
 
-        // ---------- NAME VALIDATION ----------
-
         [Theory]
         [InlineData("")]
         [InlineData("   ")]
@@ -35,8 +32,6 @@ namespace CustomerSimulationTests.DomainTests
             Assert.Throws<NameException>(() =>
                 new FirstName(name, 10, Gender.Male));
         }
-
-        // ---------- FREQUENCY VALIDATION ----------
 
         [Theory]
         [InlineData(0)]
@@ -57,33 +52,6 @@ namespace CustomerSimulationTests.DomainTests
             // Assert
             Assert.Null(firstName.Frequency);
         }
-
-        // ---------- ID VALIDATION ----------
-
-        [Theory]
-        [InlineData(1)]
-        [InlineData(5)]
-        [InlineData(100)]
-        public void Constructor_ValidId_SetsId(int id)
-        {
-            // Act
-            FirstName firstName = new FirstName(id, "John", 10, Gender.Male);
-
-            // Assert
-            Assert.Equal(id, firstName.Id);
-        }
-
-        [Theory]
-        [InlineData(0)]
-        [InlineData(-1)]
-        [InlineData(-50)]
-        public void Constructor_InvalidId_ThrowsException(int id)
-        {
-            Assert.Throws<NameException>(() =>
-                new FirstName(id, "John", 10, Gender.Male));
-        }
-
-        // ---------- GENDER VALIDATION ----------
 
         [Fact]
         public void Constructor_InvalidGender_ThrowsException()

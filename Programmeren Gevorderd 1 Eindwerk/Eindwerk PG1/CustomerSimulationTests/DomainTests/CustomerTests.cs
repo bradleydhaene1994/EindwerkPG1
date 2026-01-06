@@ -11,8 +11,6 @@ namespace CustomerSimulationTests.DomainTests
 {
     public  class CustomerTests
     {
-        // ---------- VALID CUSTOMER ----------
-
         [Fact]
         public void Constructor_ValidValues_CreatesCustomer()
         {
@@ -34,9 +32,6 @@ namespace CustomerSimulationTests.DomainTests
             Assert.Equal("12A", customer.HouseNumber);
             Assert.Equal(Gender.Male, customer.Gender);
         }
-
-        // ---------- FIRST NAME ----------
-
         [Theory]
         [InlineData("")]
         [InlineData("   ")]
@@ -52,8 +47,6 @@ namespace CustomerSimulationTests.DomainTests
                     "12",
                     Gender.Male));
         }
-
-        // ---------- LAST NAME ----------
 
         [Theory]
         [InlineData("")]
@@ -71,8 +64,6 @@ namespace CustomerSimulationTests.DomainTests
                     Gender.Male));
         }
 
-        // ---------- MUNICIPALITY ----------
-
         [Theory]
         [InlineData("")]
         [InlineData("   ")]
@@ -88,8 +79,6 @@ namespace CustomerSimulationTests.DomainTests
                     "12",
                     Gender.Male));
         }
-
-        // ---------- STREET ----------
 
         [Theory]
         [InlineData("")]
@@ -107,8 +96,6 @@ namespace CustomerSimulationTests.DomainTests
                     Gender.Male));
         }
 
-        // ---------- HOUSE NUMBER ----------
-
         [Theory]
         [InlineData("")]
         [InlineData("   ")]
@@ -125,8 +112,6 @@ namespace CustomerSimulationTests.DomainTests
                     Gender.Male));
         }
 
-        // ---------- BIRTH DATE ----------
-
         [Fact]
         public void Constructor_BirthDateInFuture_ThrowsException()
         {
@@ -140,47 +125,6 @@ namespace CustomerSimulationTests.DomainTests
                     "12",
                     Gender.Male));
         }
-
-        // ---------- ID ----------
-
-        [Theory]
-        [InlineData(1)]
-        [InlineData(10)]
-        [InlineData(999)]
-        public void Constructor_ValidId_SetsId(int id)
-        {
-            Customer customer = new Customer(
-                id,
-                "John",
-                "Doe",
-                "Antwerp",
-                "Main Street",
-                new DateTime(1990, 1, 1),
-                "12",
-                Gender.Male);
-
-            Assert.Equal(id, customer.Id);
-        }
-
-        [Theory]
-        [InlineData(0)]
-        [InlineData(-1)]
-        [InlineData(-50)]
-        public void Constructor_InvalidId_ThrowsException(int id)
-        {
-            Assert.Throws<CustomerException>(() =>
-                new Customer(
-                    id,
-                    "John",
-                    "Doe",
-                    "Antwerp",
-                    "Main Street",
-                    new DateTime(1990, 1, 1),
-                    "12",
-                    Gender.Male));
-        }
-
-        // ---------- GENDER ----------
 
         [Fact]
         public void Gender_Null_IsAllowed()

@@ -16,16 +16,18 @@ namespace CustomerSimulationBL.Managers
         {
             _municipalityRepo = municipalityRepo;
         }
-
+        //uploads municipalities to the db (only used if municipalities aren't specifically linked to streets)
         public void UploadMunicipality(IEnumerable<Municipality> municipalities, int countryVersionId)
         {
             _municipalityRepo.UploadMunicipality(municipalities, countryVersionId);
         }
+        // gets municipality by the countryversionId;
         public List<Municipality> GetMunicipalityByCountryVersionID(int countryVersionID)
         {
             var municipalities = _municipalityRepo.GetMunicipalityByCountryVersionID(countryVersionID);
             return municipalities;
         }
+        //returns random municipality according to a given list of municipalities
         public Municipality GetRandomMunicipality(List<Municipality> municipalities)
         {
             if(municipalities == null)
@@ -40,18 +42,20 @@ namespace CustomerSimulationBL.Managers
             int index = _random.Next(municipalities.Count);
             return municipalities[index];
         }
+        //gets municipalities from the db according to the countryversionid
         public void GetMunicipalitiesByCountryVersionID(int countryVersionId)
         {
             _municipalityRepo.GetMunicipalityByCountryVersionID(countryVersionId);
         }
-        public Municipality GetRandomMunicipalityByPercentage(IReadOnlyList<MunicipalitySelection> municipalitySelection)
+        //gets a random municipality from a list of specified municipalities
+        public Municipality GetRandomMunicipalityBySpecifiedList(IReadOnlyList<MunicipalitySelection> municipalitySelection)
         {
             if(municipalitySelection == null || municipalitySelection.Count == 0)
             {
                 return null;
             }
 
-            int randomValue = _random.Next(1, 101);
+            int randomValue = _random.Next(0, 100);
             int cumulative = 0;
 
             foreach(var selection in municipalitySelection)

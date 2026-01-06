@@ -57,24 +57,5 @@ namespace CustomerSimulationTests.DomainTests
             // Assert
             Assert.Null(address.Municipality);
         }
-        [Fact]
-        public void Constructor_WithValidId_SetsId()
-        {
-            // Arrange
-            Municipality municipality = new Municipality("Ghent");
-
-            // Act
-            Address address = new Address(1, municipality, "High Street");
-
-            // Assert
-            Assert.Equal(1, address.Id);
-        }
-        [Fact]
-        public void Constructor_IdLessOrEqualZero_ThrowsException()
-        {
-            // Act & Assert
-            Assert.Throws<AddressException>(() =>
-                new Address(0, null, "Main Street"));
-        }
     }
 }

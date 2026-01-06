@@ -10,7 +10,6 @@ namespace CustomerSimulationTests.DomainTests
 {
     public class MunicipalityStatisticsTests
     {
-        // ---------- VALID MUNICIPALITY STATISTICS ----------
 
         [Theory]
         [InlineData(0)]
@@ -31,8 +30,6 @@ namespace CustomerSimulationTests.DomainTests
             Assert.Equal(count, stats.Count);
         }
 
-        // ---------- MUNICIPALITY VALIDATION ----------
-
         [Fact]
         public void Constructor_NullMunicipality_ThrowsException()
         {
@@ -40,8 +37,6 @@ namespace CustomerSimulationTests.DomainTests
             Assert.Throws<MunicipalityException>(() =>
                 new MunicipalityStatistics(null, 10));
         }
-
-        // ---------- COUNT VALIDATION ----------
 
         [Theory]
         [InlineData(-1)]

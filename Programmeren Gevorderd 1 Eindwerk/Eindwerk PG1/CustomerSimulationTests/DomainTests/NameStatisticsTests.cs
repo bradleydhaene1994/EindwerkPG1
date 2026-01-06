@@ -10,7 +10,6 @@ namespace CustomerSimulationTests.DomainTests
 {
     public class NameStatisticsTests
     {
-        // ---------- VALID NAME STATISTICS ----------
 
         [Theory]
         [InlineData("John", 0)]
@@ -26,8 +25,6 @@ namespace CustomerSimulationTests.DomainTests
             Assert.Equal(count, stats.Count);
         }
 
-        // ---------- NAME VALIDATION ----------
-
         [Theory]
         [InlineData("")]
         [InlineData("   ")]
@@ -37,8 +34,6 @@ namespace CustomerSimulationTests.DomainTests
             Assert.Throws<SimulationException>(() =>
                 new NameStatistics(name, 1));
         }
-
-        // ---------- COUNT VALIDATION ----------
 
         [Theory]
         [InlineData(-1)]

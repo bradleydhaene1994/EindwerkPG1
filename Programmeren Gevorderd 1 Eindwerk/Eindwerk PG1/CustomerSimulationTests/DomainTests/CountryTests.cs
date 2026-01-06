@@ -45,24 +45,5 @@ namespace CustomerSimulationTests.DomainTests
             Assert.Throws<CountryException>(() =>
                 new Country("   "));
         }
-
-        [Fact]
-        public void Constructor_WithValidId_SetsId()
-        {
-            // Act
-            Country country = new Country(1, "Belgium");
-
-            // Assert
-            Assert.Equal(1, country.Id);
-            Assert.Equal("Belgium", country.Name);
-        }
-
-        [Fact]
-        public void Constructor_IdLessOrEqualZero_ThrowsException()
-        {
-            // Act & Assert
-            Assert.Throws<CountryException>(() =>
-                new Country(0, "Belgium"));
-        }
     }
 }

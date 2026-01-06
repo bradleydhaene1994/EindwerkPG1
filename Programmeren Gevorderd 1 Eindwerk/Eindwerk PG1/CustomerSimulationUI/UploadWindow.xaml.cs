@@ -97,13 +97,17 @@ namespace CustomerSimulationUI
             try
             {
                 await Task.Run(() => _uploadService.Upload(filePath, year, dataType, countryId, progress, countryName));
+
+                MessageBox.Show("Upload completed");
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Upload aborted");
             }
             finally
             {
                 progressWindow.Close();
             }
-
-            MessageBox.Show("Upload Completed");
         }
 
         private UploadDataType GetSelectedDataType()

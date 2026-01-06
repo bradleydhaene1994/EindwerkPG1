@@ -71,7 +71,7 @@ namespace CustomerSimulationDL.Repositories
         {
             List<Customer> customers = new List<Customer>();
 
-            string SQL = "SELECT c.ID, c.FirstName, c.LastName, c.Municipality, c.Municipality, c.Street, c.HouseNumber, c.BirthDate " +
+            string SQL = "SELECT c.ID, c.FirstName, c.LastName, c.Municipality, c.Street, c.HouseNumber, c.BirthDate " +
                          "FROM Customer c WHERE c.SimulationDataID = @SimulationDataId";
 
             using SqlConnection conn = new SqlConnection(_connectionstring);

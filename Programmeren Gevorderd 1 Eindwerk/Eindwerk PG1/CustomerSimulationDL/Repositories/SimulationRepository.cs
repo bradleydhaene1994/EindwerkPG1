@@ -166,12 +166,12 @@ namespace CustomerSimulationDL.Repositories
                 }
             }
         }
-        public void UploadSelectedMunicipalities(
-    int simulationSettingsId,
-    List<MunicipalitySelection> selections)
+        public void UploadSelectedMunicipalities(int simulationSettingsId, List<MunicipalitySelection> selections)
         {
             if (selections == null || selections.Count == 0)
+            {
                 return;
+            }
 
             string sql = @"
         INSERT INTO SimulationMunicipality

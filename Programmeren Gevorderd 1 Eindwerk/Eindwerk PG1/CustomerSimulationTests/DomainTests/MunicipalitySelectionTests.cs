@@ -10,8 +10,6 @@ namespace CustomerSimulationTests.DomainTests
 {
     public class MunicipalitySelectionTests
     {
-        // ---------- VALID MUNICIPALITY SELECTION ----------
-
         [Fact]
         public void Constructor_ValidValues_CreatesMunicipalitySelection()
         {
@@ -28,16 +26,12 @@ namespace CustomerSimulationTests.DomainTests
             Assert.True(selection.IsSelected);
         }
 
-        // ---------- MUNICIPALITY VALIDATION ----------
-
         [Fact]
         public void Constructor_NullMunicipality_ThrowsException()
         {
             Assert.Throws<MunicipalityException>(() =>
                 new MunicipalitySelection(null, 50, true));
         }
-
-        // ---------- PERCENTAGE VALIDATION ----------
 
         [Theory]
         [InlineData(0)]
@@ -71,8 +65,6 @@ namespace CustomerSimulationTests.DomainTests
             Assert.Throws<MunicipalityException>(() =>
                 new MunicipalitySelection(municipality, percentage, true));
         }
-
-        // ---------- ISSELECTED ----------
 
         [Fact]
         public void IsSelected_CanBeTrueOrFalse()

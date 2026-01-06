@@ -48,18 +48,22 @@ namespace CustomerSimulationBL.Managers
             //add the random number of days to the earliestbirthdate in order to get a valid random birthdate
             return earliestBirthDate.AddDays(randomDays);
         }
-
+        //generate a random housenumber according to the specifications in settings
         public string GetRandomHouseNumber(SimulationSettings settings)
         {
-            int number = _random.Next(settings.MinAge , settings.MaxAge + 1);
+            //get random number according to settings
+            int number = _random.Next(settings.MinNumber , settings.MaxNumber + 1);
 
-            bool addLeter = settings.HasLetters && _random.Next(100) < settings.PercentageLetters;
+            //checks if a letter should be added according to the settings
+            bool addLetter = settings.HasLetters && _random.Next(100) < settings.PercentageLetters;
 
-            if(!addLeter)
+            //if addletter is false, return only number
+            if(!addLetter)
             {
                 return number.ToString();
             }
 
+            //if a letter has to be added, pick a random letter using ASCII arithmetics
             char letter = (char)('A' + _random.Next(26));
 
             return $"{number}{letter}";

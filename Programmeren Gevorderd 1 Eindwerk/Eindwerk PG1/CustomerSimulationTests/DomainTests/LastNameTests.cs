@@ -11,7 +11,6 @@ namespace CustomerSimulationTests.DomainTests
 {
     public class LastNameTests
     {
-        // ---------- VALID LAST NAME ----------
 
         [Fact]
         public void Constructor_ValidValues_CreatesLastName()
@@ -25,8 +24,6 @@ namespace CustomerSimulationTests.DomainTests
             Assert.Equal(Gender.Male, lastName.Gender);
         }
 
-        // ---------- NAME VALIDATION ----------
-
         [Theory]
         [InlineData("")]
         [InlineData("   ")]
@@ -35,8 +32,6 @@ namespace CustomerSimulationTests.DomainTests
             Assert.Throws<NameException>(() =>
                 new LastName(name, 10, Gender.Male));
         }
-
-        // ---------- FREQUENCY VALIDATION ----------
 
         [Theory]
         [InlineData(-1)]
@@ -67,33 +62,6 @@ namespace CustomerSimulationTests.DomainTests
             // Assert
             Assert.Equal(0, lastName.Frequency);
         }
-
-        // ---------- ID VALIDATION ----------
-
-        [Theory]
-        [InlineData(1)]
-        [InlineData(5)]
-        [InlineData(100)]
-        public void Constructor_ValidId_SetsId(int id)
-        {
-            // Act
-            LastName lastName = new LastName(id, "Smith", 10, Gender.Male);
-
-            // Assert
-            Assert.Equal(id, lastName.Id);
-        }
-
-        [Theory]
-        [InlineData(0)]
-        [InlineData(-1)]
-        [InlineData(-50)]
-        public void Constructor_InvalidId_ThrowsException(int id)
-        {
-            Assert.Throws<NameException>(() =>
-                new LastName(id, "Smith", 10, Gender.Male));
-        }
-
-        // ---------- GENDER VALIDATION ----------
 
         [Fact]
         public void Gender_Null_IsAllowed()

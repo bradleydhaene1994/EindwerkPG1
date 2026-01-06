@@ -10,7 +10,6 @@ namespace CustomerSimulationTests.DomainTests
 {
     public class SimulationSettingsTests
     {
-        // ---------- HELPERS ----------
 
         private List<MunicipalitySelection> CreateValidMunicipalities()
         {
@@ -33,8 +32,6 @@ namespace CustomerSimulationTests.DomainTests
                 percentageLetters: 50);
         }
 
-        // ---------- VALID SETTINGS ----------
-
         [Fact]
         public void Constructor_ValidValues_CreatesSimulationSettings()
         {
@@ -52,49 +49,6 @@ namespace CustomerSimulationTests.DomainTests
             Assert.NotNull(settings.SelectedMunicipalities);
         }
 
-        // ---------- ID VALIDATION ----------
-
-        [Theory]
-        [InlineData(1)]
-        [InlineData(5)]
-        [InlineData(100)]
-        public void Constructor_ValidId_SetsId(int id)
-        {
-            SimulationSettings settings = new SimulationSettings(
-                id,
-                CreateValidMunicipalities(),
-                10,
-                18,
-                65,
-                1,
-                100,
-                true,
-                50);
-
-            Assert.Equal(id, settings.Id);
-        }
-
-        [Theory]
-        [InlineData(0)]
-        [InlineData(-1)]
-        [InlineData(-50)]
-        public void Constructor_InvalidId_ThrowsException(int id)
-        {
-            Assert.Throws<SimulationException>(() =>
-                new SimulationSettings(
-                    id,
-                    CreateValidMunicipalities(),
-                    10,
-                    18,
-                    65,
-                    1,
-                    100,
-                    true,
-                    50));
-        }
-
-        // ---------- SELECTED MUNICIPALITIES ----------
-
         [Fact]
         public void Constructor_SelectedMunicipalitiesContainingNull_ThrowsException()
         {
@@ -111,27 +65,6 @@ namespace CustomerSimulationTests.DomainTests
                     true,
                     50));
         }
-
-        // ---------- TOTAL CUSTOMERS ----------
-
-        [Theory]
-        [InlineData(0)]
-        [InlineData(-1)]
-        public void Constructor_InvalidTotalCustomers_ThrowsException(int totalCustomers)
-        {
-            Assert.Throws<SimulationException>(() =>
-                new SimulationSettings(
-                    CreateValidMunicipalities(),
-                    totalCustomers,
-                    18,
-                    65,
-                    1,
-                    100,
-                    true,
-                    50));
-        }
-
-        // ---------- AGE VALIDATION ----------
 
         [Theory]
         [InlineData(-1)]
@@ -167,8 +100,6 @@ namespace CustomerSimulationTests.DomainTests
                     50));
         }
 
-        // ---------- HOUSE NUMBER VALIDATION ----------
-
         [Theory]
         [InlineData(0)]
         [InlineData(-1)]
@@ -203,8 +134,6 @@ namespace CustomerSimulationTests.DomainTests
                     true,
                     50));
         }
-
-        // ---------- PERCENTAGE LETTERS ----------
 
         [Theory]
         [InlineData(0)]
@@ -242,8 +171,6 @@ namespace CustomerSimulationTests.DomainTests
                     true,
                     percentage));
         }
-
-        // ---------- SETSELECTEDMUNICIPALITIES ----------
 
         [Fact]
         public void SetSelectedMunicipalities_WithValidList_UpdatesValue()

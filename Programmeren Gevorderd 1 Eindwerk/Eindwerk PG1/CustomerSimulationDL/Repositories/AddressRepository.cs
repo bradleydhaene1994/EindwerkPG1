@@ -203,13 +203,31 @@ namespace CustomerSimulationDL.Repositories
                 string street = reader.GetString(reader.GetOrdinal("Street"));
                 string municipalityName = reader.GetString(reader.GetOrdinal("Municipality"));
 
-                Municipality municipality = new Municipality(street);
+                Municipality municipality = new Municipality(municipalityName);
 
                 Address address = new Address(municipality, street);
 
                 addresses.Add(address);
             }
             return addresses;
+        }
+        public bool HasAddresses(int countryVersionId)
+        {
+            const string SQL = "SELECT 1 FROM Address a " +
+                               "JOIN Municipality m ON m.ID = a.MunicipalityID " +
+                               "WHERE m.CountryVersionID = @CountryVersionID";
+
+            using SqlConnection conn = new SqlConnection(_connectionstring);
+            using SqlCommand cmd = conn.CreateCommand();
+
+            cmd.CommandText = SQL;
+            cmd.Parameters.Add("@CountryVersionID", SqlDbType.Int).Value = countryVersionId;
+
+            conn.Open();
+
+            using SqlDataReader reader = cmd.ExecuteReader();
+
+            return reader.HasRows;
         }
     }
 }
