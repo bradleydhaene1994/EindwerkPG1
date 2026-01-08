@@ -220,7 +220,7 @@ namespace CustomerSimulationDL.Repositories
 
             return Enum.Parse<Gender>(result.ToString()!, true);
         }
-        public bool HasFirstNames(int countryVersionId)
+        /*public bool HasFirstNames(int countryVersionId)
         {
             const string SQL = "SELECT 1 FROM FirstName WHERE CountryVersionID = @CountryVersionID";
 
@@ -235,7 +235,7 @@ namespace CustomerSimulationDL.Repositories
             using SqlDataReader reader = cmd.ExecuteReader();
 
             return reader.HasRows;
-        }
+        }*/
         public bool HasLastNames(int countryVersionId)
         {
             const string SQL = "SELECT 1 FROM LastName WHERE CountryVersionID = @CountryVersionID";

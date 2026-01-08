@@ -15,7 +15,6 @@ namespace CustomerSimulationBL.Interfaces
         List<FirstName> GetFirstNamesByCountryVersionID(int countryVersionID);
         List<LastName> GetLastNamesByCountryVersionID(int countryVersionID);
         Gender GetGenderByFirstName(string firstName);
-        bool HasFirstNames(int countryVersionId);
         bool HasLastNames(int countryVersionId);
     }
 }

@@ -127,7 +127,6 @@ namespace CustomerSimulationBL.Services
         {
             return dataType switch
             {
-                UploadDataType.FirstName => _nameRepository.HasFirstNames(countryVersionId),
                 UploadDataType.LastName => _nameRepository.HasLastNames(countryVersionId),
                 UploadDataType.Municipality => _municipalityRepository.HasMunicipalities(countryVersionId),
                 UploadDataType.Address => _addressRepository.HasAddresses(countryVersionId),
