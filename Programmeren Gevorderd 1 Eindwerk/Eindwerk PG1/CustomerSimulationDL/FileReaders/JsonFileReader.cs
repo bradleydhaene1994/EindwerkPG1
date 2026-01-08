@@ -35,7 +35,7 @@ namespace CustomerSimulationDL.FileReaders
                         FirstNames.Add(FirstName);
                     }
                 }
-                else if(countryName == "Tsjech Republic")
+                else if(countryName == "Czech Republic")
                 {
                     foreach (var item in nameSection.GetProperty("male_first_name").EnumerateArray())
                     {
@@ -69,7 +69,7 @@ namespace CustomerSimulationDL.FileReaders
                         LastNames.Add(LastName);
                     }
                 }
-                else if(countryName == "Tsjech Republic")
+                else if(countryName == "Czech Republic")
                 {
                     foreach (var item in nameSection.GetProperty("male_last_name").EnumerateArray())
                     {
