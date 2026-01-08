@@ -79,7 +79,6 @@ namespace CustomerSimulationDL.Repositories
                     }
                 }
             }
-
             return municipalities;
         }
         public bool HasMunicipalities(int countryVersionId)

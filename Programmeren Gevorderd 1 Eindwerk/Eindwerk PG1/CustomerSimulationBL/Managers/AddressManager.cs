@@ -41,20 +41,27 @@ namespace CustomerSimulationBL.Managers
             //this LINQ only keeps addresses belonging to given municipality and stores them in a list
             var filtered = addresses.Where(a => a.Municipality == municipality).ToList();
 
-            //check to see if filtered is empty, if so throws error
-            if (filtered.Count == 0)
-            {
-                throw new InvalidOperationException($"No addresses found for municipality {municipality.Name}");
-            }
+            var source = filtered.Count > 0 ? filtered : addresses;
 
             //picks random address according to the index of the filtered list
-            return filtered[_random.Next(filtered.Count)];
+            return source[_random.Next(source.Count)];
+        }
+        public Address GetRandomAddress(List<Address> addresses)
+        {
+            if (addresses == null || addresses.Count == 0)
+                throw new InvalidOperationException("No addresses available.");
+
+            return addresses[_random.Next(addresses.Count)];
         }
         //gets addresses from the db using a simulationdataid
         public List<Address> GetAddressesBySimulationDataID(int simulationDataId)
         {
             List<Address> addresses = _addressRepo.GetAddressesBySimulationDataID(simulationDataId);
             return addresses;
+        }
+        public List<Address> GetAllAddressesByCountryVersionID(int countryVersionId)
+        {
+            return _addressRepo.GetAllAddressesByCountryVersionID(countryVersionId);
         }
     }
 }

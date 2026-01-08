@@ -144,16 +144,30 @@ namespace CustomerSimulationDL.Repositories
         {
             List<Address> addresses = new List<Address>();
 
-            string SQL = "SELECT a.StreetName, a.MunicipalityID, m.Name " +
+            var municipalityIds = municipalities.Select(m => m.Id).ToList();
+
+            var parameters = new List<string>();
+
+            for(int i = 0; i < municipalityIds.Count; i++)
+            {
+                parameters.Add($"@m{i}");
+            }
+
+            string SQL = "SELECT a.StreetName, a.MunicipalityID " +
                          "FROM Address a " +
-                         "LEFT JOIN Municipality m ON a.MunicipalityID = m.ID " +
-                         "WHERE m.CountryVersionID = @CountryVersionID";
+                         "JOIN Municipality m ON a.MunicipalityID = m.ID " +
+                         $"WHERE m.CountryVersionID = @CountryVersionID AND a.MunicipalityID IN ({string.Join(", ", parameters)})";
 
             using(SqlConnection conn =  new SqlConnection(_connectionstring))
             using(SqlCommand cmd = conn.CreateCommand())
             {
                 cmd.CommandText = SQL;
                 cmd.Parameters.AddWithValue("@CountryVersionID", countryVersionId);
+
+                for (int i = 0; i< municipalityIds.Count; i++)
+                {
+                    cmd.Parameters.Add($"@m{i}", SqlDbType.Int).Value = municipalityIds[i];
+                }
                 conn.Open();
                 using(SqlDataReader reader = cmd.ExecuteReader())
                 {
@@ -161,19 +175,9 @@ namespace CustomerSimulationDL.Repositories
                     {
                         string street = reader.GetString(reader.GetOrdinal("StreetName"));
 
-                        Municipality? municipality = null;
+                        int municipalityId = reader.GetInt32(reader.GetOrdinal("MunicipalityID"));
 
-                        if(!reader.IsDBNull(reader.GetOrdinal("MunicipalityID")))
-                        {
-                            int municipalityId = reader.GetInt32(reader.GetOrdinal("MunicipalityID"));
-
-                            municipality = municipalities.FirstOrDefault(m => m.Id == municipalityId);
-
-                            if(municipality == null)
-                            {
-                                throw new InvalidOperationException($"Municipality {municipalityId} not found for address {street}");
-                            }
-                        }
+                        Municipality municipality = municipalities.First(m => m.Id == municipalityId);
 
                         Address address = new Address(municipality, street);
 
@@ -208,6 +212,32 @@ namespace CustomerSimulationDL.Repositories
                 Address address = new Address(municipality, street);
 
                 addresses.Add(address);
+            }
+            return addresses;
+        }
+        public List<Address> GetAllAddressesByCountryVersionID(int countryVersionId)
+        {
+            var addresses = new List<Address>();
+
+            string SQL = "SELECT a.StreetName " +
+                         "FROM Address a";
+
+            using SqlConnection conn = new SqlConnection(_connectionstring);
+            using SqlCommand cmd = conn.CreateCommand();
+
+            cmd.CommandText = SQL;
+            cmd.Parameters.Add("@CountryVersionID", SqlDbType.Int).Value = countryVersionId;
+
+            conn.Open();
+
+            using SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                string street = reader.GetString(reader.GetOrdinal("StreetName"));
+
+                Address address = new Address(null, street);
+
+                addresses.Add(address) ;
             }
             return addresses;
         }

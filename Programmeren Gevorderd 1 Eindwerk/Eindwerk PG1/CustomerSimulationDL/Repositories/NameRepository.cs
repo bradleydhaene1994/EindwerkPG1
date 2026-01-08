@@ -146,7 +146,7 @@ namespace CustomerSimulationDL.Repositories
                         string name = reader.GetString(reader.GetOrdinal("Name"));
                         string genderAsString = reader.GetString(reader.GetOrdinal("Gender"));
                         Gender gender = (Gender)Enum.Parse(typeof(Gender), genderAsString);
-                        int frequency = reader.GetInt32(reader.GetOrdinal("Frequency"));
+                        int? frequency = reader.IsDBNull(reader.GetOrdinal("Frequency")) ? null : reader.GetInt32(reader.GetOrdinal("Frequency"));
 
                         FirstName firstName = new FirstName(id, name, frequency, gender);
 
@@ -189,7 +189,7 @@ namespace CustomerSimulationDL.Repositories
                         {
                             gender = Gender.Unknown;
                         }
-                        int frequency = reader.GetInt32(reader.GetOrdinal("Frequency"));
+                        int? frequency = reader.IsDBNull(reader.GetOrdinal("Frequency")) ? null : reader.GetInt32(reader.GetOrdinal("Frequency"));
 
                         LastName lastName = new LastName(id, name, frequency, gender);
 

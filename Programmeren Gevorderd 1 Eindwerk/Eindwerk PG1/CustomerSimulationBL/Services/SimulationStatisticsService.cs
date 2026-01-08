@@ -59,12 +59,28 @@ namespace CustomerSimulationBL.Services
                 .ToList();
         }
 
-        public List<MunicipalityStatistics> CalculateStreetsPerMunicipality(List<Address> addresses)
+        public List<MunicipalityStatistics> CalculateStreetsPerMunicipality(List<Address> addresses, List<Municipality> municipalities)
         {
-            return addresses
-                .GroupBy(a => a.Municipality)
-                .Select(g => new MunicipalityStatistics(g.Key, g.Select(a => a.Street).Distinct().Count()))
-                .ToList();
+            var result = new List<MunicipalityStatistics>();
+
+            foreach(var municipality in municipalities)
+            {
+                int streetCount = addresses.Where(a => a.Municipality?.Name == municipality.Name)
+                                           .Select(a => a.Street)
+                                           .Distinct()
+                                           .Count();
+
+                if(streetCount == 0)
+                {
+                    continue;
+                }
+
+                MunicipalityStatistics municipalityStatistics = new MunicipalityStatistics(municipality, streetCount);
+
+                result.Add(municipalityStatistics);
+            }
+
+            return result;
         }
 
         public List<NameStatistics> CalculateNameStatistics(IEnumerable<string> names)
@@ -80,6 +96,11 @@ namespace CustomerSimulationBL.Services
         {
             SimulationStatistics general = _simulationDataManager.GetSimulationStatisticsBySimulationDataID(simulationDataId);
             List<Customer> domainCustomers = _customerManager.GetCustomerBySimulationDataID(simulationDataId);
+            foreach(var customer in domainCustomers)
+            {
+                Gender gender = _nameManager.GetGenderByFirstName(customer.FirstName);
+                customer.Gender = gender;
+            }
             List<CustomerDTO> customers = domainCustomers.Select(ToDTO).ToList();
             List<Municipality> municipalities = _municipalityManager.GetMunicipalityByCountryVersionID(countryVersionId);
             List<Address> addresses = _addressManager.GetAddressesBySimulationDataID(simulationDataId);
@@ -87,7 +108,7 @@ namespace CustomerSimulationBL.Services
             return new SimulationStatisticsResult(
                 general,
                 CalculateCustomersPerMunicipality(customers, municipalities),
-                CalculateStreetsPerMunicipality(addresses),
+                CalculateStreetsPerMunicipality(addresses, municipalities),
                 CalculateNameStatistics(customers.Where(c => c.Gender == Gender.Male).Select(c => c.FirstName)),
                 CalculateNameStatistics(customers.Where(c => c.Gender == Gender.Female).Select(c => c.FirstName)),
                 CalculateNameStatistics(customers.Select(c => c.LastName)));

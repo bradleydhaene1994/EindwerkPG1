@@ -51,7 +51,12 @@ namespace CustomerSimulationBL.Managers
 
             List<Municipality> effectiveMunicipalities = allowedMunicipalities != null && allowedMunicipalities.Any() ? allowedMunicipalities : allMunicipalities;
 
-            List<Address> addresses = _addressManager.GetAddressesByCountryVersionID( countryVersionId, effectiveMunicipalities);
+            List<Address> addresses = _addressManager.GetAddressesByCountryVersionID(countryVersionId, effectiveMunicipalities);
+
+            if(addresses.Count == 0)
+            {
+                addresses = _addressManager.GetAllAddressesByCountryVersionID(countryVersionId);
+            }
 
             List<CustomerDTO> customers = GenerateCustomers(simSettings, countryVersionId, effectiveMunicipalities, addresses);
 
@@ -79,14 +84,23 @@ namespace CustomerSimulationBL.Managers
             {
                 Municipality municipality = selectedMunicipalities == null || !selectedMunicipalities.Any() ? _municipalityManager.GetRandomMunicipality(municipalities) : _municipalityManager.GetRandomMunicipalityBySpecifiedList(selectedMunicipalities);
 
-                Address address = _addressManager.GetRandomAddressByMunicipality(addresses, municipality);
+                Address address;
+                
+                bool hasMunicipalityAddresses = addresses.Any(a => a.Municipality?.Id == municipality.Id);
+
+                if(hasMunicipalityAddresses)
+                {
+                    address = _addressManager.GetRandomAddressByMunicipality(addresses, municipality);
+                }
+                else
+                {
+                    address = _addressManager.GetRandomAddress(addresses);
+                }
 
                 FirstName first = _nameManager.GetRandomFirstName(firstNames);
                 LastName last = _nameManager.GetRandomLastName(lastNames);
 
-                Gender gender = _nameManager.GetGenderByFirstName(first.Name);
-
-                customers.Add(new CustomerDTO(first.Name, last.Name, municipality.Name, address.Street, _customerManager.GetRandomBirthdate(settings), _customerManager.GetRandomHouseNumber(settings), gender));
+                customers.Add(new CustomerDTO(first.Name, last.Name, municipality.Name, address.Street, _customerManager.GetRandomBirthdate(settings), _customerManager.GetRandomHouseNumber(settings), null));
             }
             return customers;
         }
